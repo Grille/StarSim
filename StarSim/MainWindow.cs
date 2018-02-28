@@ -8,16 +8,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using GGL.IO;
 
 namespace AtomSim
 {
 
-    public unsafe partial class Form1 : Form
+    public unsafe partial class MainWindow : Form
     {
         int MaxStars = 0;
 
-        struct Atom
+        struct Star
         {
             public bool Kill;
             public bool Enabled;
@@ -52,23 +52,26 @@ namespace AtomSim
             }
         }
         int RPF;
-        Atom[] starArray = new Atom[1000];
+        Star[] starArray = new Star[1000];
         float[] power = new float[2];
         int[] WeltGroese = new int[4];
-        int[] WeltKamPos = new int[2];
+        int[] camPos = new int[2];
         int[] TxtBoxData = new int[2];
 
+
         int enabeldStarNumber = 0;
+        int finalEnabeldStarNumber = 0;
         float scaling = 1;
 
         Task logikTask;
+        Task[] logikTasks;
         bool logikRun = false;
 
         Point lastMousePos = new Point(0,0);
 
         int usedTime;
 
-        public Form1()
+        public MainWindow()
         {
             InitializeComponent();
 
@@ -83,7 +86,7 @@ namespace AtomSim
 
             //Feld.Refresh();
         }
-        ~Form1()
+        ~MainWindow()
         {
             Application.Exit();
         }
@@ -132,6 +135,9 @@ namespace AtomSim
                             {
                                 starArray[iS2].Kill = true;
                                 starArray[iS1].NewMass = starArray[iS1].Mass + starArray[iS2].Mass;
+                                starArray[iS1].Pos[0] = (starArray[iS1].Pos[0] * massS1 + starArray[iS2].Pos[0] * massS2);
+                                starArray[iS1].Pos[1] = (starArray[iS1].Pos[1] * massS1 + starArray[iS2].Pos[1] * massS2);
+
                                 starArray[iS1].Speed[0] = (starArray[iS1].Speed[0] * massS1 + starArray[iS2].Speed[0] * massS2);
                                 starArray[iS1].Speed[1] = (starArray[iS1].Speed[1] * massS1 + starArray[iS2].Speed[1] * massS2);
 
@@ -180,50 +186,49 @@ namespace AtomSim
         private void Simulate()
         {
             logikRun = true;
-            enabeldStarNumber = 0;
-            Stopwatch SWTotal = new Stopwatch();
-            SWTotal.Start();
 
-            int tasks = 8;
-            int step = MaxStars / tasks;
-            //jj(0, MaxStars);
+            for (int j = 0; j < 1; j++)
+            {
+                enabeldStarNumber = 0;
+                Stopwatch SWTotal = new Stopwatch();
+                SWTotal.Start();
 
-            Task[] renderTasks = new Task[tasks];
-            for (int iT = 0; iT < tasks; iT++)
-            {
-                int index = iT;
-                renderTasks[index] = new Task(() => SimulateStars(step * index, step * (index + 1)));
-                Console.WriteLine("init: " + index);
-            }
-            for (int iT = 0; iT < tasks; iT++)
-            {
-                int index = iT;
-                renderTasks[index].Start();
-                Console.WriteLine("start: " + index);
-            }
+                int tasks = 8;
+                int step = MaxStars / tasks;
 
-            for (int iT = 0; iT < tasks; iT++)
-            {
-                int index = iT;
-                renderTasks[index].Wait();
-                Console.WriteLine("end: " + index);
-            }
 
-            for (int iS1 = 0; iS1 < MaxStars; iS1++)
-            {
-                if (starArray[iS1].Enabled == true)
+                logikTasks = new Task[tasks];
+                for (int iT = 0; iT < tasks; iT++)
                 {
-                    if (starArray[iS1].Kill == true) starArray[iS1].Enabled = false;
-                    else
+                    int index = iT; logikTasks[index] = new Task(() => SimulateStars(step * index, step * (index + 1)));
+                }
+                for (int iT = 0; iT < tasks; iT++)
+                {
+                    int index = iT; logikTasks[index].Start();
+                }
+
+                for (int iT = 0; iT < tasks; iT++)
+                {
+                    int index = iT; logikTasks[index].Wait();
+                }
+
+                for (int iS1 = 0; iS1 < MaxStars; iS1++)
+                {
+                    if (starArray[iS1].Enabled == true)
                     {
-                        starArray[iS1].UpdateMass();
-                        starArray[iS1].Pos[0] += starArray[iS1].Speed[0]*=1.000f;
-                        starArray[iS1].Pos[1] += starArray[iS1].Speed[1] *= 1.000f;
+                        if (starArray[iS1].Kill == true) starArray[iS1].Enabled = false;
+                        else
+                        {
+                            starArray[iS1].UpdateMass();
+                            starArray[iS1].Pos[0] += starArray[iS1].Speed[0] *= 1.000f;
+                            starArray[iS1].Pos[1] += starArray[iS1].Speed[1] *= 1.000f;
+                        }
                     }
                 }
+                usedTime = (int)SWTotal.ElapsedMilliseconds;
+                SWTotal.Stop();
+                finalEnabeldStarNumber = enabeldStarNumber;
             }
-            usedTime = (int)SWTotal.ElapsedMilliseconds;
-            SWTotal.Stop();
             logikRun = false;
         }
 
@@ -239,18 +244,19 @@ namespace AtomSim
             Stopwatch SWTotal = new Stopwatch();
             SWTotal.Start();
             Graphics g = e.Graphics;
-            //g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-            //g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighSpeed;
+
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.High;
+            g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
             //g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
-            //g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighSpeed;
-            //g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighSpeed;
+            g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
 
             g.TranslateTransform(Feld.Width / 2, Feld.Height / 2);
             g.ScaleTransform(scaling, scaling);
             try
             {
                 g.DrawRectangle(new Pen(Color.FromArgb(255, 25, 25, 50), 2)
-                    , WeltGroese[0] + WeltKamPos[0], WeltGroese[1] + WeltKamPos[1]
+                    , WeltGroese[0] + camPos[0], WeltGroese[1] + camPos[1]
                     , WeltGroese[2]- WeltGroese[0], WeltGroese[3]- WeltGroese[1]);
                 //BildP[0, 0] = 7;
                 // Create a local version of the graphics object for the PictureBox.
@@ -273,11 +279,11 @@ namespace AtomSim
                         if (listBox1.SelectedIndex == 0)
                         {
                             g.FillEllipse(new SolidBrush(Color.FromArgb(5, 250, 250, 255))
-                            , starArray[ii].Pos[0] - (r * 15) + WeltKamPos[0], starArray[ii].Pos[1] - (r * 15) + WeltKamPos[1]
+                            , starArray[ii].Pos[0] - (r * 15) + camPos[0], starArray[ii].Pos[1] - (r * 15) + camPos[1]
                             , (r * 15) * 2, (r * 15) * 2);
 
                             g.FillEllipse(new SolidBrush(Color.FromArgb(255, 250, 250, 255))
-                            , starArray[ii].Pos[0] - (r) + WeltKamPos[0], starArray[ii].Pos[1] - (r) + WeltKamPos[1]
+                            , starArray[ii].Pos[0] - (r) + camPos[0], starArray[ii].Pos[1] - (r) + camPos[1]
                             , (r) * 2, (r) * 2);
                         }
                         else
@@ -285,8 +291,10 @@ namespace AtomSim
                             byte RColor = (byte)starArray[ii].Mass;
                             //if (RColor > 255) { RColor = 255; }
 
-                            g.DrawEllipse(new Pen(Color.FromArgb(255, 50, 100, 255), 1)
-                                , starArray[ii].Pos[0] - r + WeltKamPos[0], starArray[ii].Pos[1] - r + WeltKamPos[1]
+                            float posX = starArray[ii].Pos[0] - r + camPos[0];
+                            float posY = starArray[ii].Pos[1] - r + camPos[1];
+                            g.DrawEllipse(new Pen(Color.FromArgb(255, 100, 200, 255), 1)
+                                , posX, posY
                                 , r * 2, r * 2);
                         }
 
@@ -323,8 +331,8 @@ namespace AtomSim
                 g.DrawString("T " + TotalEnergie[0] / MaxStars, new Font("Consolas", 9), brush, new Point(10, 10));
                 g.DrawString("X " + TotalEnergie[1] / MaxStars, new Font("Consolas", 9), brush, new Point(10, 20));
                 g.DrawString("Y " + TotalEnergie[2] / MaxStars, new Font("Consolas", 9), brush, new Point(10, 30));
-                g.DrawString("Stars " + enabeldStarNumber, new Font("Consolas", 9), brush, new Point(10, 40));
-                g.DrawString("Ops " + enabeldStarNumber* enabeldStarNumber, new Font("Consolas", 9), brush, new Point(10, 50));
+                g.DrawString("Stars " + finalEnabeldStarNumber, new Font("Consolas", 9), brush, new Point(10, 40));
+                g.DrawString("Ops " + finalEnabeldStarNumber * finalEnabeldStarNumber, new Font("Consolas", 9), brush, new Point(10, 50));
 
 
                 //float[] dist = new float[2];
@@ -356,33 +364,51 @@ namespace AtomSim
 
         private void buttonStart_Click(object sender, EventArgs e)
         {
+            logikTask.Wait();
+            for (int i = 0; i < logikTasks.Length; i++) logikTasks[i].Wait();
             try
             {
                 MaxStars = Convert.ToInt32(textBox1.Text);
-                int maxSpeed = Convert.ToInt32(textBox3.Text);
-                starArray = new Atom[MaxStars];
-
-                //for (int ii = 0; ii < MaxAtom; ii++)
-                //{
-                //    AtomArray[ii].Init(Convert.ToInt32(textBox2.Text), 20 + ii * 50, 20 + ii * 10, (2 + 0.1f * ii) * 0, (2 + 1f * ii) * 0);
-                //}
-
+                float maxSpeed = (float)Convert.ToDouble(textBox3.Text);
+                float size = (float)Convert.ToDouble(textBox2.Text);
+                starArray = new Star[MaxStars];
                 Random Rnd = new Random(); // initialisiert die Zufallsklasse
-                for (int ii = 0; ii < MaxStars; ii++)
+                int mode = 1;
+
+                if (mode == 0)
                 {
-                    starArray[ii].Init(Convert.ToInt32(textBox2.Text)
-                        //(int)((1+(5) * Rnd.NextDouble()))
+                    for (int ii = 0; ii < MaxStars; ii++)
+                    {
+                        starArray[ii].Init(size
 
-                        , (float)(((WeltGroese[0] - WeltGroese[2]) * Rnd.NextDouble()) + WeltGroese[2])
-                        , (float)(((WeltGroese[1] - WeltGroese[3]) * Rnd.NextDouble()) + WeltGroese[3])
+                            , (float)(((WeltGroese[0] - WeltGroese[2]) * Rnd.NextDouble()) + WeltGroese[2])
+                            , (float)(((WeltGroese[1] - WeltGroese[3]) * Rnd.NextDouble()) + WeltGroese[3])
 
-                        , (float)(maxSpeed * Rnd.NextDouble() - maxSpeed/2)
-                        , (float)(maxSpeed * Rnd.NextDouble() - maxSpeed/2)
-                        );
+                            , (float)(maxSpeed * Rnd.NextDouble() - maxSpeed / 2)
+                            , (float)(maxSpeed * Rnd.NextDouble() - maxSpeed / 2)
+                            );
+                    }
+                }
+                else if (mode == 1)
+                {
+                    for (int ii = 0; ii < MaxStars; ii++)
+                    {
+                        float speedX;
+                        if (ii>MaxStars/2) speedX = (float)(((ii / (float)(MaxStars)) * maxSpeed));
+                        else speedX = (float)(((ii / (float)(MaxStars)) * -maxSpeed));
+                        starArray[ii].Init(size
+
+                            , 0f
+                            , (float)(ii*10)
+
+                            , speedX
+                            , 0f
+                            );
+                    }
                 }
 
 
-                for (int ii = 0; ii < MaxStars; ii++)
+                    for (int ii = 0; ii < MaxStars; ii++)
                 {
                     starArray[ii].UID = ii;
                 }
@@ -471,8 +497,8 @@ namespace AtomSim
         {
             if (e.Button == MouseButtons.Left)
             {
-                WeltKamPos[0] += (int)((e.X - lastMousePos.X)/scaling);
-                WeltKamPos[1] += (int)((e.Y - lastMousePos.Y) / scaling);
+                camPos[0] += (int)((e.X - lastMousePos.X)/scaling);
+                camPos[1] += (int)((e.Y - lastMousePos.Y) / scaling);
                 Feld.Refresh();
             }
             else if (e.Button == MouseButtons.Middle)
@@ -491,6 +517,48 @@ namespace AtomSim
 
         private void button2_Click(object sender, EventArgs e)
         {
+            logikTask.Wait();
+            for (int i = 0; i < logikTasks.Length; i++) logikTasks[i].Wait();
+            ByteStream bs = new ByteStream();
+            bs.WriteInt(MaxStars);
+            bs.WriteInt(camPos[0]);
+            bs.WriteInt(camPos[1]);
+            bs.WriteFloat(scaling);
+            int a = true ? 9 : 0;
+            for (int i = 0; i < MaxStars; i++)
+            {
+                bs.WriteByte((byte)(starArray[i].Enabled ? 1 : 0));
+                bs.WriteFloat(starArray[i].Mass);
+                bs.WriteFloat(starArray[i].Pos[0]);
+                bs.WriteFloat(starArray[i].Pos[1]);
+                bs.WriteFloat(starArray[i].Speed[0]);
+                bs.WriteFloat(starArray[i].Speed[1]);
+            }
+            bs.Save("save.txt");
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+
+            System.IO.BinaryReader j;
+
+
+            logikTask.Wait();
+            for (int i = 0; i < logikTasks.Length; i++) logikTasks[i].Wait();
+            ByteStream bs = new ByteStream("save.txt");
+            bs.ResetIndex();
+            MaxStars = bs.ReadInt();
+            camPos[0] = bs.ReadInt();
+            camPos[1] = bs.ReadInt();
+            scaling = bs.ReadFloat();
+            starArray = new Star[MaxStars];
+            for (int i = 0; i < MaxStars; i++)
+            {
+                starArray[i] = new Star();
+                byte enabled = bs.ReadByte();
+                starArray[i].Init(bs.ReadFloat(), bs.ReadFloat(), bs.ReadFloat(), bs.ReadFloat(), bs.ReadFloat());
+                if (enabled == 0) starArray[i].Enabled = false;
+            }
         }
     }
 }
