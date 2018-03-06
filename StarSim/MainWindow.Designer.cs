@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.buttonStart = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -43,6 +44,11 @@
             this.TimerDraw = new System.Windows.Forms.Timer(this.components);
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.buttonStop = new System.Windows.Forms.Button();
+            this.buttonTimeSub = new System.Windows.Forms.Button();
+            this.buttonTimeAdd = new System.Windows.Forms.Button();
+            this.labelTime = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // buttonStart
@@ -98,12 +104,12 @@
             // 
             // buttonClose
             // 
-            this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonClose.BackColor = System.Drawing.Color.Black;
             this.buttonClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonClose.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonClose.ForeColor = System.Drawing.Color.LightGray;
-            this.buttonClose.Location = new System.Drawing.Point(425, 452);
+            this.buttonClose.Location = new System.Drawing.Point(677, 452);
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.Size = new System.Drawing.Size(79, 30);
             this.buttonClose.TabIndex = 78;
@@ -113,12 +119,12 @@
             // 
             // buttonLoad
             // 
-            this.buttonLoad.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonLoad.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonLoad.BackColor = System.Drawing.Color.Black;
             this.buttonLoad.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonLoad.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonLoad.ForeColor = System.Drawing.Color.LightGray;
-            this.buttonLoad.Location = new System.Drawing.Point(329, 452);
+            this.buttonLoad.Location = new System.Drawing.Point(556, 452);
             this.buttonLoad.Name = "buttonLoad";
             this.buttonLoad.Size = new System.Drawing.Size(79, 30);
             this.buttonLoad.TabIndex = 77;
@@ -128,12 +134,13 @@
             // 
             // buttonSave
             // 
-            this.buttonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonSave.AutoEllipsis = true;
             this.buttonSave.BackColor = System.Drawing.Color.Black;
             this.buttonSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonSave.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.buttonSave.ForeColor = System.Drawing.Color.LightGray;
-            this.buttonSave.Location = new System.Drawing.Point(244, 452);
+            this.buttonSave.Location = new System.Drawing.Point(471, 452);
             this.buttonSave.Name = "buttonSave";
             this.buttonSave.Size = new System.Drawing.Size(79, 30);
             this.buttonSave.TabIndex = 76;
@@ -195,7 +202,7 @@
             // 
             // TimerDraw
             // 
-            this.TimerDraw.Interval = 50;
+            this.TimerDraw.Interval = 5;
             this.TimerDraw.Tick += new System.EventHandler(this.TimerDraw_Tick);
             // 
             // openFileDialog
@@ -207,12 +214,88 @@
             // 
             this.saveFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog_FileOk);
             // 
+            // buttonStop
+            // 
+            this.buttonStop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonStop.BackColor = System.Drawing.Color.Black;
+            this.buttonStop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonStop.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonStop.ForeColor = System.Drawing.Color.LightGray;
+            this.buttonStop.Location = new System.Drawing.Point(280, 452);
+            this.buttonStop.Name = "buttonStop";
+            this.buttonStop.Size = new System.Drawing.Size(30, 30);
+            this.buttonStop.TabIndex = 82;
+            this.buttonStop.Text = ">";
+            this.buttonStop.UseVisualStyleBackColor = false;
+            this.buttonStop.Click += new System.EventHandler(this.buttonStop_Click);
+            // 
+            // buttonTimeSub
+            // 
+            this.buttonTimeSub.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonTimeSub.BackColor = System.Drawing.Color.Black;
+            this.buttonTimeSub.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonTimeSub.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonTimeSub.ForeColor = System.Drawing.Color.LightGray;
+            this.buttonTimeSub.Location = new System.Drawing.Point(316, 452);
+            this.buttonTimeSub.Name = "buttonTimeSub";
+            this.buttonTimeSub.Size = new System.Drawing.Size(30, 30);
+            this.buttonTimeSub.TabIndex = 83;
+            this.buttonTimeSub.Text = "-";
+            this.buttonTimeSub.UseVisualStyleBackColor = false;
+            this.buttonTimeSub.Click += new System.EventHandler(this.buttonTimeSub_Click);
+            // 
+            // buttonTimeAdd
+            // 
+            this.buttonTimeAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonTimeAdd.BackColor = System.Drawing.Color.Black;
+            this.buttonTimeAdd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonTimeAdd.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.buttonTimeAdd.ForeColor = System.Drawing.Color.LightGray;
+            this.buttonTimeAdd.Location = new System.Drawing.Point(388, 452);
+            this.buttonTimeAdd.Name = "buttonTimeAdd";
+            this.buttonTimeAdd.Size = new System.Drawing.Size(30, 30);
+            this.buttonTimeAdd.TabIndex = 84;
+            this.buttonTimeAdd.Text = "+";
+            this.buttonTimeAdd.UseVisualStyleBackColor = false;
+            this.buttonTimeAdd.Click += new System.EventHandler(this.buttonTimeAdd_Click);
+            // 
+            // labelTime
+            // 
+            this.labelTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.labelTime.BackColor = System.Drawing.Color.Black;
+            this.labelTime.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.labelTime.Font = new System.Drawing.Font("Consolas", 9.75F);
+            this.labelTime.ForeColor = System.Drawing.Color.LightGray;
+            this.labelTime.Location = new System.Drawing.Point(354, 411);
+            this.labelTime.Name = "labelTime";
+            this.labelTime.Size = new System.Drawing.Size(30, 19);
+            this.labelTime.TabIndex = 85;
+            this.labelTime.Text = "1";
+            this.labelTime.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label5
+            // 
+            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Consolas", 9.75F);
+            this.label5.ForeColor = System.Drawing.Color.LightGray;
+            this.label5.Location = new System.Drawing.Point(239, 467);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(35, 15);
+            this.label5.TabIndex = 86;
+            this.label5.Text = "Time";
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(10)))), ((int)(((byte)(15)))), ((int)(((byte)(20)))));
             this.ClientSize = new System.Drawing.Size(768, 498);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.labelTime);
+            this.Controls.Add(this.buttonTimeAdd);
+            this.Controls.Add(this.buttonTimeSub);
+            this.Controls.Add(this.buttonStop);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.textBoxNumber);
@@ -223,10 +306,17 @@
             this.Controls.Add(this.buttonLoad);
             this.Controls.Add(this.buttonStart);
             this.Controls.Add(this.buttonSave);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.KeyPreview = true;
             this.Name = "MainWindow";
-            this.Text = "Form1";
+            this.Text = "StarSim";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.this_Paint);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainWindow_KeyDown);
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainWindow_KeyPress);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainWindow_KeyUp);
+            this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MainWindow_MouseClick);
+            this.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.MainWindow_MouseDoubleClick);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Window_MouseMove);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -249,6 +339,11 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
         private System.Windows.Forms.SaveFileDialog saveFileDialog;
+        private System.Windows.Forms.Button buttonStop;
+        private System.Windows.Forms.Button buttonTimeSub;
+        private System.Windows.Forms.Button buttonTimeAdd;
+        private System.Windows.Forms.Label labelTime;
+        private System.Windows.Forms.Label label5;
     }
 }
 
