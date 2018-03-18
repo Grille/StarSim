@@ -266,7 +266,7 @@
             this.labelTime.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.labelTime.Font = new System.Drawing.Font("Consolas", 9.75F);
             this.labelTime.ForeColor = System.Drawing.Color.LightGray;
-            this.labelTime.Location = new System.Drawing.Point(354, 411);
+            this.labelTime.Location = new System.Drawing.Point(352, 458);
             this.labelTime.Name = "labelTime";
             this.labelTime.Size = new System.Drawing.Size(30, 19);
             this.labelTime.TabIndex = 85;
