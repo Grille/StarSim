@@ -70,6 +70,7 @@ namespace AtomSim
         int time = 1;
         bool run = false;
 
+        float massCenterX = 0, massCenterY = 0;
         int enabeldStarNumber = 0;
         int finalEnabeldStarNumber = 0;
         float scaling = 1;
@@ -124,7 +125,7 @@ namespace AtomSim
 
             for (int j = 0; j < time; j++)
             {
-                enabeldStarNumber = 0;
+                int newEnabeldStarNumber = 0;
 
                 int tasks = 8;
                 int step = MaxStars / tasks;
@@ -145,33 +146,43 @@ namespace AtomSim
                     int index = iT; logikTasks[index].Wait();
                 }
 
+                float newMassCenterX = 0,newMassCenterY = 0;
+                float totalmass = 0;
                 for (int iS1 = 0; iS1 < MaxStars; iS1++)
                 {
-                    if (starArray[iS1].Enabled == true)
+                    if (starArray[iS1].Enabled == false) continue;
+                    else if (starArray[iS1].Kill == true) starArray[iS1].Enabled = false;
+                    else
                     {
-                        if (starArray[iS1].Kill == true) starArray[iS1].Enabled = false;
-                        else
-                        {
-                            starArray[iS1].UpdateMass();
-                            starArray[iS1].Pos[0] += starArray[iS1].Speed[0] *= 1.000f;
-                            starArray[iS1].Pos[1] += starArray[iS1].Speed[1] *= 1.000f;
-                        }
+                        newEnabeldStarNumber++;
+                        starArray[iS1].UpdateMass();
+
+                        newMassCenterX += starArray[iS1].Pos[0] * starArray[iS1].AbsMass;
+                        newMassCenterY += starArray[iS1].Pos[1] * starArray[iS1].AbsMass;
+                        totalmass += starArray[iS1].AbsMass;
+                        //fix speed;
+                        /*
+                        float goalSpeed = 20;
+                        float fullSpeed = Math.Abs(starArray[iS1].Speed[0]) + Math.Abs(starArray[iS1].Speed[1]);
+                        float factor = (goalSpeed / fullSpeed);
+                        starArray[iS1].Speed[0] *= factor;
+                        starArray[iS1].Speed[1] *= factor;
+                        */
+                        starArray[iS1].Pos[0] += starArray[iS1].Speed[0] *= 1.000f;
+                        starArray[iS1].Pos[1] += starArray[iS1].Speed[1] *= 1.000f;
                     }
                 }
-                finalEnabeldStarNumber = enabeldStarNumber;
+                massCenterX = newMassCenterX / totalmass; massCenterY = newMassCenterY / totalmass;
+
+                enabeldStarNumber = newEnabeldStarNumber;
 
                 if (FocusStar != -1 && starArray[FocusStar].Enabled == true)
                 {
-                    camPos[0] = -starArray[FocusStar].Pos[0];
-                    camPos[1] = -starArray[FocusStar].Pos[1];
+                    camPos[0] -= starArray[FocusStar].Speed[0];
+                    camPos[1] -= starArray[FocusStar].Speed[1];
                 }
-                else
+                if (RefStar != -1 && starArray[RefStar].Enabled == true)
                 {
-                    if (RefStar != -1 && starArray[RefStar].Enabled == true)
-                    {
-                        camPos[0] -= starArray[RefStar].Speed[0];
-                        camPos[1] -= starArray[RefStar].Speed[1];
-                    }
                 }
 
                 if (!run) break;
@@ -186,13 +197,15 @@ namespace AtomSim
             {
                 if (starArray[iS1].Enabled == true)
                 {
-                    enabeldStarNumber++;
                     //--------------------------------------------------------------Atom_Kolision
                     for (int iS2 = iS1; iS2 < MaxStars; iS2++)
                     {
                         if (starArray[iS2].Enabled == true && iS1 != iS2)
                         { //Vergleicher jedes object mit jedem anderen
                             RPF += 1;
+
+
+
 
                             float distX = (starArray[iS1].Pos[0] + 0) - (starArray[iS2].Pos[0] + 0);
                             float distY = (starArray[iS1].Pos[1] + 0) - (starArray[iS2].Pos[1] + 0);
@@ -207,6 +220,9 @@ namespace AtomSim
                             float massPS1 = (float)starArray[iS1].AbsMass / (starArray[iS1].AbsMass + starArray[iS2].AbsMass);
                             float massPS2 = (float)starArray[iS2].AbsMass / (starArray[iS1].AbsMass + starArray[iS2].AbsMass);
                             float Fg = ((float)(starArray[iS1].Mass) * (starArray[iS2].Mass) / dist);
+
+
+                            
 
                             //AtomArray[ii].speed[1] += pY * Fg /1000;
                             float kolision = 0;
@@ -270,6 +286,10 @@ namespace AtomSim
             this.Invalidate();
             //Refresh();
         }
+        private float[] transformPoint(float x,float y)
+        {
+            return new float[] {(x + camPos[0]) * scaling + Width / 2f, (y + camPos[1]) * scaling + Height / 2f};
+        }
         private void this_Paint(object sender, PaintEventArgs e)
         {
             Stopwatch SWTotal = new Stopwatch();
@@ -283,14 +303,52 @@ namespace AtomSim
 
             //g.TranslateTransform(Width / 2, Height / 2);
             //g.ScaleTransform(scaling, scaling);
-            Pen backPen = new Pen(Color.FromArgb(20, 30, 40), 1);
-            Pen backPen2 = new Pen(Color.FromArgb(40, 60, 80), 1);
+            Pen backPen = new Pen(Color.FromArgb(20, 30, 30),1);
+            backPen.DashPattern = new float[] { 8, 4};
+            Pen backPen2 = new Pen(Color.FromArgb(20, 30, 30), 1);
+            backPen2.DashPattern = new float[] { 8, 4,4,8 };
+            Pen guiLine = new Pen(Color.FromArgb(40, 60, 80), 1);
+
+            /*
             g.DrawLine(backPen, 0, Height / 2, Width, Height / 2);
             g.DrawLine(backPen, Width/2, 0 , Width / 2, Height);
+            */
+            float[] centerPos = transformPoint(massCenterX,massCenterY);
+
+            g.DrawEllipse(backPen, centerPos[0] - 20f, centerPos[1] - 20f, 40, 40);
+
+            /*
+            g.DrawLine(backPen, 0, Height / 2, Width, Height / 2);
+            g.DrawLine(backPen, Width/2, 0 , Width / 2, Height);
+            */
+            float[] refPos = centerPos;
+            if (RefStar != -1)
+            {
+                refPos = transformPoint(starArray[RefStar].Pos[0], starArray[RefStar].Pos[1]);
+                g.DrawEllipse(backPen, refPos[0] - 10, refPos[1] - 10, 20, 20);
+                g.DrawLine(backPen, centerPos[0], centerPos[1], refPos[0], refPos[1]);
+            }
+            float[] focusPos = centerPos;
+            if (FocusStar != -1)
+            {
+                focusPos = transformPoint(starArray[FocusStar].Pos[0], starArray[FocusStar].Pos[1]);
+            }
+            int dist1 = 10, dist2 = 40;
+            g.DrawLine(backPen, focusPos[0] + dist1, focusPos[1] + dist1, focusPos[0] + dist2, focusPos[1] + dist2);
+            g.DrawLine(backPen, focusPos[0] - dist1, focusPos[1] + dist1, focusPos[0] - dist2, focusPos[1] + dist2);
+            g.DrawLine(backPen, focusPos[0] + dist1, focusPos[1] - dist1, focusPos[0] + dist2, focusPos[1] - dist2);
+            g.DrawLine(backPen, focusPos[0] - dist1, focusPos[1] - dist1, focusPos[0] - dist2, focusPos[1] - dist2);
+
+            if (CurStar != -1)
+            {
+                float[] curPos = transformPoint(starArray[CurStar].Pos[0], starArray[CurStar].Pos[1]);
+                g.DrawLine(backPen2, curPos[0], curPos[1], refPos[0], refPos[1]);
+            }
+
 
             //try
             //{
-                SolidBrush brush = new SolidBrush(Color.LightGray);
+            SolidBrush brush = new SolidBrush(Color.LightGray);
 
                 for (int ii = 0; ii < MaxStars; ii++)
                 {
@@ -318,12 +376,13 @@ namespace AtomSim
 
                         posX += r;
                         posY += r;
-                        g.DrawLine(backPen2, new PointF(posX, posY), new PointF(posX + r * 1.5f, posY - r * 1.5f));
-                        g.DrawLine(backPen2, new PointF(posX + r * 1.5f, posY - r * 1.5f), new PointF(posX + r * 1.5f + r * 2f + 4f, posY - r * 1.5f));
+                        g.DrawLine(guiLine, new PointF(posX, posY), new PointF(posX + r * 1.5f, posY - r * 1.5f));
+                        g.DrawLine(guiLine, new PointF(posX + r * 1.5f, posY - r * 1.5f), new PointF(posX + r * 1.5f + r * 2f + 4f, posY - r * 1.5f));
                         int txtPosX = (int)(posX + r * 1.5f + r * 2f + 9f);
                         int txtPosY = (int)(posY - r * 1.5f - 6f);
                         g.DrawString("S" + ii + "M" + starArray[ii].Mass, new Font("Consolas", 9), brush, new PointF(txtPosX, txtPosY));
                         g.DrawString("Mass:" + starArray[ii].Mass, new Font("Consolas", 9), brush, new PointF(txtPosX, txtPosY += 15));
+                        g.DrawString("Speed:" + (Math.Abs(starArray[ii].Speed[0])+ Math.Abs(starArray[ii].Speed[1])), new Font("Consolas", 9), brush, new PointF(txtPosX, txtPosY += 15));
                     }
                     else
                     {
@@ -336,8 +395,8 @@ namespace AtomSim
 
             }
 
-                g.DrawString("Stars " + finalEnabeldStarNumber, new Font("Consolas", 9), brush, new Point(10, 10));
-                g.DrawString("Ops " + finalEnabeldStarNumber * finalEnabeldStarNumber, new Font("Consolas", 9), brush, new Point(10, 20));
+                g.DrawString("Stars " + enabeldStarNumber, new Font("Consolas", 9), brush, new Point(10, 10));
+                g.DrawString("Ops " + enabeldStarNumber * enabeldStarNumber, new Font("Consolas", 9), brush, new Point(10, 20));
 
                 g.DrawString("L_Time " + usedTime + "ms", new Font("Consolas", 9), brush, new Point(10, 40));
                 g.DrawString("R_Time " + SWTotal.ElapsedMilliseconds + "ms", new Font("Consolas", 9), brush, new Point(10, 50));
@@ -407,10 +466,17 @@ namespace AtomSim
         }
         private void Window_MouseWheel(object sender, MouseEventArgs e)
         {
+            float posX = -camPos[0] + (e.X - Width / 2) / scaling;
+            float posY = -camPos[1] + (e.Y - Height / 2) / scaling;
+
             scaling += (e.Delta / 500f) * scaling;
             if (scaling < 0.00001) scaling = 0.00001f;
             else if (scaling > 10) scaling = 10;
+
+            camPos[0] = -posX + (Width / 2 * (e.X / (float)Width * 2 - 1)) / scaling;
+            camPos[1] = -posY + (Height / 2 * (e.Y / (float)Height * 2 - 1)) / scaling;
         }
+
         private void MainWindow_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             selectStar(e);
