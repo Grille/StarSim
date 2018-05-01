@@ -97,7 +97,6 @@ namespace AtomSim
             WeltGroese[2] = 20000;
             WeltGroese[3] = 20000;
 
-
             //Feld.Refresh();
             
         }
@@ -230,6 +229,8 @@ namespace AtomSim
                             {
                                 starArray[iS2].Kill = true;
                                 if (iS2 == CurStar) CurStar = iS1;
+                                if (iS2 == FocusStar) FocusStar = iS1;
+                                if (iS2 == RefStar) RefStar = iS1;
                                 starArray[iS1].NewMass = starArray[iS1].Mass + starArray[iS2].Mass;
                                 if (starArray[iS1].NewMass == 0) starArray[iS1].Kill = true;
                                 starArray[iS1].Pos[0] = (starArray[iS1].Pos[0] * massPS1 + starArray[iS2].Pos[0] * massPS2);
@@ -303,9 +304,9 @@ namespace AtomSim
 
             //g.TranslateTransform(Width / 2, Height / 2);
             //g.ScaleTransform(scaling, scaling);
-            Pen backPen = new Pen(Color.FromArgb(20, 30, 30),1);
+            Pen backPen = new Pen(Color.FromArgb(30, 45, 45),1);
             backPen.DashPattern = new float[] { 8, 4};
-            Pen backPen2 = new Pen(Color.FromArgb(20, 30, 30), 1);
+            Pen backPen2 = new Pen(Color.FromArgb(30, 45, 45), 1);
             backPen2.DashPattern = new float[] { 8, 4,4,8 };
             Pen guiLine = new Pen(Color.FromArgb(40, 60, 80), 1);
 
@@ -522,6 +523,10 @@ namespace AtomSim
             CurStar = nearestStar;
         }
 
+        private void clearFocus()
+        {
+            label1.Focus();
+        }
         private void buttonStart_Click(object sender, EventArgs e)
         {
             logikTask.Wait();
@@ -533,13 +538,13 @@ namespace AtomSim
                 float size = (float)Convert.ToDouble(textBoxMass.Text);
                 starArray = new Star[MaxStars];
                 Random rnd = new Random(); // initialisiert die Zufallsklasse
-                int mode = 0;
+                int mode = 1;
 
                 if (mode == 0)
                 {
                     for (int ii = 0; ii < MaxStars; ii++)
                     {
-                        starArray[ii].Init(rnd.NextDouble() > 0.5f ? size : -size
+                        starArray[ii].Init(size//rnd.NextDouble() > 0.5f ? size : -size
 
                             , (float)(((WeltGroese[0] - WeltGroese[2]) * rnd.NextDouble()) + WeltGroese[2])
                             , (float)(((WeltGroese[1] - WeltGroese[3]) * rnd.NextDouble()) + WeltGroese[3])
@@ -558,7 +563,7 @@ namespace AtomSim
                         else
                         {
                             speedX = (float)(((ii / (float)(MaxStars)) * -maxSpeed));
-                            size = -size;
+                            //size = -size;
                         }
                         starArray[ii].Init(size
 
@@ -603,7 +608,6 @@ namespace AtomSim
             openFileDialog.DefaultExt = "sm";
             openFileDialog.InitialDirectory = Environment.CurrentDirectory;
             openFileDialog.ShowDialog();
-
         }
 
         private void openFileDialog_FileOk(object sender, CancelEventArgs e)
