@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace AtomSim
+namespace StarSim
 {
     static class Program
     {
@@ -14,8 +16,9 @@ namespace AtomSim
         [STAThread]
         static void Main()
         {
-            //Application.EnableVisualStyles();
-           
+            Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
+            Application.EnableVisualStyles();
+            //Application.CurrentCulture = new System.Globalization.CultureInfo("en-US");
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainWindow());
             //Application.Restart();

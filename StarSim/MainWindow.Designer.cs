@@ -1,4 +1,4 @@
-﻿namespace AtomSim
+﻿namespace StarSim
 {
     partial class MainWindow
     {
@@ -30,170 +30,45 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
-            this.buttonStart = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.buttonClose = new System.Windows.Forms.Button();
-            this.buttonLoad = new System.Windows.Forms.Button();
-            this.buttonSave = new System.Windows.Forms.Button();
-            this.textBoxSpeed = new System.Windows.Forms.TextBox();
-            this.textBoxMass = new System.Windows.Forms.TextBox();
-            this.textBoxNumber = new System.Windows.Forms.TextBox();
             this.TimerLogik = new System.Windows.Forms.Timer(this.components);
             this.TimerDraw = new System.Windows.Forms.Timer(this.components);
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
-            this.buttonStop = new System.Windows.Forms.Button();
-            this.buttonTimeSub = new System.Windows.Forms.Button();
-            this.buttonTimeAdd = new System.Windows.Forms.Button();
-            this.labelTime = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.simulationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.simSpeedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pauseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.x1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.x4ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.x16ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.x64ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.selectetStarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.searchStarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.windowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fullscrennToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.showMarkerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showStarInfosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showSimInfosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.keyBindingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.hjghjToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.nameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.jghfToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fgjhToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuStrip1.SuspendLayout();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // buttonStart
-            // 
-            this.buttonStart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonStart.BackColor = System.Drawing.Color.Black;
-            this.buttonStart.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonStart.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonStart.ForeColor = System.Drawing.Color.LightGray;
-            this.buttonStart.Location = new System.Drawing.Point(145, 452);
-            this.buttonStart.Name = "buttonStart";
-            this.buttonStart.Size = new System.Drawing.Size(79, 30);
-            this.buttonStart.TabIndex = 74;
-            this.buttonStart.Text = "Start";
-            this.buttonStart.UseVisualStyleBackColor = false;
-            this.buttonStart.Click += new System.EventHandler(this.buttonStart_Click);
-            // 
-            // label3
-            // 
-            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Consolas", 9.75F);
-            this.label3.ForeColor = System.Drawing.Color.LightGray;
-            this.label3.Location = new System.Drawing.Point(14, 467);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(42, 15);
-            this.label3.TabIndex = 81;
-            this.label3.Text = "Speed";
-            // 
-            // label2
-            // 
-            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Consolas", 9.75F);
-            this.label2.ForeColor = System.Drawing.Color.LightGray;
-            this.label2.Location = new System.Drawing.Point(14, 441);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(35, 15);
-            this.label2.TabIndex = 80;
-            this.label2.Text = "Mass";
-            // 
-            // label1
-            // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Consolas", 9.75F);
-            this.label1.ForeColor = System.Drawing.Color.LightGray;
-            this.label1.Location = new System.Drawing.Point(14, 415);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(49, 15);
-            this.label1.TabIndex = 79;
-            this.label1.Text = "Number";
-            // 
-            // buttonClose
-            // 
-            this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonClose.BackColor = System.Drawing.Color.Black;
-            this.buttonClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonClose.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonClose.ForeColor = System.Drawing.Color.LightGray;
-            this.buttonClose.Location = new System.Drawing.Point(677, 452);
-            this.buttonClose.Name = "buttonClose";
-            this.buttonClose.Size = new System.Drawing.Size(79, 30);
-            this.buttonClose.TabIndex = 78;
-            this.buttonClose.Text = "Close";
-            this.buttonClose.UseVisualStyleBackColor = false;
-            this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
-            // 
-            // buttonLoad
-            // 
-            this.buttonLoad.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonLoad.BackColor = System.Drawing.Color.Black;
-            this.buttonLoad.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonLoad.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonLoad.ForeColor = System.Drawing.Color.LightGray;
-            this.buttonLoad.Location = new System.Drawing.Point(556, 452);
-            this.buttonLoad.Name = "buttonLoad";
-            this.buttonLoad.Size = new System.Drawing.Size(79, 30);
-            this.buttonLoad.TabIndex = 77;
-            this.buttonLoad.Text = "Load";
-            this.buttonLoad.UseVisualStyleBackColor = false;
-            this.buttonLoad.Click += new System.EventHandler(this.buttonLoad_Click);
-            // 
-            // buttonSave
-            // 
-            this.buttonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonSave.AutoEllipsis = true;
-            this.buttonSave.BackColor = System.Drawing.Color.Black;
-            this.buttonSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonSave.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonSave.ForeColor = System.Drawing.Color.LightGray;
-            this.buttonSave.Location = new System.Drawing.Point(471, 452);
-            this.buttonSave.Name = "buttonSave";
-            this.buttonSave.Size = new System.Drawing.Size(79, 30);
-            this.buttonSave.TabIndex = 76;
-            this.buttonSave.Text = "Save";
-            this.buttonSave.UseVisualStyleBackColor = false;
-            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
-            // 
-            // textBoxSpeed
-            // 
-            this.textBoxSpeed.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.textBoxSpeed.BackColor = System.Drawing.Color.Black;
-            this.textBoxSpeed.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBoxSpeed.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxSpeed.ForeColor = System.Drawing.Color.LightGray;
-            this.textBoxSpeed.Location = new System.Drawing.Point(69, 462);
-            this.textBoxSpeed.Multiline = true;
-            this.textBoxSpeed.Name = "textBoxSpeed";
-            this.textBoxSpeed.Size = new System.Drawing.Size(61, 20);
-            this.textBoxSpeed.TabIndex = 2;
-            this.textBoxSpeed.Text = "4";
-            this.textBoxSpeed.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // textBoxMass
-            // 
-            this.textBoxMass.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.textBoxMass.BackColor = System.Drawing.Color.Black;
-            this.textBoxMass.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBoxMass.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxMass.ForeColor = System.Drawing.Color.LightGray;
-            this.textBoxMass.Location = new System.Drawing.Point(69, 436);
-            this.textBoxMass.Multiline = true;
-            this.textBoxMass.Name = "textBoxMass";
-            this.textBoxMass.Size = new System.Drawing.Size(61, 20);
-            this.textBoxMass.TabIndex = 1;
-            this.textBoxMass.Text = "1";
-            this.textBoxMass.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.textBoxMass.TextChanged += new System.EventHandler(this.textBoxMass_TextChanged);
-            // 
-            // textBoxNumber
-            // 
-            this.textBoxNumber.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.textBoxNumber.BackColor = System.Drawing.Color.Black;
-            this.textBoxNumber.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBoxNumber.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxNumber.ForeColor = System.Drawing.Color.LightGray;
-            this.textBoxNumber.Location = new System.Drawing.Point(69, 410);
-            this.textBoxNumber.Multiline = true;
-            this.textBoxNumber.Name = "textBoxNumber";
-            this.textBoxNumber.Size = new System.Drawing.Size(61, 20);
-            this.textBoxNumber.TabIndex = 0;
-            this.textBoxNumber.Text = "500";
-            this.textBoxNumber.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.textBoxNumber.TextChanged += new System.EventHandler(this.textBoxNumber_TextChanged);
             // 
             // TimerLogik
             // 
@@ -214,136 +89,295 @@
             // 
             this.saveFileDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog_FileOk);
             // 
-            // buttonStop
+            // menuStrip1
             // 
-            this.buttonStop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonStop.BackColor = System.Drawing.Color.Black;
-            this.buttonStop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonStop.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonStop.ForeColor = System.Drawing.Color.LightGray;
-            this.buttonStop.Location = new System.Drawing.Point(280, 452);
-            this.buttonStop.Name = "buttonStop";
-            this.buttonStop.Size = new System.Drawing.Size(30, 30);
-            this.buttonStop.TabIndex = 82;
-            this.buttonStop.Text = ">";
-            this.buttonStop.UseVisualStyleBackColor = false;
-            this.buttonStop.Click += new System.EventHandler(this.buttonStop_Click);
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fileToolStripMenuItem,
+            this.simulationToolStripMenuItem,
+            this.windowToolStripMenuItem,
+            this.helpToolStripMenuItem});
+            resources.ApplyResources(this.menuStrip1, "menuStrip1");
+            this.menuStrip1.Name = "menuStrip1";
             // 
-            // buttonTimeSub
+            // fileToolStripMenuItem
             // 
-            this.buttonTimeSub.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonTimeSub.BackColor = System.Drawing.Color.Black;
-            this.buttonTimeSub.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonTimeSub.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonTimeSub.ForeColor = System.Drawing.Color.LightGray;
-            this.buttonTimeSub.Location = new System.Drawing.Point(316, 452);
-            this.buttonTimeSub.Name = "buttonTimeSub";
-            this.buttonTimeSub.Size = new System.Drawing.Size(30, 30);
-            this.buttonTimeSub.TabIndex = 83;
-            this.buttonTimeSub.Text = "-";
-            this.buttonTimeSub.UseVisualStyleBackColor = false;
-            this.buttonTimeSub.Click += new System.EventHandler(this.buttonTimeSub_Click);
+            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newToolStripMenuItem1,
+            this.loadToolStripMenuItem,
+            this.saveToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.exitToolStripMenuItem});
+            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+            resources.ApplyResources(this.fileToolStripMenuItem, "fileToolStripMenuItem");
             // 
-            // buttonTimeAdd
+            // newToolStripMenuItem1
             // 
-            this.buttonTimeAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonTimeAdd.BackColor = System.Drawing.Color.Black;
-            this.buttonTimeAdd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonTimeAdd.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonTimeAdd.ForeColor = System.Drawing.Color.LightGray;
-            this.buttonTimeAdd.Location = new System.Drawing.Point(388, 452);
-            this.buttonTimeAdd.Name = "buttonTimeAdd";
-            this.buttonTimeAdd.Size = new System.Drawing.Size(30, 30);
-            this.buttonTimeAdd.TabIndex = 84;
-            this.buttonTimeAdd.Text = "+";
-            this.buttonTimeAdd.UseVisualStyleBackColor = false;
-            this.buttonTimeAdd.Click += new System.EventHandler(this.buttonTimeAdd_Click);
+            this.newToolStripMenuItem1.Name = "newToolStripMenuItem1";
+            resources.ApplyResources(this.newToolStripMenuItem1, "newToolStripMenuItem1");
+            this.newToolStripMenuItem1.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
-            // labelTime
+            // loadToolStripMenuItem
             // 
-            this.labelTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.labelTime.BackColor = System.Drawing.Color.Black;
-            this.labelTime.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.labelTime.Font = new System.Drawing.Font("Consolas", 9.75F);
-            this.labelTime.ForeColor = System.Drawing.Color.LightGray;
-            this.labelTime.Location = new System.Drawing.Point(352, 458);
-            this.labelTime.Name = "labelTime";
-            this.labelTime.Size = new System.Drawing.Size(30, 19);
-            this.labelTime.TabIndex = 85;
-            this.labelTime.Text = "1";
-            this.labelTime.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
+            resources.ApplyResources(this.loadToolStripMenuItem, "loadToolStripMenuItem");
+            this.loadToolStripMenuItem.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
             // 
-            // label5
+            // saveToolStripMenuItem
             // 
-            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Consolas", 9.75F);
-            this.label5.ForeColor = System.Drawing.Color.LightGray;
-            this.label5.Location = new System.Drawing.Point(239, 467);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(35, 15);
-            this.label5.TabIndex = 86;
-            this.label5.Text = "Time";
+            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            resources.ApplyResources(this.saveToolStripMenuItem, "saveToolStripMenuItem");
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            resources.ApplyResources(this.toolStripSeparator1, "toolStripSeparator1");
+            // 
+            // exitToolStripMenuItem
+            // 
+            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            resources.ApplyResources(this.exitToolStripMenuItem, "exitToolStripMenuItem");
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            // 
+            // simulationToolStripMenuItem
+            // 
+            this.simulationToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.simSpeedToolStripMenuItem,
+            this.toolStripSeparator2,
+            this.selectetStarToolStripMenuItem,
+            this.searchStarToolStripMenuItem});
+            resources.ApplyResources(this.simulationToolStripMenuItem, "simulationToolStripMenuItem");
+            this.simulationToolStripMenuItem.Name = "simulationToolStripMenuItem";
+            // 
+            // simSpeedToolStripMenuItem
+            // 
+            this.simSpeedToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.pauseToolStripMenuItem,
+            this.x1ToolStripMenuItem,
+            this.x4ToolStripMenuItem,
+            this.x16ToolStripMenuItem,
+            this.x64ToolStripMenuItem});
+            this.simSpeedToolStripMenuItem.Name = "simSpeedToolStripMenuItem";
+            resources.ApplyResources(this.simSpeedToolStripMenuItem, "simSpeedToolStripMenuItem");
+            // 
+            // pauseToolStripMenuItem
+            // 
+            this.pauseToolStripMenuItem.Name = "pauseToolStripMenuItem";
+            resources.ApplyResources(this.pauseToolStripMenuItem, "pauseToolStripMenuItem");
+            // 
+            // x1ToolStripMenuItem
+            // 
+            this.x1ToolStripMenuItem.Name = "x1ToolStripMenuItem";
+            resources.ApplyResources(this.x1ToolStripMenuItem, "x1ToolStripMenuItem");
+            // 
+            // x4ToolStripMenuItem
+            // 
+            this.x4ToolStripMenuItem.Name = "x4ToolStripMenuItem";
+            resources.ApplyResources(this.x4ToolStripMenuItem, "x4ToolStripMenuItem");
+            // 
+            // x16ToolStripMenuItem
+            // 
+            this.x16ToolStripMenuItem.Name = "x16ToolStripMenuItem";
+            resources.ApplyResources(this.x16ToolStripMenuItem, "x16ToolStripMenuItem");
+            // 
+            // x64ToolStripMenuItem
+            // 
+            this.x64ToolStripMenuItem.Name = "x64ToolStripMenuItem";
+            resources.ApplyResources(this.x64ToolStripMenuItem, "x64ToolStripMenuItem");
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            resources.ApplyResources(this.toolStripSeparator2, "toolStripSeparator2");
+            // 
+            // selectetStarToolStripMenuItem
+            // 
+            this.selectetStarToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.editToolStripMenuItem});
+            this.selectetStarToolStripMenuItem.Name = "selectetStarToolStripMenuItem";
+            resources.ApplyResources(this.selectetStarToolStripMenuItem, "selectetStarToolStripMenuItem");
+            // 
+            // editToolStripMenuItem
+            // 
+            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
+            resources.ApplyResources(this.editToolStripMenuItem, "editToolStripMenuItem");
+            // 
+            // searchStarToolStripMenuItem
+            // 
+            this.searchStarToolStripMenuItem.BackColor = System.Drawing.SystemColors.Control;
+            this.searchStarToolStripMenuItem.Name = "searchStarToolStripMenuItem";
+            resources.ApplyResources(this.searchStarToolStripMenuItem, "searchStarToolStripMenuItem");
+            // 
+            // windowToolStripMenuItem
+            // 
+            this.windowToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fullscrennToolStripMenuItem,
+            this.toolStripSeparator3,
+            this.showMarkerToolStripMenuItem,
+            this.showStarInfosToolStripMenuItem,
+            this.showSimInfosToolStripMenuItem});
+            this.windowToolStripMenuItem.Name = "windowToolStripMenuItem";
+            resources.ApplyResources(this.windowToolStripMenuItem, "windowToolStripMenuItem");
+            // 
+            // fullscrennToolStripMenuItem
+            // 
+            this.fullscrennToolStripMenuItem.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.fullscrennToolStripMenuItem.CheckOnClick = true;
+            this.fullscrennToolStripMenuItem.Name = "fullscrennToolStripMenuItem";
+            resources.ApplyResources(this.fullscrennToolStripMenuItem, "fullscrennToolStripMenuItem");
+            this.fullscrennToolStripMenuItem.Click += new System.EventHandler(this.fullscrennToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            resources.ApplyResources(this.toolStripSeparator3, "toolStripSeparator3");
+            // 
+            // showMarkerToolStripMenuItem
+            // 
+            this.showMarkerToolStripMenuItem.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.showMarkerToolStripMenuItem.Checked = true;
+            this.showMarkerToolStripMenuItem.CheckOnClick = true;
+            this.showMarkerToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.showMarkerToolStripMenuItem.Name = "showMarkerToolStripMenuItem";
+            resources.ApplyResources(this.showMarkerToolStripMenuItem, "showMarkerToolStripMenuItem");
+            this.showMarkerToolStripMenuItem.Click += new System.EventHandler(this.showMarkerToolStripMenuItem_Click);
+            // 
+            // showStarInfosToolStripMenuItem
+            // 
+            this.showStarInfosToolStripMenuItem.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.showStarInfosToolStripMenuItem.Checked = true;
+            this.showStarInfosToolStripMenuItem.CheckOnClick = true;
+            this.showStarInfosToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.showStarInfosToolStripMenuItem.Name = "showStarInfosToolStripMenuItem";
+            resources.ApplyResources(this.showStarInfosToolStripMenuItem, "showStarInfosToolStripMenuItem");
+            this.showStarInfosToolStripMenuItem.Click += new System.EventHandler(this.showStarInfosToolStripMenuItem_Click);
+            // 
+            // showSimInfosToolStripMenuItem
+            // 
+            this.showSimInfosToolStripMenuItem.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.showSimInfosToolStripMenuItem.Checked = true;
+            this.showSimInfosToolStripMenuItem.CheckOnClick = true;
+            this.showSimInfosToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.showSimInfosToolStripMenuItem.Name = "showSimInfosToolStripMenuItem";
+            resources.ApplyResources(this.showSimInfosToolStripMenuItem, "showSimInfosToolStripMenuItem");
+            this.showSimInfosToolStripMenuItem.Click += new System.EventHandler(this.showSimInfosToolStripMenuItem_Click);
+            // 
+            // helpToolStripMenuItem
+            // 
+            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.keyBindingsToolStripMenuItem});
+            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            resources.ApplyResources(this.helpToolStripMenuItem, "helpToolStripMenuItem");
+            // 
+            // keyBindingsToolStripMenuItem
+            // 
+            this.keyBindingsToolStripMenuItem.Name = "keyBindingsToolStripMenuItem";
+            resources.ApplyResources(this.keyBindingsToolStripMenuItem, "keyBindingsToolStripMenuItem");
+            this.keyBindingsToolStripMenuItem.Click += new System.EventHandler(this.keyBindingsToolStripMenuItem_Click);
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.hjghjToolStripMenuItem,
+            this.jghfToolStripMenuItem});
+            this.contextMenuStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Table;
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.ShowCheckMargin = true;
+            resources.ApplyResources(this.contextMenuStrip1, "contextMenuStrip1");
+            // 
+            // hjghjToolStripMenuItem
+            // 
+            this.hjghjToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.nameToolStripMenuItem,
+            this.editToolStripMenuItem1});
+            this.hjghjToolStripMenuItem.Name = "hjghjToolStripMenuItem";
+            resources.ApplyResources(this.hjghjToolStripMenuItem, "hjghjToolStripMenuItem");
+            // 
+            // nameToolStripMenuItem
+            // 
+            this.nameToolStripMenuItem.Name = "nameToolStripMenuItem";
+            resources.ApplyResources(this.nameToolStripMenuItem, "nameToolStripMenuItem");
+            // 
+            // editToolStripMenuItem1
+            // 
+            this.editToolStripMenuItem1.Name = "editToolStripMenuItem1";
+            resources.ApplyResources(this.editToolStripMenuItem1, "editToolStripMenuItem1");
+            // 
+            // jghfToolStripMenuItem
+            // 
+            this.jghfToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fgjhToolStripMenuItem});
+            this.jghfToolStripMenuItem.Name = "jghfToolStripMenuItem";
+            resources.ApplyResources(this.jghfToolStripMenuItem, "jghfToolStripMenuItem");
+            // 
+            // fgjhToolStripMenuItem
+            // 
+            this.fgjhToolStripMenuItem.Name = "fgjhToolStripMenuItem";
+            resources.ApplyResources(this.fgjhToolStripMenuItem, "fgjhToolStripMenuItem");
             // 
             // MainWindow
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(10)))), ((int)(((byte)(15)))), ((int)(((byte)(20)))));
-            this.ClientSize = new System.Drawing.Size(768, 498);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.labelTime);
-            this.Controls.Add(this.buttonTimeAdd);
-            this.Controls.Add(this.buttonTimeSub);
-            this.Controls.Add(this.buttonStop);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.textBoxNumber);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.textBoxMass);
-            this.Controls.Add(this.buttonClose);
-            this.Controls.Add(this.textBoxSpeed);
-            this.Controls.Add(this.buttonLoad);
-            this.Controls.Add(this.buttonStart);
-            this.Controls.Add(this.buttonSave);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Controls.Add(this.menuStrip1);
             this.KeyPreview = true;
+            this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainWindow";
-            this.Text = "StarSim";
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.this_Paint);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainWindow_KeyDown);
             this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainWindow_KeyPress);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainWindow_KeyUp);
             this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MainWindow_MouseClick);
             this.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.MainWindow_MouseDoubleClick);
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MainWindow_MouseDown);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Window_MouseMove);
+            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MainWindow_MouseUp);
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.Button buttonStart;
-        private System.Windows.Forms.TextBox textBoxSpeed;
-        private System.Windows.Forms.TextBox textBoxMass;
-        private System.Windows.Forms.TextBox textBoxNumber;
         private System.Windows.Forms.Timer TimerLogik;
         private System.Windows.Forms.Timer TimerDraw;
-        private System.Windows.Forms.Button buttonClose;
-        private System.Windows.Forms.Button buttonLoad;
-        private System.Windows.Forms.Button buttonSave;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
         private System.Windows.Forms.SaveFileDialog saveFileDialog;
-        private System.Windows.Forms.Button buttonStop;
-        private System.Windows.Forms.Button buttonTimeSub;
-        private System.Windows.Forms.Button buttonTimeAdd;
-        private System.Windows.Forms.Label labelTime;
-        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem windowToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem fullscrennToolStripMenuItem;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem hjghjToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem jghfToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem fgjhToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem nameToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem keyBindingsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem simulationToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem selectetStarToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem searchStarToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem simSpeedToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pauseToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem x1ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem x4ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem x16ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem x64ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripMenuItem showMarkerToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem showStarInfosToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem showSimInfosToolStripMenuItem;
     }
 }
 
