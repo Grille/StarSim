@@ -26,10 +26,10 @@ namespace StarSim
         public float AbsMass;
         public float NewMass;
         public float SizeR;
-        public float[] Pos;
-        public float[] NewPos;
-        public float[] Speed;
-        public float[] NewSpeed;
+        public double[] Pos;
+        public double[] NewPos;
+        public double[] Speed;
+        public double[] NewSpeed;
 
         //public int Richtung; //ghkads
 
@@ -39,8 +39,8 @@ namespace StarSim
             Name = "";
             Enabled = true;
             UpdateMass(mass);
-            Pos = new float[2] { posX, posY };
-            Speed = new float[2] { speedX, speedY };
+            Pos = new double[2] { posX, posY };
+            Speed = new double[2] { speedX, speedY };
             NewMass = -1;
             Reference = -1;
         }
