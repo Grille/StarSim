@@ -21,15 +21,20 @@ namespace StarSim
         public string Name;
         public bool Kill;
         public bool Enabled;
+        public bool Marked;
+        public bool Tracked;
         public int Reference;
         public float Mass;
         public float AbsMass;
         public float NewMass;
         public float SizeR;
-        public double[] Pos;
-        public double[] NewPos;
-        public double[] Speed;
-        public double[] NewSpeed;
+
+        public float[] PosTracking;
+
+        public double PosX,PosY;
+        public double NewPosX,NewPosY;
+        public double SpeedX,SpeedY;
+        public double NewSpeedX,NewSpeedY;
 
         //public int Richtung; //ghkads
 
@@ -39,8 +44,8 @@ namespace StarSim
             Name = "";
             Enabled = true;
             UpdateMass(mass);
-            Pos = new double[2] { posX, posY };
-            Speed = new double[2] { speedX, speedY };
+            PosX = posX;PosY = posY;
+            SpeedX = speedX; SpeedY = speedY;
             NewMass = -1;
             Reference = -1;
         }

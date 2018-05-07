@@ -25,6 +25,7 @@ namespace StarSim
 
         double massCenterX = 0, massCenterY = 0;
         double speedCenterX = 0, speedCenterY = 0;
+        float totalMass = 0;
         int starsNumber = 0;
 
         int timeScale = 1;
@@ -33,7 +34,7 @@ namespace StarSim
         Task mainLogikTask;
         Task[] logikTasks;
 
-        double[] camPos = new double[2];
+        double camPosX, camPosY;
         double scaling = 1;
 
         bool showMarker = true;
@@ -129,24 +130,25 @@ namespace StarSim
                         starArray[iS1].UpdateMass();
 
                         
-                        newMassCenterX += starArray[iS1].Pos[0] * starArray[iS1].AbsMass;
-                        newMassCenterY += starArray[iS1].Pos[1] * starArray[iS1].AbsMass;
-                        newSpeedCenterX += starArray[iS1].Speed[0] * starArray[iS1].AbsMass;
-                        newSpeedCenterY += starArray[iS1].Speed[1] * starArray[iS1].AbsMass;
+                        newMassCenterX += starArray[iS1].PosX * starArray[iS1].AbsMass;
+                        newMassCenterY += starArray[iS1].PosY * starArray[iS1].AbsMass;
+                        newSpeedCenterX += starArray[iS1].SpeedX * starArray[iS1].AbsMass;
+                        newSpeedCenterY += starArray[iS1].SpeedY * starArray[iS1].AbsMass;
                         
                         totalmass += starArray[iS1].AbsMass;
                         //fix speed;
                         /*
                         float goalSpeed = 20;
-                        float fullSpeed = Math.Abs(starArray[iS1].Speed[0]) + Math.Abs(starArray[iS1].Speed[1]);
+                        float fullSpeed = Math.Abs(starArray[iS1].SpeedX) + Math.Abs(starArray[iS1].SpeedY);
                         float factor = (goalSpeed / fullSpeed);
-                        starArray[iS1].Speed[0] *= factor;
-                        starArray[iS1].Speed[1] *= factor;
+                        starArray[iS1].SpeedX *= factor;
+                        starArray[iS1].SpeedY *= factor;
                         */
-                        starArray[iS1].Pos[0] += starArray[iS1].Speed[0] *= 1.000f;
-                        starArray[iS1].Pos[1] += starArray[iS1].Speed[1] *= 1.000f;
+                        starArray[iS1].PosX += starArray[iS1].SpeedX *= 1.000f;
+                        starArray[iS1].PosY += starArray[iS1].SpeedY *= 1.000f;
                     }
                 }
+                totalMass = totalmass;
                 massCenterX = newMassCenterX / totalmass; massCenterY = newMassCenterY / totalmass;
                 speedCenterX = newSpeedCenterX / totalmass; speedCenterY = newSpeedCenterY / totalmass;
 
@@ -154,13 +156,13 @@ namespace StarSim
 
                 if (focusStar != -1 && starArray[focusStar].Enabled == true)
                 {
-                    camPos[0] -= (float)starArray[focusStar].Speed[0];
-                    camPos[1] -= (float)starArray[focusStar].Speed[1];
+                    camPosX -= (float)starArray[focusStar].SpeedX;
+                    camPosY -= (float)starArray[focusStar].SpeedY;
                 }
                 else
                 {
-                    camPos[0] -= (float)speedCenterX;
-                    camPos[1] -= (float)speedCenterY;
+                    camPosX -= (float)speedCenterX;
+                    camPosY -= (float)speedCenterY;
                 }
                 if (refStar != -1 && starArray[refStar].Enabled == true)
                 {
@@ -183,8 +185,9 @@ namespace StarSim
                     {
                         if (starArray[iS2].Enabled == true && iS1 != iS2)
                         { //Vergleicher jedes object mit jedem anderen
-                            double distX = (starArray[iS1].Pos[0] + 0) - (starArray[iS2].Pos[0] + 0);
-                            double distY = (starArray[iS1].Pos[1] + 0) - (starArray[iS2].Pos[1] + 0);
+
+                            double distX = (starArray[iS1].PosX + 0) - (starArray[iS2].PosX + 0);
+                            double distY = (starArray[iS1].PosY + 0) - (starArray[iS2].PosY + 0);
                             double dist = Math.Sqrt((distX * distX) + (distY * distY));
 
                             double relativDistX = (distX > 0) ? distX : -distX;
@@ -199,9 +202,8 @@ namespace StarSim
 
 
 
-
-                            //AtomArray[ii].speed[1] += pY * Fg /1000;
-                            double kolision = 0;
+                            
+                            //AtomArray[ii].SpeedY += pY * Fg /1000;
                             if (dist < (starArray[iS1].SizeR) + (starArray[iS2].SizeR))
                             {
                                 starArray[iS2].Kill = true;
@@ -210,43 +212,40 @@ namespace StarSim
                                 if (iS2 == refStar) refStar = iS1;
                                 starArray[iS1].NewMass = starArray[iS1].Mass + starArray[iS2].Mass;
                                 if (starArray[iS1].NewMass == 0) starArray[iS1].Kill = true;
-                                starArray[iS1].Pos[0] = (starArray[iS1].Pos[0] * massPS1 + starArray[iS2].Pos[0] * massPS2);
-                                starArray[iS1].Pos[1] = (starArray[iS1].Pos[1] * massPS1 + starArray[iS2].Pos[1] * massPS2);
+                                starArray[iS1].PosX = (starArray[iS1].PosX * massPS1 + starArray[iS2].PosX * massPS2);
+                                starArray[iS1].PosY = (starArray[iS1].PosY * massPS1 + starArray[iS2].PosY * massPS2);
 
-                                starArray[iS1].Speed[0] = (starArray[iS1].Speed[0] * massPS1 + starArray[iS2].Speed[0] * massPS2);
-                                starArray[iS1].Speed[1] = (starArray[iS1].Speed[1] * massPS1 + starArray[iS2].Speed[1] * massPS2);
+                                starArray[iS1].SpeedX = (starArray[iS1].SpeedX * massPS1 + starArray[iS2].SpeedX * massPS2);
+                                starArray[iS1].SpeedY = (starArray[iS1].SpeedY * massPS1 + starArray[iS2].SpeedY * massPS2);
 
-                                kolision = 0;
+                                starArray[iS1].Marked |= starArray[iS2].Marked;
                             }
-                            else
-                            {
-                                kolision = 1;
-                            }
-
                             const int time = (int)100;
                             //Grafitation
-                            if (starArray[iS1].Pos[0] > starArray[iS2].Pos[0])
+                            
+                            if (starArray[iS1].PosX > starArray[iS2].PosX)
                             {
-                                starArray[iS1].Speed[0] -= (pX * Fg / time) * massPS2 * kolision;
-                                starArray[iS2].Speed[0] += (pX * Fg / time) * massPS1 * kolision;
+                                starArray[iS1].SpeedX -= (pX * Fg / time) * massPS2;
+                                starArray[iS2].SpeedX += (pX * Fg / time) * massPS1;
                             }
-                            else if (starArray[iS1].Pos[0] < starArray[iS2].Pos[0])
+                            else if (starArray[iS1].PosX < starArray[iS2].PosX)
                             {
-                                starArray[iS1].Speed[0] += (pX * Fg / time) * massPS2 * kolision;
-                                starArray[iS2].Speed[0] -= (pX * Fg / time) * massPS1 * kolision;
-                            }
-
-                            if (starArray[iS1].Pos[1] > starArray[iS2].Pos[1])
-                            {
-                                starArray[iS1].Speed[1] -= (pY * Fg / time) * massPS2 * kolision;
-                                starArray[iS2].Speed[1] += (pY * Fg / time) * massPS1 * kolision;
-                            }
-                            else if (starArray[iS1].Pos[1] < starArray[iS2].Pos[1])
-                            {
-                                starArray[iS1].Speed[1] += (pY * Fg / time) * massPS2 * kolision;
-                                starArray[iS2].Speed[1] -= (pY * Fg / time) * massPS1 * kolision;
+                                starArray[iS1].SpeedX += (pX * Fg / time) * massPS2;
+                                starArray[iS2].SpeedX -= (pX * Fg / time) * massPS1;
                             }
 
+                            if (starArray[iS1].PosY > starArray[iS2].PosY)
+                            {
+                                starArray[iS1].SpeedY -= (pY * Fg / time) * massPS2;
+                                starArray[iS2].SpeedY += (pY * Fg / time) * massPS1;
+                            }
+                            else if (starArray[iS1].PosY < starArray[iS2].PosY)
+                            {
+                                starArray[iS1].SpeedY += (pY * Fg / time) * massPS2;
+                                starArray[iS2].SpeedY -= (pY * Fg / time) * massPS1;
+                            }
+                            
+                            
 
 
 
@@ -264,7 +263,7 @@ namespace StarSim
             for (int i = 0; i < logikTasks.Length; i++) logikTasks[i].Wait();
             try
             {
-                camPos[0] = camPos[1] = 0;
+                camPosX = camPosY = 0;
                 starArrayLenght = stars;
                 starArray = new Star[stars];
                 Random rnd = new Random(); // initialisiert die Zufallsklasse
@@ -300,9 +299,10 @@ namespace StarSim
             this.Invalidate();
             //Refresh();
         }
-        private float[] transformPoint(float x, float y)
+        private void transformPoint(float x, float y, out float outX, out float outY)
         {
-            return new float[] {(x + (float)camPos[0]) * (float)scaling + Width / 2f, (y + (float)camPos[1]) * (float)scaling + Height / 2f};
+            outX = (x + (float)camPosX) * (float)scaling + Width / 2f; 
+            outY = (y + (float)camPosY) * (float)scaling + Height / 2f;
         }
         private void this_Paint(object sender, PaintEventArgs e)
         {
@@ -329,36 +329,38 @@ namespace StarSim
             */
             if (showMarker)
             {
-                float[] centerPos = transformPoint((float)massCenterX, (float)massCenterY);
+                float centerPosX, centerPosY;
+                transformPoint((float)massCenterX, (float)massCenterY, out centerPosX, out centerPosY);
 
-                g.DrawEllipse(backPen, centerPos[0] - 20f, centerPos[1] - 20f, 40, 40);
+                g.DrawEllipse(backPen, centerPosX - 20f, centerPosY - 20f, 40, 40);
 
                 /*
                 g.DrawLine(backPen, 0, Height / 2, Width, Height / 2);
                 g.DrawLine(backPen, Width/2, 0 , Width / 2, Height);
                 */
-                float[] refPos = centerPos;
+                float refPosX = centerPosX, refPosY = centerPosY;
                 if (refStar != -1)
                 {
-                    refPos = transformPoint((float)starArray[refStar].Pos[0], (float)starArray[refStar].Pos[1]);
-                    g.DrawEllipse(backPen, refPos[0] - 10, refPos[1] - 10, 20, 20);
-                    //g.DrawLine(backPen, centerPos[0], centerPos[1], refPos[0], refPos[1]);
+                    transformPoint((float)starArray[refStar].PosX, (float)starArray[refStar].PosY,out refPosX,out refPosY);
+                    g.DrawEllipse(backPen, refPosX - 10, refPosY - 10, 20, 20);
+                    g.DrawLine(backPen, centerPosX, centerPosY, refPosX, refPosY);
                 }
-                float[] focusPos = centerPos;
+                float focusPosX = centerPosX, focusPosY = centerPosY;
                 if (focusStar != -1)
                 {
-                    focusPos = transformPoint((float)starArray[focusStar].Pos[0], (float)starArray[focusStar].Pos[1]);
+                    transformPoint((float)starArray[focusStar].PosX, (float)starArray[focusStar].PosY,out focusPosX,out focusPosY);
                 }
                 int dist1 = 10, dist2 = 40;
-                g.DrawLine(backPen, focusPos[0] + dist1, focusPos[1] + dist1, focusPos[0] + dist2, focusPos[1] + dist2);
-                g.DrawLine(backPen, focusPos[0] - dist1, focusPos[1] + dist1, focusPos[0] - dist2, focusPos[1] + dist2);
-                g.DrawLine(backPen, focusPos[0] + dist1, focusPos[1] - dist1, focusPos[0] + dist2, focusPos[1] - dist2);
-                g.DrawLine(backPen, focusPos[0] - dist1, focusPos[1] - dist1, focusPos[0] - dist2, focusPos[1] - dist2);
+                g.DrawLine(backPen, focusPosX + dist1, focusPosY + dist1, focusPosX + dist2, focusPosY + dist2);
+                g.DrawLine(backPen, focusPosX - dist1, focusPosY + dist1, focusPosX - dist2, focusPosY + dist2);
+                g.DrawLine(backPen, focusPosX + dist1, focusPosY - dist1, focusPosX + dist2, focusPosY - dist2);
+                g.DrawLine(backPen, focusPosX - dist1, focusPosY - dist1, focusPosX - dist2, focusPosY - dist2);
 
                 if (curStar != -1)
                 {
-                    float[] curPos = transformPoint((float)starArray[curStar].Pos[0], (float)starArray[curStar].Pos[1]);
-                    //g.DrawLine(backPen2, curPos[0], curPos[1], refPos[0], refPos[1]);
+                    float curPosX, curPosY;
+                    transformPoint((float)starArray[curStar].PosX, (float)starArray[curStar].PosY,out curPosX,out curPosY);
+                    g.DrawLine(backPen2, curPosX, curPosY, refPosX, refPosY);
                 }
             }
 
@@ -367,52 +369,59 @@ namespace StarSim
             //{
             SolidBrush brush = new SolidBrush(Color.LightGray);
 
-            for (int ii = 0; ii < starArrayLenght; ii++)
+            for (int iS = 0; iS < starArrayLenght; iS++)
             {
-                if (!starArray[ii].Enabled) continue;
+                if (!starArray[iS].Enabled) continue;
 
-                float r = starArray[ii].SizeR;
+                float r = starArray[iS].SizeR;
 
-                byte RColor = (byte)starArray[ii].Mass;
-                float posX = (float)(starArray[ii].Pos[0] - r + camPos[0]);
-                float posY = (float)(starArray[ii].Pos[1] - r + camPos[1]);
+                byte RColor = (byte)starArray[iS].Mass;
+                float posX = (float)(starArray[iS].PosX - r + camPosX);
+                float posY = (float)(starArray[iS].PosY - r + camPosY);
 
                 posX *= (float)scaling; posY *= (float)scaling; r *= (float)scaling;
                 posX += Width / 2f; posY += Height / 2f;
 
                 if (r < 0.01) r = 0.01f;
-                if (ii == curStar)
+                if (iS == curStar)
                 {
-                    if (starArray[ii].Mass > 0) g.DrawEllipse(new Pen(Color.FromArgb(170, 255, 255), 1), posX, posY, r * 2, r * 2);
+                    if (starArray[iS].Mass > 0) g.DrawEllipse(new Pen(Color.FromArgb(170, 255, 255), 1), posX, posY, r * 2, r * 2);
                     else g.DrawEllipse(new Pen(Color.FromArgb(255, 170, 255), 1), posX, posY, r * 2, r * 2);
-
-                    if (showStarInfo)
-                    {
-                        posX += r;
-                        posY += r;
-                        g.DrawLine(guiLine, new PointF(posX, posY), new PointF(posX + r * 1.5f, posY - r * 1.5f));
-                        g.DrawLine(guiLine, new PointF(posX + r * 1.5f, posY - r * 1.5f), new PointF(posX + r * 1.5f + r * 2f + 4f, posY - r * 1.5f));
-                        int txtPosX = (int)(posX + r * 1.5f + r * 2f + 9f);
-                        int txtPosY = (int)(posY - r * 1.5f - 6f);
-                        g.DrawString("Name: "+((starArray[ii].Name.Length > 0) ? starArray[ii].Name : String.Format("{0:X}", starArray[ii].ID)), new Font("Consolas", 9), brush, new PointF(txtPosX, txtPosY));
-                        g.DrawString("Mass: " + Math.Round(starArray[ii].Mass,2), new Font("Consolas", 9), brush, new PointF(txtPosX, txtPosY += 15));
-                        g.DrawString("posX: " + starArray[ii].Pos[0]+ " posY: " + Math.Round(starArray[ii].Pos[1], 2), new Font("Consolas", 9), brush, new PointF(txtPosX, txtPosY += 15));
-                        g.DrawString("speedX: " + starArray[ii].Speed[0] + " speedY: " + Math.Round(starArray[ii].Speed[1], 2), new Font("Consolas", 9), brush, new PointF(txtPosX, txtPosY += 15));
-                        //g.DrawString("Speed: " + (Math.Abs(starArray[ii].Speed[0]) + Math.Abs(starArray[ii].Speed[1])), new Font("Consolas", 9), brush, new PointF(txtPosX, txtPosY += 15));
-                    }
                 }
                 else
                 {
-                    if (starArray[ii].Mass > 0) g.DrawEllipse(new Pen(Color.FromArgb(100, 200, 255), 1), posX, posY, r * 2, r * 2);
+                    if (starArray[iS].Mass > 0) g.DrawEllipse(new Pen(Color.FromArgb(100, 200, 255), 1), posX, posY, r * 2, r * 2);
                     else g.DrawEllipse(new Pen(Color.FromArgb(200, 100, 255), 1), posX, posY, r * 2, r * 2);
                 }
+
+                if ((curStar == iS || starArray[iS].Marked) && showStarInfo)
+                {
+                    posX += r;
+                    posY += r;
+                    g.DrawLine(guiLine, new PointF(posX, posY), new PointF(posX + r * 1.5f, posY - r * 1.5f));
+                    g.DrawLine(guiLine, new PointF(posX + r * 1.5f, posY - r * 1.5f), new PointF(posX + r * 1.5f + r * 2f + 4f, posY - r * 1.5f));
+                    int txtPosX = (int)(posX + r * 1.5f + r * 2f + 9f);
+                    int txtPosY = (int)(posY - r * 1.5f - 6f);
+                    g.DrawString("Name: " + ((starArray[iS].Name.Length > 0) ? starArray[iS].Name : String.Format("{0:X}", starArray[iS].ID)), new Font("Consolas", 9), brush, new PointF(txtPosX, txtPosY));
+                    g.DrawString("Mass: " + Math.Round(starArray[iS].Mass, 2), new Font("Consolas", 9), brush, new PointF(txtPosX, txtPosY += 15));
+                    txtPosY += 5;
+
+                    /*
+                    g.DrawString("Relative data to " +((refStar != -1) ? ((starArray[refStar].Name.Length > 0) ? starArray[refStar].Name : String.Format("{0:X}", starArray[refStar].ID)) : "Nothing"), new Font("Consolas", 9), brush, new PointF(txtPosX, txtPosY += 15));
+                    g.DrawString("Dist: " + Math.Abs((int)(massCenterX - starArray[iS].PosX)) + " posY: " +Math.Abs((int)(massCenterY - starArray[iS].PosY)), new Font("Consolas", 9), brush, new PointF(txtPosX, txtPosY += 15));
+                    g.DrawString("Speed: " + starArray[iS].SpeedX + " speedY: " + Math.Round(starArray[iS].SpeedY, 2), new Font("Consolas", 9), brush, new PointF(txtPosX, txtPosY += 15));
+                    //g.DrawString("Speed: " + (Math.Abs(starArray[ii].SpeedX) + Math.Abs(starArray[ii].SpeedY)), new Font("Consolas", 9), brush, new PointF(txtPosX, txtPosY += 15));
+               */
+                }
+
             }
 
             if (showSimInfo)
             {
                 g.DrawString("Stars " + starsNumber, new Font("Consolas", 9), brush, new Point(10, 40));
-
-                g.DrawString("SimSpeed " + timeScale, new Font("Consolas", 9), brush, new Point(10, 60));
+                g.DrawString("Mass " + totalMass, new Font("Consolas", 9), brush, new Point(10, 50));
+                g.DrawString("SimTime " + usedTime, new Font("Consolas", 9), brush, new Point(10, 60));
+                g.DrawString("SimSpeed " + timeScale, new Font("Consolas", 9), brush, new Point(10, 70));
                 /*
                 g.DrawString("L_Time " + usedTime + "ms", new Font("Consolas", 9), brush, new Point(10, 50));
                 g.DrawString("R_Time " + SWTotal.ElapsedMilliseconds + "ms", new Font("Consolas", 9), brush, new Point(10, 60));
@@ -427,23 +436,23 @@ namespace StarSim
             this.Focus();
             if (e.Button == MouseButtons.Left)
             {
-                camPos[0] += ((e.X - lastMousePos.X)/scaling);
-                camPos[1] += ((e.Y - lastMousePos.Y) / scaling);
+                camPosX += ((e.X - lastMousePos.X)/scaling);
+                camPosY += ((e.Y - lastMousePos.Y) / scaling);
             }
             lastMousePos.X = e.X;
             lastMousePos.Y = e.Y;
         }
         private void Window_MouseWheel(object sender, MouseEventArgs e)
         {
-            double posX = -camPos[0] + (e.X - Width / 2) / scaling;
-            double posY = -camPos[1] + (e.Y - Height / 2) / scaling;
+            double posX = -camPosX + (e.X - Width / 2) / scaling;
+            double posY = -camPosY + (e.Y - Height / 2) / scaling;
 
             scaling += (e.Delta / 500f) * scaling;
             if (scaling < 0.00001) scaling = 0.00001f;
             else if (scaling > 10) scaling = 10;
 
-            camPos[0] = -posX + (Width / 2 * (e.X / (double)Width * 2 - 1)) / scaling;
-            camPos[1] = -posY + (Height / 2 * (e.Y / (double)Height * 2 - 1)) / scaling;
+            camPosX = -posX + (Width / 2 * (e.X / (double)Width * 2 - 1)) / scaling;
+            camPosY = -posY + (Height / 2 * (e.Y / (double)Height * 2 - 1)) / scaling;
         }
 
         private void MainWindow_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -458,8 +467,8 @@ namespace StarSim
         }
         private void selectStar(MouseEventArgs e)
         {
-            float posX = (float)(-camPos[0] + (e.X - Width / 2)/ scaling);
-            float posY = (float)(-camPos[1] + (e.Y - Height / 2)/scaling);
+            float posX = (float)(-camPosX + (e.X - Width / 2)/ scaling);
+            float posY = (float)(-camPosY + (e.Y - Height / 2)/scaling);
             int nearestStar = -1;
 
             bool firstStar = true;
@@ -469,8 +478,8 @@ namespace StarSim
             {
                 if (starArray[iS].Enabled == true)
                 { //Vergleicher jedes object mit jedem anderen
-                    double distX = posX - (starArray[iS].Pos[0] + 0);
-                    double distY = posY - (starArray[iS].Pos[1] + 0);
+                    double distX = posX - (starArray[iS].PosX + 0);
+                    double distY = posY - (starArray[iS].PosY + 0);
                     if (firstStar)
                     {
                         maxdist = (float)Math.Sqrt((distX * distX) + (distY * distY));
@@ -502,8 +511,8 @@ namespace StarSim
 
             bs.ReadByte();
             starArrayLenght = bs.ReadInt();
-            camPos[0] = bs.ReadFloat();
-            camPos[1] = bs.ReadFloat();
+            camPosX = bs.ReadFloat();
+            camPosY = bs.ReadFloat();
             scaling = bs.ReadFloat();
             starArray = new Star[starArrayLenght];
             for (int i = 0; i < starArrayLenght; i++)
@@ -529,8 +538,8 @@ namespace StarSim
 
             int scurStar=-1, sfocusStar=-1, srefStar=-1;
             bs.WriteInt(starArrayLenght);
-            bs.WriteFloat((float)camPos[0]);
-            bs.WriteFloat((float)camPos[1]);
+            bs.WriteFloat((float)camPosX);
+            bs.WriteFloat((float)camPosY);
             bs.WriteFloat((float)scaling);
             int newMaxStars = 0;
             for (int i = 0; i < starArrayLenght; i++)
@@ -539,10 +548,10 @@ namespace StarSim
                 {
                     bs.WriteInt(starArray[i].ID);
                     bs.WriteFloat(starArray[i].Mass);
-                    bs.WriteFloat((float)starArray[i].Pos[0]);
-                    bs.WriteFloat((float)starArray[i].Pos[1]);
-                    bs.WriteFloat((float)starArray[i].Speed[0]);
-                    bs.WriteFloat((float)starArray[i].Speed[1]);
+                    bs.WriteFloat((float)starArray[i].PosX);
+                    bs.WriteFloat((float)starArray[i].PosY);
+                    bs.WriteFloat((float)starArray[i].SpeedX);
+                    bs.WriteFloat((float)starArray[i].SpeedY);
                     bs.WriteString(starArray[i].Name);
 
                     if (curStar == i) scurStar = newMaxStars;
@@ -588,6 +597,12 @@ namespace StarSim
                 case Keys.R:
                     if (refStar == curStar) refStar = -1;
                     else refStar = curStar;
+                    break;
+                case Keys.M:
+                    if (curStar != -1) starArray[curStar].Marked = !starArray[curStar].Marked;
+                    break;
+                case Keys.T:
+                    if (curStar != -1) starArray[curStar].Tracked = !starArray[curStar].Tracked;
                     break;
                 case Keys.OemPeriod:
                     if (timeScale < 512) timeScale *= 2;
