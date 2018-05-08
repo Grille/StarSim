@@ -19,14 +19,14 @@ namespace StarSim
     {
         public int ID;
         public string Name;
-        public bool Kill;
         public bool Enabled;
         public bool Marked;
         public bool Tracked;
         public int Reference;
+        public int ColisionsRef;
         public float Mass;
         public float AbsMass;
-        public float NewMass;
+
         public float SizeR;
 
         public float[] PosTracking;
@@ -46,14 +46,8 @@ namespace StarSim
             UpdateMass(mass);
             PosX = posX;PosY = posY;
             SpeedX = speedX; SpeedY = speedY;
-            NewMass = -1;
+            ColisionsRef = -1;
             Reference = -1;
-        }
-        public void UpdateMass()
-        {
-            if (NewMass == -1) return;
-            UpdateMass(NewMass);
-            NewMass = -1;
         }
         public void UpdateMass(float mass)
         {

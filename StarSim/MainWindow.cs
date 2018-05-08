@@ -16,7 +16,7 @@ namespace StarSim
 {
     public unsafe partial class MainWindow : Form
     {
-        Star[] starArray = new Star[1000];
+        Star[] starArray;
         int starArrayLenght = 0;
 
         int curStar = -1;
@@ -54,8 +54,8 @@ namespace StarSim
             SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer,true);
 
             DoubleBuffered = true;
-            TimerLogik.Enabled = true;
-            TimerDraw.Enabled = true;
+            TimerLogik.Start();
+            TimerDraw.Start();
             //Feld.Refresh();
 
         }
@@ -122,14 +122,15 @@ namespace StarSim
                 float totalmass = 0;
                 for (int iS1 = 0; iS1 < starArrayLenght; iS1++)
                 {
+                    colide(iS1);
+                }
+                for (int iS1 = 0; iS1 < starArrayLenght; iS1++)
+                {
                     if (starArray[iS1].Enabled == false) continue;
-                    else if (starArray[iS1].Kill == true) starArray[iS1].Enabled = false;
                     else
                     {
                         newEnabeldStarNumber++;
-                        starArray[iS1].UpdateMass();
 
-                        
                         newMassCenterX += starArray[iS1].PosX * starArray[iS1].AbsMass;
                         newMassCenterY += starArray[iS1].PosY * starArray[iS1].AbsMass;
                         newSpeedCenterX += starArray[iS1].SpeedX * starArray[iS1].AbsMass;
@@ -146,6 +147,7 @@ namespace StarSim
                         */
                         starArray[iS1].PosX += starArray[iS1].SpeedX *= 1.000f;
                         starArray[iS1].PosY += starArray[iS1].SpeedY *= 1.000f;
+
                     }
                 }
                 totalMass = totalmass;
@@ -174,6 +176,37 @@ namespace StarSim
             SWTotal.Stop();
             usedTime = (int)SWTotal.ElapsedMilliseconds;
         }
+        private void colide(int iS1)
+        {
+            
+            int iS2;
+            if (((iS2 = starArray[iS1].ColisionsRef) != -1) && starArray[iS2].Enabled)
+            {
+                starArray[iS1].ColisionsRef = -1;
+                Console.WriteLine("colide " + iS1 + " width " + iS2);
+                Console.WriteLine(starArray[iS1].Enabled);
+                Console.WriteLine(starArray[iS2].Enabled);
+                if (starArray[iS2].ColisionsRef != -1) colide(iS2);
+
+                double massPS1 = (float)starArray[iS1].AbsMass / (starArray[iS1].AbsMass + starArray[iS2].AbsMass);
+                double massPS2 = (float)starArray[iS2].AbsMass / (starArray[iS1].AbsMass + starArray[iS2].AbsMass);
+
+
+                if (iS2 == curStar) curStar = iS1;
+                if (iS2 == focusStar) focusStar = iS1;
+                if (iS2 == refStar) refStar = iS1;
+                starArray[iS1].Marked |= starArray[iS2].Marked;
+
+
+                starArray[iS1].UpdateMass(starArray[iS1].Mass + starArray[iS2].Mass);
+                starArray[iS1].PosX = (starArray[iS1].PosX * massPS1 + starArray[iS2].PosX * massPS2);
+                starArray[iS1].PosY = (starArray[iS1].PosY * massPS1 + starArray[iS2].PosY * massPS2);
+                starArray[iS1].SpeedX = (starArray[iS1].SpeedX * massPS1 + starArray[iS2].SpeedX * massPS2);
+                starArray[iS1].SpeedY = (starArray[iS1].SpeedY * massPS1 + starArray[iS2].SpeedY * massPS2);
+
+                starArray[iS2].Enabled = false;
+            }
+        }
         private void SimulateSelective(int start, int end)
         {
             for (int iS1 = start; iS1 < end; iS1++)
@@ -198,7 +231,7 @@ namespace StarSim
 
                             double massPS1 = (float)starArray[iS1].AbsMass / (starArray[iS1].AbsMass + starArray[iS2].AbsMass);
                             double massPS2 = (float)starArray[iS2].AbsMass / (starArray[iS1].AbsMass + starArray[iS2].AbsMass);
-                            double Fg = ((float)(starArray[iS1].Mass) * (starArray[iS2].Mass) / dist);
+                            double Fg = ((float)(starArray[iS1].Mass) * (starArray[iS2].Mass) / dist)/100;
 
 
 
@@ -206,43 +239,33 @@ namespace StarSim
                             //AtomArray[ii].SpeedY += pY * Fg /1000;
                             if (dist < (starArray[iS1].SizeR) + (starArray[iS2].SizeR))
                             {
-                                starArray[iS2].Kill = true;
-                                if (iS2 == curStar) curStar = iS1;
-                                if (iS2 == focusStar) focusStar = iS1;
-                                if (iS2 == refStar) refStar = iS1;
-                                starArray[iS1].NewMass = starArray[iS1].Mass + starArray[iS2].Mass;
-                                if (starArray[iS1].NewMass == 0) starArray[iS1].Kill = true;
-                                starArray[iS1].PosX = (starArray[iS1].PosX * massPS1 + starArray[iS2].PosX * massPS2);
-                                starArray[iS1].PosY = (starArray[iS1].PosY * massPS1 + starArray[iS2].PosY * massPS2);
-
-                                starArray[iS1].SpeedX = (starArray[iS1].SpeedX * massPS1 + starArray[iS2].SpeedX * massPS2);
-                                starArray[iS1].SpeedY = (starArray[iS1].SpeedY * massPS1 + starArray[iS2].SpeedY * massPS2);
-
-                                starArray[iS1].Marked |= starArray[iS2].Marked;
+                                starArray[iS1].ColisionsRef = iS2;
                             }
-                            const int time = (int)100;
+                            /*
+                            massPS1 *= 0.001;
+                            massPS2 *= 0.001;
+                            */
                             //Grafitation
-                            
                             if (starArray[iS1].PosX > starArray[iS2].PosX)
                             {
-                                starArray[iS1].SpeedX -= (pX * Fg / time) * massPS2;
-                                starArray[iS2].SpeedX += (pX * Fg / time) * massPS1;
+                                starArray[iS1].SpeedX -= (pX * Fg) * massPS2;
+                                starArray[iS2].SpeedX += (pX * Fg) * massPS1;
                             }
                             else if (starArray[iS1].PosX < starArray[iS2].PosX)
                             {
-                                starArray[iS1].SpeedX += (pX * Fg / time) * massPS2;
-                                starArray[iS2].SpeedX -= (pX * Fg / time) * massPS1;
+                                starArray[iS1].SpeedX += (pX * Fg) * massPS2;
+                                starArray[iS2].SpeedX -= (pX * Fg) * massPS1;
                             }
 
                             if (starArray[iS1].PosY > starArray[iS2].PosY)
                             {
-                                starArray[iS1].SpeedY -= (pY * Fg / time) * massPS2;
-                                starArray[iS2].SpeedY += (pY * Fg / time) * massPS1;
+                                starArray[iS1].SpeedY -= (pY * Fg) * massPS2;
+                                starArray[iS2].SpeedY += (pY * Fg) * massPS1;
                             }
                             else if (starArray[iS1].PosY < starArray[iS2].PosY)
                             {
-                                starArray[iS1].SpeedY += (pY * Fg / time) * massPS2;
-                                starArray[iS2].SpeedY -= (pY * Fg / time) * massPS1;
+                                starArray[iS1].SpeedY += (pY * Fg) * massPS2;
+                                starArray[iS2].SpeedY -= (pY * Fg) * massPS1;
                             }
                             
                             
@@ -292,7 +315,6 @@ namespace StarSim
                 //button1.BackColor = Color.Red;
             }
         }
-
 
         private void TimerDraw_Tick(object sender, EventArgs e)
         {
