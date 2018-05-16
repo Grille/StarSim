@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using GGL.IO;
 using System.Globalization;
+using GGL.Graphic;
 
 namespace StarSim
 {
@@ -91,6 +92,7 @@ namespace StarSim
         private void Simulate()
         {
 
+
             Stopwatch SWTotal = new Stopwatch();
             SWTotal.Start();
 
@@ -100,8 +102,7 @@ namespace StarSim
 
                 int tasks = 8;
                 int step = starArrayLenght / tasks;
-
-
+                
                 logikTasks = new Task[tasks];
                 for (int iT = 0; iT < tasks; iT++)
                 {
@@ -116,6 +117,7 @@ namespace StarSim
                 {
                     int index = iT; logikTasks[index].Wait();
                 }
+                
 
                 double newMassCenterX = 0,newMassCenterY = 0;
                 double newSpeedCenterX = 0, newSpeedCenterY = 0;
@@ -183,9 +185,11 @@ namespace StarSim
             if (((iS2 = starArray[iS1].ColisionsRef) != -1) && starArray[iS2].Enabled)
             {
                 starArray[iS1].ColisionsRef = -1;
+                /*
                 Console.WriteLine("colide " + iS1 + " width " + iS2);
                 Console.WriteLine(starArray[iS1].Enabled);
                 Console.WriteLine(starArray[iS2].Enabled);
+                */
                 if (starArray[iS2].ColisionsRef != -1) colide(iS2);
 
                 double massPS1 = (float)starArray[iS1].AbsMass / (starArray[iS1].AbsMass + starArray[iS2].AbsMass);
@@ -466,15 +470,21 @@ namespace StarSim
         }
         private void Window_MouseWheel(object sender, MouseEventArgs e)
         {
-            double posX = -camPosX + (e.X - Width / 2) / scaling;
-            double posY = -camPosY + (e.Y - Height / 2) / scaling;
+  
+            //get worldPos
+            double posX = -camPosX + (e.X - Width / 2d) / scaling;
+            double posY = -camPosY + (e.Y - Height / 2d) / scaling;
 
-            scaling += (e.Delta / 500f) * scaling;
+            scaling += (e.Delta * scaling) / 500d;
             if (scaling < 0.00001) scaling = 0.00001f;
             else if (scaling > 10) scaling = 10;
 
-            camPosX = -posX + (Width / 2 * (e.X / (double)Width * 2 - 1)) / scaling;
-            camPosY = -posY + (Height / 2 * (e.Y / (double)Height * 2 - 1)) / scaling;
+            Console.WriteLine("--------------------------");
+            Console.WriteLine(-posX);
+            Console.WriteLine((Width / 2 * (e.X / (double)Width * 2 - 1)) / scaling);
+            
+            camPosX = -posX + (Width / 2d * (e.X / (double)Width * 2d - 1)) / scaling;
+            camPosY = -posY + (Height / 2d * (e.Y / (double)Height * 2d - 1)) / scaling;
         }
 
         private void MainWindow_MouseDoubleClick(object sender, MouseEventArgs e)
