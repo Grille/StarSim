@@ -42,6 +42,8 @@ namespace StarSim
         bool showStarInfo = true;
         bool showSimInfo = true;
 
+        Graphics g;
+
         Point lastMousePos = new Point(0,0);
 
         int usedTime;
@@ -153,8 +155,17 @@ namespace StarSim
                     }
                 }
                 totalMass = totalmass;
-                massCenterX = newMassCenterX / totalmass; massCenterY = newMassCenterY / totalmass;
-                speedCenterX = newSpeedCenterX / totalmass; speedCenterY = newSpeedCenterY / totalmass;
+                if (totalMass != 0)
+                {
+                    massCenterX = newMassCenterX / totalmass; massCenterY = newMassCenterY / totalmass;
+                    speedCenterX = newSpeedCenterX / totalmass; speedCenterY = newSpeedCenterY / totalmass;
+                }
+                else
+                {
+                    massCenterX = newMassCenterX; massCenterY = newMassCenterY;
+                    speedCenterX = newSpeedCenterX; speedCenterY = newSpeedCenterY;
+
+                }
 
                 starsNumber = newEnabeldStarNumber;
 
@@ -330,11 +341,62 @@ namespace StarSim
             outX = (x + (float)camPosX) * (float)scaling + Width / 2f; 
             outY = (y + (float)camPosY) * (float)scaling + Height / 2f;
         }
+        private void fixPoint(ref float posX,ref float posY,float refX,float refY)
+        {
+
+            float mX = (refX - posX) / (refY - posY);
+            float nullPosX = posX - mX * posY;
+
+            float mY = (refY - posY) / (refX - posX);
+            float nullPosY = posY - mY * posX;
+
+            if (posX < 0)
+            {
+                posY = nullPosY;
+                posX = 0;
+            }
+            if (posY < 0)
+            {
+                posX = nullPosX;
+                posY = 0;
+            }
+            if (posX > Width)
+            {
+                posY = mY * Width + nullPosY;
+                posX = Width;
+            }
+            if (posY > Height)
+            {
+                posX = mX * Height + nullPosX;
+                posY = Height;
+            }
+        }
+        private void drawLine(Pen pen,float posX1,float posY1,float posX2,float posY2)
+        {
+            
+            if (posX1 < 0 && posX2 < 0) return;
+            if (posY1 < 0 && posY2 < 0) return;
+            if (posX1 > Width && posX2 > Width) return;
+            if (posY1 > Height && posY2 > Height) return;
+            
+            fixPoint(ref posX1,ref posY1, posX2, posY2);
+            fixPoint(ref posX2, ref posY2, posX1, posY1);
+
+            /*
+            g.DrawEllipse(new Pen(Color.Red, 2), posX1-10, posY1-10, 20, 20);
+            g.DrawEllipse(new Pen(Color.Red, 2), posX2 - 10, posY2 - 10, 20, 20);
+
+            /*
+            g.DrawString("X: " + posX1, new Font("Consolas", 9), new SolidBrush(Color.Red), new PointF(posX1, posY1));
+            */
+
+            g.DrawLine(pen, posX1,posY1, posX2, posY2);
+        }
         private void this_Paint(object sender, PaintEventArgs e)
         {
             Stopwatch SWTotal = new Stopwatch();
             SWTotal.Start();
-            Graphics g = e.Graphics;
+            g = e.Graphics;
 
             g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.High;
             g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
@@ -369,7 +431,7 @@ namespace StarSim
                 {
                     transformPoint((float)starArray[refStar].PosX, (float)starArray[refStar].PosY,out refPosX,out refPosY);
                     g.DrawEllipse(backPen, refPosX - 10, refPosY - 10, 20, 20);
-                    g.DrawLine(backPen, centerPosX, centerPosY, refPosX, refPosY);
+                    drawLine(backPen, centerPosX, centerPosY, refPosX, refPosY);
                 }
                 float focusPosX = centerPosX, focusPosY = centerPosY;
                 if (focusStar != -1)
@@ -377,16 +439,16 @@ namespace StarSim
                     transformPoint((float)starArray[focusStar].PosX, (float)starArray[focusStar].PosY,out focusPosX,out focusPosY);
                 }
                 int dist1 = 10, dist2 = 40;
-                g.DrawLine(backPen, focusPosX + dist1, focusPosY + dist1, focusPosX + dist2, focusPosY + dist2);
-                g.DrawLine(backPen, focusPosX - dist1, focusPosY + dist1, focusPosX - dist2, focusPosY + dist2);
-                g.DrawLine(backPen, focusPosX + dist1, focusPosY - dist1, focusPosX + dist2, focusPosY - dist2);
-                g.DrawLine(backPen, focusPosX - dist1, focusPosY - dist1, focusPosX - dist2, focusPosY - dist2);
+                drawLine(backPen, focusPosX + dist1, focusPosY + dist1, focusPosX + dist2, focusPosY + dist2);
+                drawLine(backPen, focusPosX - dist1, focusPosY + dist1, focusPosX - dist2, focusPosY + dist2);
+                drawLine(backPen, focusPosX + dist1, focusPosY - dist1, focusPosX + dist2, focusPosY - dist2);
+                drawLine(backPen, focusPosX - dist1, focusPosY - dist1, focusPosX - dist2, focusPosY - dist2);
 
                 if (curStar != -1)
                 {
                     float curPosX, curPosY;
                     transformPoint((float)starArray[curStar].PosX, (float)starArray[curStar].PosY,out curPosX,out curPosY);
-                    g.DrawLine(backPen2, curPosX, curPosY, refPosX, refPosY);
+                    drawLine(backPen2, curPosX, curPosY, refPosX, refPosY);
                 }
             }
 
@@ -479,10 +541,6 @@ namespace StarSim
             if (scaling < 0.00001) scaling = 0.00001f;
             else if (scaling > 10) scaling = 10;
 
-            Console.WriteLine("--------------------------");
-            Console.WriteLine(-posX);
-            Console.WriteLine((Width / 2 * (e.X / (double)Width * 2 - 1)) / scaling);
-            
             camPosX = -posX + (Width / 2d * (e.X / (double)Width * 2d - 1)) / scaling;
             camPosY = -posY + (Height / 2d * (e.Y / (double)Height * 2d - 1)) / scaling;
         }
@@ -596,9 +654,9 @@ namespace StarSim
             bs.WriteInt(newMaxStars);
             bs.Index = bs.EndIndex;
 
-            bs.WriteInt(curStar);
-            bs.WriteInt(focusStar);
-            bs.WriteInt(refStar);
+            bs.WriteInt(scurStar);
+            bs.WriteInt(sfocusStar);
+            bs.WriteInt(srefStar);
 
             bs.Save(saveFileDialog.FileName);
 
