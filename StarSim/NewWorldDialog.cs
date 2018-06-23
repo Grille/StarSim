@@ -28,7 +28,7 @@ namespace StarSim
         {
             window.Init(
                 comboBoxMode.SelectedIndex, Convert.ToInt32(textBoxSize.Text), Convert.ToInt32(textBoxStars.Text),
-                Convert.ToSingle(textBoxMass1.Text), Convert.ToSingle(textBoxMass2.Text), Convert.ToSingle(textBoxSpeed1.Text), Convert.ToSingle(textBoxSpeed2.Text)
+                Convert.ToSingle(textBoxMinMass.Text), Convert.ToSingle(textBoxMaxMass.Text), Convert.ToSingle(textBoxRngSpeed.Text)
                 );
             this.Close();
         }
