@@ -20,27 +20,27 @@ namespace StarSim
         Star[] starArray;
         int starArrayLenght = 0;
 
-        int curStar = -1;
-        int focusStar = -1;
-        int refStar = -1;
+        public int curStar = -1,focusStar = -1,refStar = -1;
 
         double massCenterX = 0, massCenterY = 0;
         double speedCenterX = 0, speedCenterY = 0;
         float totalMass = 0;
         int starsNumber = 0;
 
-        int timeScale = 1;
-        bool run = false;
+        int simSpeed = 1;
+        public bool Running = false;
 
         Task mainLogikTask;
         Task[] logikTasks;
 
-        double camPosX, camPosY;
+        public double camPosX, camPosY;
         double scaling = 1;
 
         bool showMarker = true;
         bool showStarInfo = true;
         bool showSimInfo = true;
+
+        public SearchStarDialog searchStarDialog = new SearchStarDialog();
 
         Graphics g;
 
@@ -78,9 +78,10 @@ namespace StarSim
             float[] power = new float[2];
         }
 
+
         public void TimeRun(bool run)
         {
-            this.run = run;
+            this.Running = run;
             if (run == true)
             {
                 TimerLogik.Start();
@@ -88,6 +89,8 @@ namespace StarSim
             else
             {
                 TimerLogik.Stop();
+                mainLogikTask.Wait();
+                for (int i = 0; i < logikTasks.Length; i++) logikTasks[i].Wait();
             }
         }
 
@@ -95,26 +98,24 @@ namespace StarSim
         {
 
 
-            Stopwatch SWTotal = new Stopwatch();
-            SWTotal.Start();
 
-            for (int j = 0; j < timeScale; j++)
+            for (int j = 0; j < simSpeed; j++)
             {
+                Stopwatch SWTotal = new Stopwatch();
+                SWTotal.Start();
+
                 int newEnabeldStarNumber = 0;
 
                 int tasks = 8;
-                int step = starArrayLenght / tasks;
+                float step = starArrayLenght / (float)tasks;
                 
                 logikTasks = new Task[tasks];
                 for (int iT = 0; iT < tasks; iT++)
                 {
-                    int index = iT; logikTasks[index] = new Task(() => SimulateSelective(step * index, step * (index + 1)));
+                    int index = iT;
+                    logikTasks[index] = new Task(() => SimulateSelective((int)(step * index), (int)(step * (index + 1))));
+                    logikTasks[index].Start();
                 }
-                for (int iT = 0; iT < tasks; iT++)
-                {
-                    int index = iT; logikTasks[index].Start();
-                }
-
                 for (int iT = 0; iT < tasks; iT++)
                 {
                     int index = iT; logikTasks[index].Wait();
@@ -143,9 +144,9 @@ namespace StarSim
                         newTotalMass += starArray[iS1].AbsMass;
                         //fix speed;
                         /*
-                        float goalSpeed = 20;
-                        float fullSpeed = Math.Abs(starArray[iS1].SpeedX) + Math.Abs(starArray[iS1].SpeedY);
-                        float factor = (goalSpeed / fullSpeed);
+                        double goalSpeed = 2;
+                        double fullSpeed = Math.Abs(starArray[iS1].SpeedX) + Math.Abs(starArray[iS1].SpeedY);
+                        double factor = (goalSpeed / fullSpeed);
                         starArray[iS1].SpeedX *= factor;
                         starArray[iS1].SpeedY *= factor;
                         */
@@ -184,11 +185,12 @@ namespace StarSim
                 {
                 }
 
-                if (!run) break;
+                SWTotal.Stop();
+                usedTime = (int)(usedTime*0.9f)+ (int)(SWTotal.ElapsedMilliseconds*0.1f);
+
+                if (!Running) break;
             }
 
-            SWTotal.Stop();
-            usedTime = (int)SWTotal.ElapsedMilliseconds;
         }
         private void colide(int iS1)
         {
@@ -247,14 +249,16 @@ namespace StarSim
                             double massPS1 = starArray[iS1].AbsMass / (starArray[iS1].AbsMass + starArray[iS2].AbsMass);
                             double massPS2 = starArray[iS2].AbsMass / (starArray[iS1].AbsMass + starArray[iS2].AbsMass);
                             double Fg = ((starArray[iS1].Mass) * (starArray[iS2].Mass) / dist)/100;
+                            double a1 = Fg / starArray[iS1].Mass;
+                            double a2 = Fg / starArray[iS2].Mass;
 
                             if (dist < (starArray[iS1].SizeR) + (starArray[iS2].SizeR))
                                 starArray[iS1].ColisionsRef = iS2;
 
-                            starArray[iS1].SpeedX -= (pX * Fg) * massPS2;
-                            starArray[iS2].SpeedX += (pX * Fg) * massPS1;
-                            starArray[iS1].SpeedY -= (pY * Fg) * massPS2;
-                            starArray[iS2].SpeedY += (pY * Fg) * massPS1;
+                            starArray[iS1].SpeedX -= (pX * a1);
+                            starArray[iS1].SpeedY -= (pY * a1);
+                            starArray[iS2].SpeedX += (pX * a2);
+                            starArray[iS2].SpeedY += (pY * a2);
                             
                         }
                     }  //Vergleicher jedes object mit jedem anderen
@@ -266,12 +270,12 @@ namespace StarSim
         }
         public void Init(int mode, int size, int stars, float minMass, float maxMass, float disSpeed)
         {
+            TimeRun(false);
             float maxSpeed = disSpeed / 2f;
             float minSpeed = -maxSpeed;
-            mainLogikTask.Wait();
-            for (int i = 0; i < logikTasks.Length; i++) logikTasks[i].Wait();
             try
             {
+                simSpeed = 1;
                 camPosX = camPosY = 0;
                 starArrayLenght = stars;
                 starArray = new Star[stars];
@@ -281,7 +285,7 @@ namespace StarSim
                 {
                     for (int ii = 0; ii < starArrayLenght; ii++)
                     {
-                        starArray[ii].Init(ii, (float)((maxMass - minMass) * rnd.NextDouble() + minMass)//rnd.NextDouble() > 0.5f ? size : -size
+                        starArray[ii] = new Star(ii, (float)((maxMass - minMass) * rnd.NextDouble() + minMass)//rnd.NextDouble() > 0.5f ? size : -size
 
                             , (float)(size * rnd.NextDouble() - size / 2)
                             , (float)(size * rnd.NextDouble() - size / 2)
@@ -453,7 +457,7 @@ namespace StarSim
                     else g.DrawEllipse(new Pen(Color.FromArgb(200, 100, 255), 1), posX, posY, r * 2, r * 2);
                 }
 
-                if ((curStar == iS || starArray[iS].Marked) && showStarInfo)
+                if ((curStar == iS || starArray[iS].Marked) && showStarInfo || starArray[iS].Editing)
                 {
                     posX += r;
                     posY += r;
@@ -462,7 +466,11 @@ namespace StarSim
                     int txtPosX = (int)(posX + r * 1.5f + r * 2f + 9f);
                     int txtPosY = (int)(posY - r * 1.5f - 6f);
                     g.DrawString("Name: " + ((starArray[iS].Name.Length > 0) ? starArray[iS].Name : String.Format("{0:X}", starArray[iS].ID)), new Font("Consolas", 9), brush, new PointF(txtPosX, txtPosY));
-                    g.DrawString("Mass: " + Math.Round(starArray[iS].Mass, 2), new Font("Consolas", 9), brush, new PointF(txtPosX, txtPosY += 15));
+                    if (starArray[iS].Editing)
+                    {
+                        g.DrawString("Mass: " + Math.Round(starArray[iS].Mass, 2), new Font("Consolas", 9), brush, new PointF(txtPosX, txtPosY += 15));
+                        g.DrawString("Speed: " + Math.Round(Math.Abs(starArray[iS].SpeedX)+Math.Abs(starArray[iS].SpeedY), 2), new Font("Consolas", 9), brush, new PointF(txtPosX, txtPosY += 15));
+                    }
                     txtPosY += 5;
 
                     /*
@@ -480,7 +488,7 @@ namespace StarSim
                 g.DrawString("Stars " + starsNumber + " /" + starArrayLenght, new Font("Consolas", 9), brush, new Point(10, 40));
                 g.DrawString("Mass " + totalMass, new Font("Consolas", 9), brush, new Point(10, 50));
                 g.DrawString("SimTime " + usedTime, new Font("Consolas", 9), brush, new Point(10, 60));
-                g.DrawString("SimSpeed " + timeScale, new Font("Consolas", 9), brush, new Point(10, 70));
+                g.DrawString("SimSpeed " + simSpeed, new Font("Consolas", 9), brush, new Point(10, 70));
                 /*
                 g.DrawString("L_Time " + usedTime + "ms", new Font("Consolas", 9), brush, new Point(10, 50));
                 g.DrawString("R_Time " + SWTotal.ElapsedMilliseconds + "ms", new Font("Consolas", 9), brush, new Point(10, 60));
@@ -492,7 +500,6 @@ namespace StarSim
 
         private void Window_MouseMove(object sender, MouseEventArgs e)
         {
-            this.Focus();
             if (e.Button == MouseButtons.Left)
             {
                 camPosX += ((e.X - lastMousePos.X)/scaling);
@@ -564,8 +571,7 @@ namespace StarSim
 
         private void openFileDialog_FileOk(object sender, CancelEventArgs e)
         {
-            mainLogikTask.Wait();
-            for (int i = 0; i < logikTasks.Length; i++) logikTasks[i].Wait();
+            TimeRun(false);
 
             ByteStream bs = new ByteStream(openFileDialog.FileName);
             bs.ResetIndex();
@@ -578,23 +584,21 @@ namespace StarSim
             starArray = new Star[starArrayLenght];
             for (int i = 0; i < starArrayLenght; i++)
             {
-                starArray[i] = new Star();
-                starArray[i].Init(bs.ReadInt(),bs.ReadFloat(), bs.ReadFloat(), bs.ReadFloat(), bs.ReadFloat(), bs.ReadFloat());
+                starArray[i] = new Star(bs.ReadInt(),bs.ReadFloat(), bs.ReadFloat(), bs.ReadFloat(), bs.ReadFloat(), bs.ReadFloat());
                 bs.ReadString();
             }
             curStar = bs.ReadInt();
             focusStar = bs.ReadInt();
             refStar = bs.ReadInt();
 
-            //TimerLogik.Start();
+            TimeRun(true);
         }
         private void saveFileDialog_FileOk(object sender, CancelEventArgs e)
         {
-            mainLogikTask.Wait();
-            for (int i = 0; i < logikTasks.Length; i++) logikTasks[i].Wait();
+            TimeRun(false);
+
             collapseStarArray();
             ByteStream bs = new ByteStream();
-
             bs.WriteByte(0);
 
             bs.WriteInt(starArrayLenght);
@@ -659,6 +663,9 @@ namespace StarSim
                     if (refStar == curStar) refStar = -1;
                     else refStar = curStar;
                     break;
+                case Keys.E:
+                    if (curStar != -1) new EditStarDialog().Show(this,starArray[curStar]);
+                    break;
                 case Keys.M:
                     if (curStar != -1) starArray[curStar].Marked = !starArray[curStar].Marked;
                     break;
@@ -666,10 +673,10 @@ namespace StarSim
                     if (curStar != -1) starArray[curStar].Tracked = !starArray[curStar].Tracked;
                     break;
                 case Keys.OemPeriod:
-                    if (timeScale < 512) timeScale *= 2;
+                    if (simSpeed < 512) simSpeed *= 2;
                     break;
                 case Keys.Oemcomma:
-                    if (timeScale > 1) timeScale /= 2;
+                    if (simSpeed > 1) simSpeed /= 2;
                     break;
             }
         }
@@ -686,6 +693,7 @@ namespace StarSim
             saveFileDialog.AddExtension = true;
             saveFileDialog.InitialDirectory = Environment.CurrentDirectory;
             saveFileDialog.ShowDialog();
+            TimeRun(true);
         }
         private void loadToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -703,26 +711,27 @@ namespace StarSim
             lastMousePos.X = e.X;
             lastMousePos.Y = e.Y;
         }
-
         private void MainWindow_MouseUp(object sender, MouseEventArgs e)
         {
+        }
+
+        private void searchStarToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new SearchStarDialog().Show(this,starArray);
         }
 
         private void showMarkerToolStripMenuItem_Click(object sender, EventArgs e)
         {
             showMarker = ((ToolStripMenuItem)sender).Checked;
         }
-
         private void showStarInfosToolStripMenuItem_Click(object sender, EventArgs e)
         {
             showStarInfo = ((ToolStripMenuItem)sender).Checked;
         }
-
         private void showSimInfosToolStripMenuItem_Click(object sender, EventArgs e)
         {
             showSimInfo = ((ToolStripMenuItem)sender).Checked;
         }
-
         private void keyBindingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MessageBox.Show(@"
@@ -733,7 +742,6 @@ F:  Camera focus to selcetet star
 R:  Set selcetet star as physics reference
 ", "Key Bindings");
         }
-
         private void fullscrennToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (FormBorderStyle != FormBorderStyle.None)

@@ -21,7 +21,6 @@ namespace StarSim
         {
             base.Show(window);
             this.window = window;
-            window.Enabled = false;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -32,16 +31,14 @@ namespace StarSim
                 );
             this.Close();
         }
+        private void button2_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
 
         private void NewWorldDialog_FormClosed(object sender, FormClosedEventArgs e)
         {
 
-            window.Enabled = true;
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            this.Close();
         }
     }
 }

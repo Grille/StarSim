@@ -15,13 +15,14 @@ using GGL.IO;
 namespace StarSim
 {
 
-    public struct Star
+    public class Star
     {
         public int ID;
         public string Name;
         public bool Enabled;
         public bool Marked;
         public bool Tracked;
+        public bool Editing;
         public int Reference;
         public int ColisionsRef;
         public float Mass;
@@ -38,7 +39,7 @@ namespace StarSim
 
         //public int Richtung; //ghkads
 
-        public void Init(int id,float mass, float posX, float posY, float speedX, float speedY)
+        public Star(int id,float mass, float posX, float posY, float speedX, float speedY)
         {
             ID = id;
             Name = "";

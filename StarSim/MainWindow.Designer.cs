@@ -42,14 +42,10 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.simulationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.simSpeedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.pauseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.x1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.x4ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.x16ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.x64ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.selectetStarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.followToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.searchStarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.windowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -61,11 +57,7 @@
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.keyBindingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.hjghjToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.nameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.editToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.jghfToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.fgjhToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -142,48 +134,11 @@
             // simulationToolStripMenuItem
             // 
             this.simulationToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.simSpeedToolStripMenuItem,
             this.toolStripSeparator2,
             this.selectetStarToolStripMenuItem,
             this.searchStarToolStripMenuItem});
-            resources.ApplyResources(this.simulationToolStripMenuItem, "simulationToolStripMenuItem");
             this.simulationToolStripMenuItem.Name = "simulationToolStripMenuItem";
-            // 
-            // simSpeedToolStripMenuItem
-            // 
-            this.simSpeedToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.pauseToolStripMenuItem,
-            this.x1ToolStripMenuItem,
-            this.x4ToolStripMenuItem,
-            this.x16ToolStripMenuItem,
-            this.x64ToolStripMenuItem});
-            this.simSpeedToolStripMenuItem.Name = "simSpeedToolStripMenuItem";
-            resources.ApplyResources(this.simSpeedToolStripMenuItem, "simSpeedToolStripMenuItem");
-            // 
-            // pauseToolStripMenuItem
-            // 
-            this.pauseToolStripMenuItem.Name = "pauseToolStripMenuItem";
-            resources.ApplyResources(this.pauseToolStripMenuItem, "pauseToolStripMenuItem");
-            // 
-            // x1ToolStripMenuItem
-            // 
-            this.x1ToolStripMenuItem.Name = "x1ToolStripMenuItem";
-            resources.ApplyResources(this.x1ToolStripMenuItem, "x1ToolStripMenuItem");
-            // 
-            // x4ToolStripMenuItem
-            // 
-            this.x4ToolStripMenuItem.Name = "x4ToolStripMenuItem";
-            resources.ApplyResources(this.x4ToolStripMenuItem, "x4ToolStripMenuItem");
-            // 
-            // x16ToolStripMenuItem
-            // 
-            this.x16ToolStripMenuItem.Name = "x16ToolStripMenuItem";
-            resources.ApplyResources(this.x16ToolStripMenuItem, "x16ToolStripMenuItem");
-            // 
-            // x64ToolStripMenuItem
-            // 
-            this.x64ToolStripMenuItem.Name = "x64ToolStripMenuItem";
-            resources.ApplyResources(this.x64ToolStripMenuItem, "x64ToolStripMenuItem");
+            resources.ApplyResources(this.simulationToolStripMenuItem, "simulationToolStripMenuItem");
             // 
             // toolStripSeparator2
             // 
@@ -193,9 +148,21 @@
             // selectetStarToolStripMenuItem
             // 
             this.selectetStarToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.followToolStripMenuItem,
+            this.toolStripSeparator4,
             this.editToolStripMenuItem});
             this.selectetStarToolStripMenuItem.Name = "selectetStarToolStripMenuItem";
             resources.ApplyResources(this.selectetStarToolStripMenuItem, "selectetStarToolStripMenuItem");
+            // 
+            // followToolStripMenuItem
+            // 
+            this.followToolStripMenuItem.Name = "followToolStripMenuItem";
+            resources.ApplyResources(this.followToolStripMenuItem, "followToolStripMenuItem");
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            resources.ApplyResources(this.toolStripSeparator4, "toolStripSeparator4");
             // 
             // editToolStripMenuItem
             // 
@@ -207,6 +174,7 @@
             this.searchStarToolStripMenuItem.BackColor = System.Drawing.SystemColors.Control;
             this.searchStarToolStripMenuItem.Name = "searchStarToolStripMenuItem";
             resources.ApplyResources(this.searchStarToolStripMenuItem, "searchStarToolStripMenuItem");
+            this.searchStarToolStripMenuItem.Click += new System.EventHandler(this.searchStarToolStripMenuItem_Click);
             // 
             // windowToolStripMenuItem
             // 
@@ -278,50 +246,24 @@
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.hjghjToolStripMenuItem,
             this.jghfToolStripMenuItem});
-            this.contextMenuStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Table;
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.ShowCheckMargin = true;
+            this.contextMenuStrip1.ShowImageMargin = false;
             resources.ApplyResources(this.contextMenuStrip1, "contextMenuStrip1");
-            // 
-            // hjghjToolStripMenuItem
-            // 
-            this.hjghjToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.nameToolStripMenuItem,
-            this.editToolStripMenuItem1});
-            this.hjghjToolStripMenuItem.Name = "hjghjToolStripMenuItem";
-            resources.ApplyResources(this.hjghjToolStripMenuItem, "hjghjToolStripMenuItem");
-            // 
-            // nameToolStripMenuItem
-            // 
-            this.nameToolStripMenuItem.Name = "nameToolStripMenuItem";
-            resources.ApplyResources(this.nameToolStripMenuItem, "nameToolStripMenuItem");
-            // 
-            // editToolStripMenuItem1
-            // 
-            this.editToolStripMenuItem1.Name = "editToolStripMenuItem1";
-            resources.ApplyResources(this.editToolStripMenuItem1, "editToolStripMenuItem1");
             // 
             // jghfToolStripMenuItem
             // 
-            this.jghfToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fgjhToolStripMenuItem});
             this.jghfToolStripMenuItem.Name = "jghfToolStripMenuItem";
             resources.ApplyResources(this.jghfToolStripMenuItem, "jghfToolStripMenuItem");
-            // 
-            // fgjhToolStripMenuItem
-            // 
-            this.fgjhToolStripMenuItem.Name = "fgjhToolStripMenuItem";
-            resources.ApplyResources(this.fgjhToolStripMenuItem, "fgjhToolStripMenuItem");
             // 
             // MainWindow
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(10)))), ((int)(((byte)(15)))), ((int)(((byte)(20)))));
+            this.ContextMenuStrip = this.contextMenuStrip1;
             this.Controls.Add(this.menuStrip1);
-            this.KeyPreview = true;
+            this.DoubleBuffered = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainWindow";
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.this_Paint);
@@ -357,27 +299,19 @@
         private System.Windows.Forms.ToolStripMenuItem windowToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fullscrennToolStripMenuItem;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem hjghjToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem jghfToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem fgjhToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem nameToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem keyBindingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem simulationToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem selectetStarToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem searchStarToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem simSpeedToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem pauseToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem x1ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem x4ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem x16ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem x64ToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem showMarkerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showStarInfosToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showSimInfosToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem followToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
     }
 }
 
