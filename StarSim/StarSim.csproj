@@ -44,8 +44,14 @@
     <ApplicationIcon>Star.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Cloo">
+      <HintPath>lib\Cloo.dll</HintPath>
+    </Reference>
     <Reference Include="GGL">
       <HintPath>lib\GGL.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenCLlib">
+      <HintPath>lib\OpenCLlib.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -60,44 +66,45 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EditStarDialog.cs">
+    <Compile Include="src\gui\EditStarDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="EditStarDialog.Designer.cs">
+    <Compile Include="src\gui\EditStarDialog.Designer.cs">
       <DependentUpon>EditStarDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="MainWindow.cs">
+    <Compile Include="src\gui\MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainWindow.Designer.cs">
+    <Compile Include="src\gui\MainWindow.Designer.cs">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="NewWorldDialog.cs">
+    <Compile Include="src\gui\NewWorldDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="NewWorldDialog.Designer.cs">
+    <Compile Include="src\gui\NewWorldDialog.Designer.cs">
       <DependentUpon>NewWorldDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Program.cs" />
+    <Compile Include="src\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SearchStarDialog.cs">
+    <Compile Include="src\gui\SearchStarDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SearchStarDialog.Designer.cs">
+    <Compile Include="src\gui\SearchStarDialog.Designer.cs">
       <DependentUpon>SearchStarDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Star.cs" />
-    <Compile Include="TrackingData.cs" />
-    <EmbeddedResource Include="EditStarDialog.resx">
+    <Compile Include="src\Star.cs" />
+    <Compile Include="src\StarSim.cs" />
+    <Compile Include="src\TrackingData.cs" />
+    <EmbeddedResource Include="src\gui\EditStarDialog.resx">
       <DependentUpon>EditStarDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MainWindow.en.resx">
+    <EmbeddedResource Include="src\gui\MainWindow.en.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MainWindow.resx">
+    <EmbeddedResource Include="src\gui\MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="NewWorldDialog.resx">
+    <EmbeddedResource Include="src\gui\NewWorldDialog.resx">
       <DependentUpon>NewWorldDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -110,7 +117,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="SearchStarDialog.resx">
+    <EmbeddedResource Include="src\gui\SearchStarDialog.resx">
       <DependentUpon>SearchStarDialog.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
@@ -126,6 +133,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="src\Kernel.c" />
     <Content Include="Star.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Runtime.InteropServices; // Needed for DllImport
+using System.Diagnostics; // Used for Debug.WriteLine
 
 namespace StarSim
 {
@@ -16,12 +18,17 @@ namespace StarSim
         [STAThread]
         static void Main()
         {
-            Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
+
+            //DoSomethingInCpp(10);
+        Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
             Application.EnableVisualStyles();
             //Application.CurrentCulture = new System.Globalization.CultureInfo("en-US");
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainWindow());
             //Application.Restart();
         }
+        [DllImport("NativeEnvironment.dll", EntryPoint = "DoSomethingInCpp",
+            CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Auto)]
+        public static extern int DoSomethingInCpp(int FooValue);
     }
 }

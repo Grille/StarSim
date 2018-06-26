@@ -30,7 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
-            this.TimerLogik = new System.Windows.Forms.Timer(this.components);
             this.TimerDraw = new System.Windows.Forms.Timer(this.components);
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
@@ -62,14 +61,9 @@
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // TimerLogik
-            // 
-            this.TimerLogik.Interval = 25;
-            this.TimerLogik.Tick += new System.EventHandler(this.timerLogik_Tick);
-            // 
             // TimerDraw
             // 
-            this.TimerDraw.Interval = 5;
+            this.TimerDraw.Interval = 2;
             this.TimerDraw.Tick += new System.EventHandler(this.TimerDraw_Tick);
             // 
             // openFileDialog
@@ -284,7 +278,6 @@
         }
 
         #endregion
-        private System.Windows.Forms.Timer TimerLogik;
         private System.Windows.Forms.Timer TimerDraw;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
         private System.Windows.Forms.SaveFileDialog saveFileDialog;

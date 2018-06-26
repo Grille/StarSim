@@ -37,7 +37,6 @@
             this.ColumnSpeed = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.buttonGoTo = new System.Windows.Forms.Button();
             this.buttonEdit = new System.Windows.Forms.Button();
-            this.buttonSelect = new System.Windows.Forms.Button();
             this.starBindingSource = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.starBindingSource)).BeginInit();
@@ -78,6 +77,7 @@
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridView1.Size = new System.Drawing.Size(343, 263);
             this.dataGridView1.TabIndex = 45;
+            this.dataGridView1.Click += new System.EventHandler(this.dataGridView1_Click);
             // 
             // ColumnStar
             // 
@@ -114,7 +114,7 @@
             // buttonGoTo
             // 
             this.buttonGoTo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonGoTo.Location = new System.Drawing.Point(93, 281);
+            this.buttonGoTo.Location = new System.Drawing.Point(12, 281);
             this.buttonGoTo.Name = "buttonGoTo";
             this.buttonGoTo.Size = new System.Drawing.Size(75, 23);
             this.buttonGoTo.TabIndex = 46;
@@ -125,7 +125,7 @@
             // buttonEdit
             // 
             this.buttonEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonEdit.Location = new System.Drawing.Point(174, 281);
+            this.buttonEdit.Location = new System.Drawing.Point(93, 281);
             this.buttonEdit.Name = "buttonEdit";
             this.buttonEdit.Size = new System.Drawing.Size(75, 23);
             this.buttonEdit.TabIndex = 47;
@@ -133,27 +133,11 @@
             this.buttonEdit.UseVisualStyleBackColor = true;
             this.buttonEdit.Click += new System.EventHandler(this.buttonEdit_Click);
             // 
-            // buttonSelect
-            // 
-            this.buttonSelect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonSelect.Location = new System.Drawing.Point(12, 281);
-            this.buttonSelect.Name = "buttonSelect";
-            this.buttonSelect.Size = new System.Drawing.Size(75, 23);
-            this.buttonSelect.TabIndex = 48;
-            this.buttonSelect.Text = "select";
-            this.buttonSelect.UseVisualStyleBackColor = true;
-            this.buttonSelect.Click += new System.EventHandler(this.buttonSelect_Click);
-            // 
-            // starBindingSource
-            // 
-            this.starBindingSource.DataSource = typeof(StarSim.Star);
-            // 
             // SearchStarDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(366, 312);
-            this.Controls.Add(this.buttonSelect);
             this.Controls.Add(this.buttonEdit);
             this.Controls.Add(this.buttonGoTo);
             this.Controls.Add(this.dataGridView1);
@@ -182,6 +166,5 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnSpeed;
         private System.Windows.Forms.Button buttonGoTo;
         private System.Windows.Forms.Button buttonEdit;
-        private System.Windows.Forms.Button buttonSelect;
     }
 }

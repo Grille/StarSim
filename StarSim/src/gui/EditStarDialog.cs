@@ -23,8 +23,9 @@ namespace StarSim
         {
             base.Show(window);
             this.window = window;
-            oldTime = window.Running;
-            window.TimeRun(false);
+            oldTime = window.Simulation.Running;
+            window.Simulation.Stop();
+            window.Simulation.Wait();
             UpdateStar(star);
         }
         public void UpdateStar(Star star)
@@ -56,13 +57,13 @@ namespace StarSim
             editStar.PosY = (Convert.ToSingle(textBoxPosY.Text));
             editStar.SpeedX = (Convert.ToSingle(textBoxSpeedX.Text));
             editStar.SpeedY = (Convert.ToSingle(textBoxSpeedY.Text));
-            this.Close();
+            //this.Close();
         }
 
         private void EditStarDialog_FormClosed(object sender, FormClosedEventArgs e)
         {
             if (editStar != null) editStar.Editing = false;
-            window.TimeRun(oldTime);
+            window.Simulation.Running = oldTime;
         }
     }
 }
