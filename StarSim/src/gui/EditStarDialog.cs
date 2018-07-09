@@ -21,12 +21,15 @@ namespace StarSim
         }
         public void Show(MainWindow window,Star star)
         {
+
             base.Show(window);
+            window.ChildNumber++;
             this.window = window;
-            oldTime = window.Simulation.Running;
-            window.Simulation.Stop();
-            window.Simulation.Wait();
+            oldTime = Program.Simulation.Running;
+            Program.Simulation.Stop();
+            Program.Simulation.Wait();
             UpdateStar(star);
+            comboBox1.SelectedIndex = 1;
         }
         public void UpdateStar(Star star)
         {
@@ -37,10 +40,27 @@ namespace StarSim
             textBoxName.Text = star.Name;
             textBoxMass.Text = "" + star.Mass;
 
-            textBoxPosX.Text = "" + editStar.PosX;
-            textBoxPosY.Text = "" + editStar.PosY;
-            textBoxSpeedX.Text = "" + editStar.SpeedX;
-            textBoxSpeedY.Text = "" + editStar.SpeedY;
+            switch (comboBox1.SelectedIndex)
+            {
+                case 0:
+                    textBoxPosX.Text = "" + editStar.PosX;
+                    textBoxPosY.Text = "" + editStar.PosY;
+                    textBoxSpeedX.Text = "" + editStar.SpeedX;
+                    textBoxSpeedY.Text = "" + editStar.SpeedY;
+                    break;
+                case 1:
+                    textBoxPosX.Text = "" + (editStar.PosX - Program.Simulation.MassCenterX);
+                    textBoxPosY.Text = "" + (editStar.PosY - Program.Simulation.MassCenterY);
+                    textBoxSpeedX.Text = "" + (editStar.SpeedX - Program.Simulation.SpeedCenterX);
+                    textBoxSpeedY.Text = "" + (editStar.SpeedY - Program.Simulation.SpeedCenterY);
+                    break;
+                case 2:
+                    textBoxPosX.Text = "" + (editStar.PosX - Program.Simulation.RefStar.PosX);
+                    textBoxPosY.Text = "" + (editStar.PosY - Program.Simulation.RefStar.PosY);
+                    textBoxSpeedX.Text = "" + (editStar.SpeedX - Program.Simulation.RefStar.SpeedX);
+                    textBoxSpeedY.Text = "" + (editStar.SpeedY - Program.Simulation.RefStar.SpeedY);
+                    break;
+            }
         }
 
         private void buttonClose_Click(object sender, EventArgs e)
@@ -63,7 +83,13 @@ namespace StarSim
         private void EditStarDialog_FormClosed(object sender, FormClosedEventArgs e)
         {
             if (editStar != null) editStar.Editing = false;
-            window.Simulation.Running = oldTime;
+            Program.Simulation.Running = oldTime;
+            window.ChildNumber--;
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateStar(editStar);
         }
     }
 }

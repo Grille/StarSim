@@ -22,10 +22,11 @@ namespace StarSim
         public void Show(MainWindow window, Star[] stars)
         {
             base.Show(window);
+            window.ChildNumber++;
             this.window = window;
-            oldTime = window.Simulation.Running;
-            window.Simulation.Stop();
-            window.Simulation.Wait();
+            oldTime = Program.Simulation.Running;
+            Program.Simulation.Stop();
+            Program.Simulation.Wait();
             SetStars(stars);
         }
         public void SetStars(Star[] stars)
@@ -51,13 +52,13 @@ namespace StarSim
         private void button2_Click(object sender, EventArgs e)
         {
             this.Close();
-            window.Simulation.Running = oldTime;
+            Program.Simulation.Running = oldTime;
         }
 
         private void buttonGoTo_Click(object sender, EventArgs e)
         {
-            window.camPosX = -stars[(int)dataGridView1.CurrentRow.Cells[0].Value].PosX;
-            window.camPosY = -stars[(int)dataGridView1.CurrentRow.Cells[0].Value].PosY;
+            window.Renderer.CamPosX = -stars[(int)dataGridView1.CurrentRow.Cells[0].Value].PosX;
+            window.Renderer.CamPosY = -stars[(int)dataGridView1.CurrentRow.Cells[0].Value].PosY;
         }
 
         private void buttonEdit_Click(object sender, EventArgs e)
@@ -67,8 +68,13 @@ namespace StarSim
 
         private void dataGridView1_Click(object sender, EventArgs e)
         {
-            window.Simulation.SelectetStar = (int)dataGridView1.CurrentRow.Cells[0].Value;
+            Program.Simulation.SelectetStar = stars[(int)dataGridView1.CurrentRow.Cells[0].Value];
             window.Focus();
+        }
+
+        private void SearchStarDialog_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            window.ChildNumber--;
         }
     }
 }

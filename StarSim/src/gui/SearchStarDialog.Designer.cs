@@ -150,6 +150,7 @@
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.Text = "Search Star";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.SearchStarDialog_FormClosed);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.starBindingSource)).EndInit();
             this.ResumeLayout(false);

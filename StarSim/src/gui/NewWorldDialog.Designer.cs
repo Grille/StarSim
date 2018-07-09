@@ -149,7 +149,8 @@
             this.comboBoxMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxMode.FormattingEnabled = true;
             this.comboBoxMode.Items.AddRange(new object[] {
-            "RndCube"});
+            "RndCube",
+            "RndLine"});
             this.comboBoxMode.Location = new System.Drawing.Point(96, 38);
             this.comboBoxMode.Name = "comboBoxMode";
             this.comboBoxMode.Size = new System.Drawing.Size(89, 21);

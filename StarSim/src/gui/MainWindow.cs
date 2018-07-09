@@ -17,21 +17,15 @@ namespace StarSim
 {
     public unsafe partial class MainWindow : Form
     {
-        private StarSim simulation;
-        public StarSim Simulation{
-            get { return simulation; }
+        StarSim simulation;
+        private Renderer renderer;
+        public Renderer Renderer
+        {
+            get { return renderer; }
         }
-        public double camPosX, camPosY;
-        double scaling = 1;
-
-
-        bool showMarker = true;
-        bool showStarInfo = true;
-        bool showSimInfo = true;
+        public int ChildNumber = 0;
 
         public SearchStarDialog searchStarDialog = new SearchStarDialog();
-
-        Graphics g;
 
         Point lastMousePos = new Point(0,0);
 
@@ -39,19 +33,17 @@ namespace StarSim
 
         public MainWindow()
         {
-            //Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
             InitializeComponent();
             MouseWheel += new MouseEventHandler(Window_MouseWheel);
 
             SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer,true);
 
             DoubleBuffered = true;
-            simulation = new StarSim();
+            simulation = Program.Simulation;
+            renderer = new Renderer(simulation);
             simulation.FrameCalculatet += new EventHandler(folow);
             simulation.Start();
             TimerDraw.Start();
-            //Feld.Refresh();
-
         }
         ~MainWindow()
         {
@@ -60,216 +52,33 @@ namespace StarSim
 
         public void Init(int mode, int size, int stars, float minMass, float maxMass, float disSpeed)
         {
-            camPosX = camPosY = 0;
-            scaling = Math.Min(this.Width, this.Height) / (float)(size * 1.2f);
+            simulation.SelectetStar = null; simulation.FocusStar = null; simulation.RefStar = null;
+            renderer.CamPosX = renderer.CamPosY = 0;
+            renderer.scaling = Math.Min(this.Width, this.Height) / (float)((size+ disSpeed*32) * 1.2f);
             simulation.Init(mode, size, stars, minMass, maxMass, disSpeed);
         }
         void folow(object sender,EventArgs e)
         {
-            if (simulation.FocusStar != -1 && simulation.Stars[simulation.FocusStar].Enabled == true)
+            if (simulation.FocusStar != null && simulation.FocusStar.Enabled == true)
             {
-                camPosX -= (float)simulation.Stars[simulation.FocusStar].SpeedX;
-                camPosY -= (float)simulation.Stars[simulation.FocusStar].SpeedY;
+                renderer.CamPosX -= simulation.FocusStar.SpeedX;
+                renderer.CamPosY -= simulation.FocusStar.SpeedY;
             }
             else
             {
-                camPosX -= (float)simulation.SpeedCenterX;
-                camPosY -= (float)simulation.SpeedCenterY;
+                renderer.CamPosX -= simulation.SpeedCenterX;
+                renderer.CamPosY -= simulation.SpeedCenterY;
             }
         }
 
         private void TimerDraw_Tick(object sender, EventArgs e)
         {
             this.Invalidate();
-            //Refresh();
-        }
-        private void transformPoint(float x, float y, out float outX, out float outY)
-        {
-            outX = (x + (float)camPosX) * (float)scaling + Width / 2f; 
-            outY = (y + (float)camPosY) * (float)scaling + Height / 2f;
-        }
-        private void fixPoint(ref float posX,ref float posY,float refX,float refY)
-        {
-
-            float mX = (refX - posX) / (refY - posY);
-            float nullPosX = posX - mX * posY;
-
-            float mY = (refY - posY) / (refX - posX);
-            float nullPosY = posY - mY * posX;
-
-            if (posX < 0)
-            {
-                posY = nullPosY;
-                posX = 0;
-            }
-            if (posY < 0)
-            {
-                posX = nullPosX;
-                posY = 0;
-            }
-            if (posX > Width)
-            {
-                posY = mY * Width + nullPosY;
-                posX = Width;
-            }
-            if (posY > Height)
-            {
-                posX = mX * Height + nullPosX;
-                posY = Height;
-            }
-        }
-        private void drawLine(Pen pen,float posX1,float posY1,float posX2,float posY2)
-        {
-            
-            if (posX1 < 0 && posX2 < 0) return;
-            if (posY1 < 0 && posY2 < 0) return;
-            if (posX1 > Width && posX2 > Width) return;
-            if (posY1 > Height && posY2 > Height) return;
-            
-            fixPoint(ref posX1,ref posY1, posX2, posY2);
-            fixPoint(ref posX2, ref posY2, posX1, posY1);
-
-            /*
-            g.DrawEllipse(new Pen(Color.Red, 2), posX1-10, posY1-10, 20, 20);
-            g.DrawEllipse(new Pen(Color.Red, 2), posX2 - 10, posY2 - 10, 20, 20);
-
-            /*
-            g.DrawString("X: " + posX1, new Font("Consolas", 9), new SolidBrush(Color.Red), new PointF(posX1, posY1));
-            */
-
-            g.DrawLine(pen, posX1,posY1, posX2, posY2);
         }
         private void this_Paint(object sender, PaintEventArgs e)
         {
-            Stopwatch SWTotal = new Stopwatch();
-            SWTotal.Start();
-            g = e.Graphics;
-
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.High;
-            g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-            g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
-            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-
-            //g.TranslateTransform(Width / 2, Height / 2);
-            //g.ScaleTransform(scaling, scaling);
-            Pen backPen = new Pen(Color.FromArgb(30, 45, 45),1);
-            backPen.DashPattern = new float[] { 8, 4};
-            Pen backPen2 = new Pen(Color.FromArgb(30, 45, 45), 1);
-            backPen2.DashPattern = new float[] { 8, 4,4,8 };
-            Pen guiLine = new Pen(Color.FromArgb(40, 60, 80), 1);
-
-            /*
-            g.DrawLine(backPen, 0, Height / 2, Width, Height / 2);
-            g.DrawLine(backPen, Width/2, 0 , Width / 2, Height);
-            */
-
-            Star[] starArray = simulation.Stars;
-            int curStar = simulation.SelectetStar, refStar = simulation.RefStar, focusStar = simulation.FocusStar;
-            if (showMarker)
-            {
-                float centerPosX, centerPosY;
-                transformPoint((float)simulation.MassCenterX, (float)simulation.MassCenterY, out centerPosX, out centerPosY);
-
-                g.DrawEllipse(backPen, centerPosX - 20f, centerPosY - 20f, 40, 40);
-
-                /*
-                g.DrawLine(backPen, 0, Height / 2, Width, Height / 2);
-                g.DrawLine(backPen, Width/2, 0 , Width / 2, Height);
-                */
-                float refPosX = centerPosX, refPosY = centerPosY;
-                if (refStar != -1)
-                {
-                    transformPoint((float)starArray[refStar].PosX, (float)starArray[refStar].PosY,out refPosX,out refPosY);
-                    g.DrawEllipse(backPen, refPosX - 10, refPosY - 10, 20, 20);
-                    drawLine(backPen, centerPosX, centerPosY, refPosX, refPosY);
-                }
-                float focusPosX = centerPosX, focusPosY = centerPosY;
-                if (focusStar != -1)
-                {
-                    transformPoint((float)starArray[focusStar].PosX, (float)starArray[focusStar].PosY,out focusPosX,out focusPosY);
-                }
-                int dist1 = 10, dist2 = 40;
-                drawLine(backPen, focusPosX + dist1, focusPosY + dist1, focusPosX + dist2, focusPosY + dist2);
-                drawLine(backPen, focusPosX - dist1, focusPosY + dist1, focusPosX - dist2, focusPosY + dist2);
-                drawLine(backPen, focusPosX + dist1, focusPosY - dist1, focusPosX + dist2, focusPosY - dist2);
-                drawLine(backPen, focusPosX - dist1, focusPosY - dist1, focusPosX - dist2, focusPosY - dist2);
-
-                if (curStar != -1)
-                {
-                    float curPosX, curPosY;
-                    transformPoint((float)starArray[curStar].PosX, (float)starArray[curStar].PosY,out curPosX,out curPosY);
-                    drawLine(backPen2, curPosX, curPosY, refPosX, refPosY);
-                }
-            }
-
-
-            //try
-            //{
-            SolidBrush brush = new SolidBrush(Color.LightGray);
-
-            for (int iS = 0; iS < simulation.Stars.Length; iS++)
-            {
-                if (!starArray[iS].Enabled) continue;
-
-                float r = starArray[iS].SizeR;
-
-                byte RColor = (byte)starArray[iS].Mass;
-                float posX = (float)(starArray[iS].PosX - r + camPosX);
-                float posY = (float)(starArray[iS].PosY - r + camPosY);
-
-                posX *= (float)scaling; posY *= (float)scaling; r *= (float)scaling;
-                posX += Width / 2f; posY += Height / 2f;
-
-                if (r < 0.01) r = 0.01f;
-                if (iS == curStar)
-                {
-                    if (starArray[iS].Mass > 0) g.DrawEllipse(new Pen(Color.FromArgb(170, 255, 255), 1), posX, posY, r * 2, r * 2);
-                    else g.DrawEllipse(new Pen(Color.FromArgb(255, 170, 255), 1), posX, posY, r * 2, r * 2);
-                }
-                else
-                {
-                    if (starArray[iS].Mass > 0) g.DrawEllipse(new Pen(Color.FromArgb(100, 200, 255), 1), posX, posY, r * 2, r * 2);
-                    else g.DrawEllipse(new Pen(Color.FromArgb(200, 100, 255), 1), posX, posY, r * 2, r * 2);
-                }
-
-                if ((curStar == iS || starArray[iS].Marked) && showStarInfo || starArray[iS].Editing)
-                {
-                    posX += r;
-                    posY += r;
-                    g.DrawLine(guiLine, new PointF(posX, posY), new PointF(posX + r * 1.5f, posY - r * 1.5f));
-                    g.DrawLine(guiLine, new PointF(posX + r * 1.5f, posY - r * 1.5f), new PointF(posX + r * 1.5f + r * 2f + 4f, posY - r * 1.5f));
-                    int txtPosX = (int)(posX + r * 1.5f + r * 2f + 9f);
-                    int txtPosY = (int)(posY - r * 1.5f - 6f)-15;
-                    if (starArray[iS].Name.Length > 0)g.DrawString("" + ((starArray[iS].Name.Length > 0) ? starArray[iS].Name : String.Format("{0:X}", starArray[iS].ID)), new Font("Consolas", 9), brush, new PointF(txtPosX, txtPosY+=15));
-                    g.DrawString(""+Math.Round(starArray[iS].Mass, 2), new Font("Consolas", 9), brush, new PointF(txtPosX, txtPosY += 15));
-                    if (starArray[iS].Editing)
-                    {
-                        g.DrawString(""+Math.Round(Math.Abs(starArray[iS].SpeedX)+Math.Abs(starArray[iS].SpeedY), 2), new Font("Consolas", 9), brush, new PointF(txtPosX, txtPosY += 15));
-                    }
-                    txtPosY += 5;
-
-                    /*
-                    g.DrawString("Relative data to " +((refStar != -1) ? ((starArray[refStar].Name.Length > 0) ? starArray[refStar].Name : String.Format("{0:X}", starArray[refStar].ID)) : "Nothing"), new Font("Consolas", 9), brush, new PointF(txtPosX, txtPosY += 15));
-                    g.DrawString("Dist: " + Math.Abs((int)(massCenterX - starArray[iS].PosX)) + " posY: " +Math.Abs((int)(massCenterY - starArray[iS].PosY)), new Font("Consolas", 9), brush, new PointF(txtPosX, txtPosY += 15));
-                    g.DrawString("Speed: " + starArray[iS].SpeedX + " speedY: " + Math.Round(starArray[iS].SpeedY, 2), new Font("Consolas", 9), brush, new PointF(txtPosX, txtPosY += 15));
-                    //g.DrawString("Speed: " + (Math.Abs(starArray[ii].SpeedX) + Math.Abs(starArray[ii].SpeedY)), new Font("Consolas", 9), brush, new PointF(txtPosX, txtPosY += 15));
-               */
-                }
-
-            }
-
-            if (showSimInfo)
-            {
-                g.DrawString("Stars " + simulation.StarCount + " /" + simulation.Stars.Length, new Font("Consolas", 9), brush, new Point(10, 40));
-                g.DrawString("Mass " + "-", new Font("Consolas", 9), brush, new Point(10, 50));
-                g.DrawString("SimTime " + simulation.UsedTime, new Font("Consolas", 9), brush, new Point(10, 60));
-                g.DrawString("SimSpeed " + simulation.SimSpeed, new Font("Consolas", 9), brush, new Point(10, 70));
-                /*
-                g.DrawString("L_Time " + usedTime + "ms", new Font("Consolas", 9), brush, new Point(10, 50));
-                g.DrawString("R_Time " + SWTotal.ElapsedMilliseconds + "ms", new Font("Consolas", 9), brush, new Point(10, 60));
-                */
-            }
-            SWTotal.Stop();
+            renderer.HighRenderQuality = highQualityToolStripMenuItem.Checked;
+            renderer.Render(sender, e.Graphics);
         }
 
 
@@ -277,25 +86,24 @@ namespace StarSim
         {
             if (e.Button == MouseButtons.Left)
             {
-                camPosX += ((e.X - lastMousePos.X)/scaling);
-                camPosY += ((e.Y - lastMousePos.Y) / scaling);
+                renderer.CamPosX += ((e.X - lastMousePos.X)/ renderer.scaling);
+                renderer.CamPosY += ((e.Y - lastMousePos.Y) / renderer.scaling);
             }
-            lastMousePos.X = e.X;
-            lastMousePos.Y = e.Y;
+            lastMousePos = e.Location;
         }
         private void Window_MouseWheel(object sender, MouseEventArgs e)
         {
   
             //get worldPos
-            double posX = -camPosX + (e.X - Width / 2d) / scaling;
-            double posY = -camPosY + (e.Y - Height / 2d) / scaling;
+            double posX = -renderer.CamPosX + (e.X - Width / 2d) / renderer.scaling;
+            double posY = -renderer.CamPosY + (e.Y - Height / 2d) / renderer.scaling;
 
-            scaling += (e.Delta * scaling) / 500d;
-            if (scaling < 0.00001) scaling = 0.00001f;
-            else if (scaling > 10) scaling = 10;
+            renderer.scaling += (e.Delta * renderer.scaling) / 500d;
+            if (renderer.scaling < 0.00001) renderer.scaling = 0.00001f;
+            else if (renderer.scaling > 10) renderer.scaling = 10;
 
-            camPosX = -posX + (Width / 2d * (e.X / (double)Width * 2d - 1)) / scaling;
-            camPosY = -posY + (Height / 2d * (e.Y / (double)Height * 2d - 1)) / scaling;
+            renderer.CamPosX = -posX + (Width / 2d * (e.X / (double)Width * 2d - 1)) / renderer.scaling;
+            renderer.CamPosY = -posY + (Height / 2d * (e.Y / (double)Height * 2d - 1)) / renderer.scaling;
         }
 
         private void MainWindow_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -310,9 +118,9 @@ namespace StarSim
         }
         private void selectStar(MouseEventArgs e)
         {
-            float posX = (float)(-camPosX + (e.X - Width / 2)/ scaling);
-            float posY = (float)(-camPosY + (e.Y - Height / 2)/scaling);
-            int nearestStar = -1;
+            float posX = (float)(-renderer.CamPosX + (e.X - Width / 2)/ renderer.scaling);
+            float posY = (float)(-renderer.CamPosY + (e.Y - Height / 2)/ renderer.scaling);
+            Star nearestStar = null;
 
             bool firstStar = true;
             double maxdist = 0;
@@ -327,7 +135,7 @@ namespace StarSim
                     {
                         maxdist = (float)Math.Sqrt((distX * distX) + (distY * distY));
                         firstStar = false;
-                        nearestStar = iS;
+                        nearestStar = simulation.Stars[iS];
                     }
                     else
                     {
@@ -335,7 +143,7 @@ namespace StarSim
                         if (dist < maxdist)
                         {
                             maxdist = dist;
-                            nearestStar = iS;
+                            nearestStar = simulation.Stars[iS];
                         }
                     }
 
@@ -346,6 +154,7 @@ namespace StarSim
 
         private void openFileDialog_FileOk(object sender, CancelEventArgs e)
         {
+            simulation.SelectetStar = null; simulation.FocusStar = null; simulation.RefStar = null;
             simulation.Wait();
 
             ByteStream bs = new ByteStream(openFileDialog.FileName);
@@ -353,20 +162,20 @@ namespace StarSim
 
             bs.ReadByte();
             int starArrayLenght = bs.ReadInt();
-            camPosX = bs.ReadFloat();
-            camPosY = bs.ReadFloat();
-            scaling = bs.ReadFloat();
+            renderer.CamPosX = bs.ReadFloat();
+            renderer.CamPosY = bs.ReadFloat();
+            renderer.scaling = bs.ReadFloat();
             Star[] stars = new Star[starArrayLenght];
             for (int i = 0; i < starArrayLenght; i++)
             {
                 stars[i] = new Star(bs.ReadInt(),bs.ReadFloat(), bs.ReadFloat(), bs.ReadFloat(), bs.ReadFloat(), bs.ReadFloat());
                 stars[i].Name = bs.ReadString();
             }
-            simulation.SelectetStar = bs.ReadInt();
-            simulation.FocusStar = bs.ReadInt();
-            simulation.RefStar = bs.ReadInt();
+            int starIdx;
+            if ((starIdx = bs.ReadInt()) != -1) simulation.SelectetStar = stars[starIdx];
+            if ((starIdx = bs.ReadInt()) != -1) simulation.FocusStar = stars[starIdx];
+            if ((starIdx = bs.ReadInt()) != -1) simulation.RefStar = stars[starIdx];
             simulation.Stars = stars;
-
         }
         private void saveFileDialog_FileOk(object sender, CancelEventArgs e)
         {
@@ -378,13 +187,13 @@ namespace StarSim
             bs.WriteByte(0);
 
             bs.WriteInt(simulation.Stars.Length);
-            bs.WriteFloat((float)camPosX);
-            bs.WriteFloat((float)camPosY);
-            bs.WriteFloat((float)scaling);
+            bs.WriteFloat((float)renderer.CamPosX);
+            bs.WriteFloat((float)renderer.CamPosY);
+            bs.WriteFloat((float)renderer.scaling);
             Star[] stars = simulation.Stars;
             for (int i = 0; i < simulation.Stars.Length; i++)
             {
-                bs.WriteInt(stars[i].ID);
+                bs.WriteInt(stars[i].Idx);
                 bs.WriteFloat(stars[i].Mass);
                 bs.WriteFloat((float)stars[i].PosX);
                 bs.WriteFloat((float)stars[i].PosY);
@@ -392,9 +201,9 @@ namespace StarSim
                 bs.WriteFloat((float)stars[i].SpeedY);
                 bs.WriteString(stars[i].Name);
             }
-            bs.WriteInt(simulation.SelectetStar);
-            bs.WriteInt(simulation.FocusStar);
-            bs.WriteInt(simulation.RefStar);
+            bs.WriteInt(simulation.SelectetStar != null ? simulation.SelectetStar.Idx : -1);
+            bs.WriteInt(simulation.FocusStar != null ? simulation.FocusStar.Idx : -1);
+            bs.WriteInt(simulation.RefStar != null ? simulation.RefStar.Idx : -1);
             bs.Save(saveFileDialog.FileName);
             
         }
@@ -413,24 +222,24 @@ namespace StarSim
             {
                 case Keys.Space:
                     if (simulation.Running) simulation.Stop();
-                    else simulation.Start();
+                    else if (ChildNumber <= 0) simulation.Start();
                     break;
                 case Keys.F:
-                    if (simulation.FocusStar == simulation.SelectetStar) simulation.FocusStar = -1;
+                    if (simulation.FocusStar == simulation.SelectetStar) simulation.FocusStar = null;
                     else simulation.FocusStar = simulation.SelectetStar;
                     break;
                 case Keys.R:
-                    if (simulation.RefStar == simulation.SelectetStar) simulation.RefStar = -1;
+                    if (simulation.RefStar == simulation.SelectetStar) simulation.RefStar = null;
                     else simulation.RefStar = simulation.SelectetStar;
                     break;
                 case Keys.E:
-                    if (simulation.SelectetStar != -1) new EditStarDialog().Show(this, simulation.Stars[simulation.SelectetStar]);
+                    if (simulation.SelectetStar != null) new EditStarDialog().Show(this, simulation.SelectetStar);
                     break;
                 case Keys.M:
-                    if (simulation.SelectetStar != -1) simulation.Stars[simulation.SelectetStar].Marked = !simulation.Stars[simulation.SelectetStar].Marked;
+                    if (simulation.SelectetStar != null) simulation.SelectetStar.Marked = !simulation.SelectetStar.Marked;
                     break;
                 case Keys.T:
-                    if (simulation.SelectetStar != -1) simulation.Stars[simulation.SelectetStar].Tracked = !simulation.Stars[simulation.SelectetStar].Tracked;
+                    if (simulation.SelectetStar != null) simulation.SelectetStar.Tracked = !simulation.SelectetStar.Tracked;
                     break;
                 case Keys.OemPeriod:
                     if (simulation.SimSpeed < 512) simulation.SimSpeed *= 2;
@@ -483,15 +292,15 @@ namespace StarSim
 
         private void showMarkerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            showMarker = ((ToolStripMenuItem)sender).Checked;
+            renderer.showMarker = ((ToolStripMenuItem)sender).Checked;
         }
         private void showStarInfosToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            showStarInfo = ((ToolStripMenuItem)sender).Checked;
+            renderer.showStarInfo = ((ToolStripMenuItem)sender).Checked;
         }
         private void showSimInfosToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            showSimInfo = ((ToolStripMenuItem)sender).Checked;
+            renderer.showSimInfo = ((ToolStripMenuItem)sender).Checked;
         }
         private void keyBindingsToolStripMenuItem_Click(object sender, EventArgs e)
         {

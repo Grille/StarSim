@@ -38,7 +38,6 @@ namespace StarSim
 
         private void NewWorldDialog_FormClosed(object sender, FormClosedEventArgs e)
         {
-
         }
     }
 }

@@ -17,14 +17,14 @@ namespace StarSim
 
     public class Star
     {
-        public int ID;
+        public int Idx;
         public string Name;
         public bool Enabled;
         public bool Marked;
         public bool Tracked;
         public bool Editing;
-        public int Reference;
-        public int ColisionsRef;
+        public Star Reference;
+        public Star ColisionsRef;
         public float Mass;
         public float AbsMass;
 
@@ -39,16 +39,16 @@ namespace StarSim
 
         //public int Richtung; //ghkads
 
-        public Star(int id,float mass, float posX, float posY, float speedX, float speedY)
+        public Star(int id,float mass, double posX, double posY, double speedX, double speedY)
         {
-            ID = id;
+            Idx = id;
             Name = "";
             Enabled = true;
             UpdateMass(mass);
             PosX = posX;PosY = posY;
             SpeedX = speedX; SpeedY = speedY;
-            ColisionsRef = -1;
-            Reference = -1;
+            ColisionsRef = null;
+            Reference = null;
         }
         public void UpdateMass(float mass)
         {

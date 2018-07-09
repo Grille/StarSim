@@ -44,14 +44,8 @@
     <ApplicationIcon>Star.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Cloo">
-      <HintPath>lib\Cloo.dll</HintPath>
-    </Reference>
     <Reference Include="GGL">
       <HintPath>lib\GGL.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenCLlib">
-      <HintPath>lib\OpenCLlib.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -92,6 +86,7 @@
     <Compile Include="src\gui\SearchStarDialog.Designer.cs">
       <DependentUpon>SearchStarDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="src\Renderer.cs" />
     <Compile Include="src\Star.cs" />
     <Compile Include="src\StarSim.cs" />
     <Compile Include="src\TrackingData.cs" />
@@ -133,7 +128,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="src\Kernel.c" />
     <Content Include="Star.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

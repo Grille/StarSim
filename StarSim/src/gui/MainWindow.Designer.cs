@@ -57,13 +57,14 @@
             this.keyBindingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.jghfToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.highQualityToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // TimerDraw
             // 
-            this.TimerDraw.Interval = 2;
+            this.TimerDraw.Interval = 15;
             this.TimerDraw.Tick += new System.EventHandler(this.TimerDraw_Tick);
             // 
             // openFileDialog
@@ -177,7 +178,8 @@
             this.toolStripSeparator3,
             this.showMarkerToolStripMenuItem,
             this.showStarInfosToolStripMenuItem,
-            this.showSimInfosToolStripMenuItem});
+            this.showSimInfosToolStripMenuItem,
+            this.highQualityToolStripMenuItem});
             this.windowToolStripMenuItem.Name = "windowToolStripMenuItem";
             resources.ApplyResources(this.windowToolStripMenuItem, "windowToolStripMenuItem");
             // 
@@ -250,6 +252,15 @@
             this.jghfToolStripMenuItem.Name = "jghfToolStripMenuItem";
             resources.ApplyResources(this.jghfToolStripMenuItem, "jghfToolStripMenuItem");
             // 
+            // highQualityToolStripMenuItem
+            // 
+            this.highQualityToolStripMenuItem.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.highQualityToolStripMenuItem.Checked = true;
+            this.highQualityToolStripMenuItem.CheckOnClick = true;
+            this.highQualityToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.highQualityToolStripMenuItem.Name = "highQualityToolStripMenuItem";
+            resources.ApplyResources(this.highQualityToolStripMenuItem, "highQualityToolStripMenuItem");
+            // 
             // MainWindow
             // 
             resources.ApplyResources(this, "$this");
@@ -305,6 +316,7 @@
         private System.Windows.Forms.ToolStripMenuItem showSimInfosToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem followToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripMenuItem highQualityToolStripMenuItem;
     }
 }
 
