@@ -28,6 +28,18 @@ namespace StarSim
         private WF.Timer TimerLogik;
         private Star[] starArray;
 
+        public bool NewFrameCalculatet {
+            get
+            {
+                if (newFrameCalculatet) {
+                    newFrameCalculatet = false;
+                    return true;
+                }
+                else return false;
+
+            }
+        }
+        private bool newFrameCalculatet = false;
         private double massCenterX = 0, massCenterY = 0;
         private double speedCenterX = 0, speedCenterY = 0;
         private float totalMass = 0;
@@ -78,6 +90,7 @@ namespace StarSim
 
         public StarSim()
         { 
+            
             TimerLogik = new WF.Timer();
             TimerLogik.Interval = 25;
             TimerLogik.Tick += new System.EventHandler(this.simulationTick);
@@ -212,17 +225,20 @@ namespace StarSim
                     int tasks = 8;
                     float step = starArray.Length / (float)tasks;
 
-
+                    Console.WriteLine();
+                    Stopwatch[] stopwatch = new Stopwatch[tasks];
                     logikTasks = new Task[tasks];
                     for (int iT = 0; iT < tasks; iT++)
                     {
                         int index = iT;
-                        logikTasks[index] = new Task(() => simulateSelective((int)(step * index), (int)(step * (index + 1))));
+                        stopwatch[index] = new Stopwatch();
+                        logikTasks[index] = new Task(() => simulateSelective((int)(step * index), (int)(step * (index + 1)), stopwatch[index]));
                         logikTasks[index].Start();
                     }
                     for (int iT = 0; iT < tasks; iT++)
                     {
                         int index = iT; logikTasks[index].Wait();
+                        Console.WriteLine("" + index + " => " + stopwatch[index].ElapsedMilliseconds);
                     }
 
                     double newMassCenterX = 0, newMassCenterY = 0;
@@ -279,8 +295,10 @@ namespace StarSim
                     FrameCalculatet?.Invoke(this, new EventArgs());
 
                     SWTotal.Stop();
-                    usedTime = usedTime * 0.9f + SWTotal.ElapsedMilliseconds * 0.1f;
+                    //usedTime = usedTime * 0.9f + SWTotal.ElapsedMilliseconds * 0.1f;
+                    usedTime = SWTotal.ElapsedMilliseconds;
 
+                    newFrameCalculatet = true;
                     if (!running) break;
                 }
             } catch (Exception e)
@@ -327,9 +345,9 @@ namespace StarSim
                 else if (iS2.Name != "") iS1.Name = iS1.Name + iS2.Name;
             }
         }
-        private void simulateSelective(int start, int end)
+        private void simulateSelective(int start, int end, Stopwatch stopwatch)
         {
-            
+            stopwatch.Start();
             for (int iS1 = start; iS1 < end; iS1++)
             {
                 Star star1 = starArray[iS1];
@@ -371,6 +389,7 @@ namespace StarSim
 
                 }
             }
+            stopwatch.Stop();
             return;
         }
 

@@ -17,6 +17,7 @@ namespace StarSim
 {
     public unsafe partial class MainWindow : Form
     {
+        public bool ViewChange = true;
         StarSim simulation;
         private Renderer renderer;
         public Renderer Renderer
@@ -56,6 +57,7 @@ namespace StarSim
             renderer.CamPosX = renderer.CamPosY = 0;
             renderer.scaling = Math.Min(this.Width, this.Height) / (float)((size+ disSpeed*32) * 1.2f);
             simulation.Init(mode, size, stars, minMass, maxMass, disSpeed);
+            ViewChange = true;
         }
         void folow(object sender,EventArgs e)
         {
@@ -73,7 +75,11 @@ namespace StarSim
 
         private void TimerDraw_Tick(object sender, EventArgs e)
         {
-            this.Invalidate();
+            if (ViewChange | simulation.NewFrameCalculatet)
+            {
+                this.Invalidate();
+            }
+            ViewChange = false;
         }
         private void this_Paint(object sender, PaintEventArgs e)
         {
@@ -88,6 +94,7 @@ namespace StarSim
             {
                 renderer.CamPosX += ((e.X - lastMousePos.X)/ renderer.scaling);
                 renderer.CamPosY += ((e.Y - lastMousePos.Y) / renderer.scaling);
+                ViewChange = true;
             }
             lastMousePos = e.Location;
         }
@@ -104,6 +111,7 @@ namespace StarSim
 
             renderer.CamPosX = -posX + (Width / 2d * (e.X / (double)Width * 2d - 1)) / renderer.scaling;
             renderer.CamPosY = -posY + (Height / 2d * (e.Y / (double)Height * 2d - 1)) / renderer.scaling;
+            ViewChange = true;
         }
 
         private void MainWindow_MouseDoubleClick(object sender, MouseEventArgs e)
