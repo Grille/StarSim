@@ -59,6 +59,7 @@ namespace StarSim
         {
             window.Renderer.CamPosX = -stars[(int)dataGridView1.CurrentRow.Cells[0].Value].PosX;
             window.Renderer.CamPosY = -stars[(int)dataGridView1.CurrentRow.Cells[0].Value].PosY;
+            window.ViewChange = true;
         }
 
         private void buttonEdit_Click(object sender, EventArgs e)

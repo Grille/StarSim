@@ -158,6 +158,7 @@ namespace StarSim
                 }
             }
             simulation.SelectetStar = nearestStar;
+            ViewChange = true;
         }
 
         private void openFileDialog_FileOk(object sender, CancelEventArgs e)
@@ -241,7 +242,12 @@ namespace StarSim
                     else simulation.RefStar = simulation.SelectetStar;
                     break;
                 case Keys.E:
-                    if (simulation.SelectetStar != null) new EditStarDialog().Show(this, simulation.SelectetStar);
+                    if (simulation.SelectetStar != null)
+                    {
+                        if (simulation.SelectetStar.Editor == null)
+                            new EditStarDialog().Show(this, simulation.SelectetStar);
+                        else simulation.SelectetStar.Editor.Focus();
+                    }
                     break;
                 case Keys.M:
                     if (simulation.SelectetStar != null) simulation.SelectetStar.Marked = !simulation.SelectetStar.Marked;
@@ -256,7 +262,7 @@ namespace StarSim
                     if (simulation.SimSpeed > 1) simulation.SimSpeed /= 2;
                     break;
             }
-            
+            ViewChange = true;
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)

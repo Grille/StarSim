@@ -22,7 +22,7 @@ namespace StarSim
         public bool Enabled;
         public bool Marked;
         public bool Tracked;
-        public bool Editing;
+        public EditStarDialog Editor;
         public Star Reference;
         public Star ColisionsRef;
         public float Mass;

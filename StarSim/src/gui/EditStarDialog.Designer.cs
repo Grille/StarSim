@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.label11 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.textBoxPosX = new System.Windows.Forms.TextBox();
@@ -48,6 +49,7 @@
             this.label10 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // label11
@@ -102,15 +104,12 @@
             // 
             this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
-            "Absolute",
-            "Center",
-            "Relative"});
             this.comboBox1.Location = new System.Drawing.Point(98, 116);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(89, 21);
             this.comboBox1.TabIndex = 28;
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.comboBox1.MouseEnter += new System.EventHandler(this.comboBox1_MouseEnter);
             // 
             // label2
             // 
@@ -241,6 +240,12 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.buttonApply_Click);
             // 
+            // timer1
+            // 
+            this.timer1.Enabled = true;
+            this.timer1.Interval = 1000;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
             // EditStarDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -300,5 +305,6 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Timer timer1;
     }
 }
