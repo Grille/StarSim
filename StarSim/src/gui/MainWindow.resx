@@ -136,48 +136,48 @@
   <data name="fileToolStripMenuItem.Text" xml:space="preserve">
     <value>File</value>
   </data>
+  <data name="toolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>194, 6</value>
+  </data>
+  <data name="followToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
+  </data>
+  <data name="followToolStripMenuItem.Text" xml:space="preserve">
+    <value>Follow</value>
+  </data>
+  <data name="toolStripSeparator4.Size" type="System.Drawing.Size, System.Drawing">
+    <value>177, 6</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="editToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Alt+E</value>
+  </data>
+  <data name="editToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
+  </data>
+  <data name="editToolStripMenuItem.Text" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="selectetStarToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>197, 22</value>
+  </data>
+  <data name="selectetStarToolStripMenuItem.Text" xml:space="preserve">
+    <value>Selectet Star</value>
+  </data>
+  <data name="searchStarToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Strg+Alt+S</value>
+  </data>
+  <data name="searchStarToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>197, 22</value>
+  </data>
+  <data name="searchStarToolStripMenuItem.Text" xml:space="preserve">
+    <value>Search Star</value>
+  </data>
   <data name="simulationToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>76, 20</value>
   </data>
   <data name="simulationToolStripMenuItem.Text" xml:space="preserve">
     <value>Simulation</value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="fullscrennToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>F11</value>
-  </data>
-  <data name="fullscrennToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
-  </data>
-  <data name="fullscrennToolStripMenuItem.Text" xml:space="preserve">
-    <value>Fullscreen</value>
-  </data>
-  <data name="toolStripSeparator3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>177, 6</value>
-  </data>
-  <data name="showMarkerToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
-  </data>
-  <data name="showMarkerToolStripMenuItem.Text" xml:space="preserve">
-    <value>Show Marker</value>
-  </data>
-  <data name="showStarInfosToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
-  </data>
-  <data name="showStarInfosToolStripMenuItem.Text" xml:space="preserve">
-    <value>Show Star Infos</value>
-  </data>
-  <data name="showSimInfosToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
-  </data>
-  <data name="showSimInfosToolStripMenuItem.Text" xml:space="preserve">
-    <value>Show Sim Infos</value>
-  </data>
-  <data name="highQualityToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
-  </data>
-  <data name="highQualityToolStripMenuItem.Text" xml:space="preserve">
-    <value>High Quality</value>
   </data>
   <data name="windowToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>57, 20</value>
@@ -255,41 +255,41 @@
   <data name="exitToolStripMenuItem.Text" xml:space="preserve">
     <value>Quit</value>
   </data>
-  <data name="toolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>194, 6</value>
+  <data name="fullscrennToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>F11</value>
   </data>
-  <data name="selectetStarToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>197, 22</value>
+  <data name="fullscrennToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
   </data>
-  <data name="selectetStarToolStripMenuItem.Text" xml:space="preserve">
-    <value>Selectet Star</value>
+  <data name="fullscrennToolStripMenuItem.Text" xml:space="preserve">
+    <value>Fullscreen</value>
   </data>
-  <data name="followToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>130, 22</value>
+  <data name="toolStripSeparator3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>177, 6</value>
   </data>
-  <data name="followToolStripMenuItem.Text" xml:space="preserve">
-    <value>Follow</value>
+  <data name="showMarkerToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
   </data>
-  <data name="toolStripSeparator4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>127, 6</value>
+  <data name="showMarkerToolStripMenuItem.Text" xml:space="preserve">
+    <value>Show Marker</value>
   </data>
-  <data name="editToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>Alt+E</value>
+  <data name="showStarInfosToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
   </data>
-  <data name="editToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>130, 22</value>
+  <data name="showStarInfosToolStripMenuItem.Text" xml:space="preserve">
+    <value>Show Star Infos</value>
   </data>
-  <data name="editToolStripMenuItem.Text" xml:space="preserve">
-    <value>Edit</value>
+  <data name="showSimInfosToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
   </data>
-  <data name="searchStarToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>Strg+Alt+S</value>
+  <data name="showSimInfosToolStripMenuItem.Text" xml:space="preserve">
+    <value>Show Sim Infos</value>
   </data>
-  <data name="searchStarToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>197, 22</value>
+  <data name="highQualityToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
   </data>
-  <data name="searchStarToolStripMenuItem.Text" xml:space="preserve">
-    <value>Search Star</value>
+  <data name="highQualityToolStripMenuItem.Text" xml:space="preserve">
+    <value>High Quality</value>
   </data>
   <data name="keyBindingsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>180, 22</value>
@@ -309,10 +309,10 @@
   <data name="&gt;&gt;contextMenuStrip1.Type" xml:space="preserve">
     <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="jghfToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="NewStarItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>121, 22</value>
   </data>
-  <data name="jghfToolStripMenuItem.Text" xml:space="preserve">
+  <data name="NewStarItem.Text" xml:space="preserve">
     <value>Add New Star</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -476,6 +476,12 @@
   <data name="&gt;&gt;showSimInfosToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;highQualityToolStripMenuItem.Name" xml:space="preserve">
+    <value>highQualityToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;highQualityToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;helpToolStripMenuItem.Name" xml:space="preserve">
     <value>helpToolStripMenuItem</value>
   </data>
@@ -488,16 +494,10 @@
   <data name="&gt;&gt;keyBindingsToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;jghfToolStripMenuItem.Name" xml:space="preserve">
-    <value>jghfToolStripMenuItem</value>
+  <data name="&gt;&gt;NewStarItem.Name" xml:space="preserve">
+    <value>NewStarItem</value>
   </data>
-  <data name="&gt;&gt;jghfToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;highQualityToolStripMenuItem.Name" xml:space="preserve">
-    <value>highQualityToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;highQualityToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;NewStarItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">

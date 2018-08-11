@@ -53,11 +53,11 @@
             this.showMarkerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showStarInfosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showSimInfosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.highQualityToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.keyBindingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.jghfToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.highQualityToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.NewStarItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -153,6 +153,7 @@
             // 
             this.followToolStripMenuItem.Name = "followToolStripMenuItem";
             resources.ApplyResources(this.followToolStripMenuItem, "followToolStripMenuItem");
+            this.followToolStripMenuItem.Click += new System.EventHandler(this.followToolStripMenuItem_Click);
             // 
             // toolStripSeparator4
             // 
@@ -163,6 +164,7 @@
             // 
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             resources.ApplyResources(this.editToolStripMenuItem, "editToolStripMenuItem");
+            this.editToolStripMenuItem.Click += new System.EventHandler(this.editToolStripMenuItem_Click);
             // 
             // searchStarToolStripMenuItem
             // 
@@ -226,6 +228,15 @@
             resources.ApplyResources(this.showSimInfosToolStripMenuItem, "showSimInfosToolStripMenuItem");
             this.showSimInfosToolStripMenuItem.Click += new System.EventHandler(this.showSimInfosToolStripMenuItem_Click);
             // 
+            // highQualityToolStripMenuItem
+            // 
+            this.highQualityToolStripMenuItem.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.highQualityToolStripMenuItem.Checked = true;
+            this.highQualityToolStripMenuItem.CheckOnClick = true;
+            this.highQualityToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.highQualityToolStripMenuItem.Name = "highQualityToolStripMenuItem";
+            resources.ApplyResources(this.highQualityToolStripMenuItem, "highQualityToolStripMenuItem");
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -242,24 +253,17 @@
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.jghfToolStripMenuItem});
+            this.NewStarItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.ShowImageMargin = false;
             resources.ApplyResources(this.contextMenuStrip1, "contextMenuStrip1");
+            this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             // 
-            // jghfToolStripMenuItem
+            // NewStarItem
             // 
-            this.jghfToolStripMenuItem.Name = "jghfToolStripMenuItem";
-            resources.ApplyResources(this.jghfToolStripMenuItem, "jghfToolStripMenuItem");
-            // 
-            // highQualityToolStripMenuItem
-            // 
-            this.highQualityToolStripMenuItem.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.highQualityToolStripMenuItem.Checked = true;
-            this.highQualityToolStripMenuItem.CheckOnClick = true;
-            this.highQualityToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.highQualityToolStripMenuItem.Name = "highQualityToolStripMenuItem";
-            resources.ApplyResources(this.highQualityToolStripMenuItem, "highQualityToolStripMenuItem");
+            this.NewStarItem.Name = "NewStarItem";
+            resources.ApplyResources(this.NewStarItem, "NewStarItem");
+            this.NewStarItem.Click += new System.EventHandler(this.jghfToolStripMenuItem_Click);
             // 
             // MainWindow
             // 
@@ -303,7 +307,7 @@
         private System.Windows.Forms.ToolStripMenuItem windowToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fullscrennToolStripMenuItem;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem jghfToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem NewStarItem;
         private System.Windows.Forms.ToolStripMenuItem keyBindingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem simulationToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem selectetStarToolStripMenuItem;

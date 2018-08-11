@@ -18,6 +18,7 @@ namespace StarSim
                 return selectetIndex;
             }
         }
+        
         private Star editStar;
         private MainWindow window;
         private bool readEnabled;
@@ -42,6 +43,7 @@ namespace StarSim
             editStar.Editor = this;
             textBoxName.Text = star.Name;
             textBoxMass.Text = "" + star.Mass;
+            textBoxDensity.Text = "" + star.Density;
 
             updateComboBox();
             if (Program.Simulation.RefStar != null && editStar != Program.Simulation.RefStar) comboBox1.SelectedIndex = 3;
@@ -91,7 +93,10 @@ namespace StarSim
 
         private void buttonApply_Click(object sender, EventArgs e)
         {
+            updateComboBox();
+
             editStar.Name = textBoxName.Text;
+            editStar.Density = (Convert.ToSingle(textBoxDensity.Text));
             editStar.UpdateMass(Convert.ToSingle(textBoxMass.Text));
 
             readTextBox();
@@ -111,6 +116,7 @@ namespace StarSim
         private void EditStarDialog_FormClosed(object sender, FormClosedEventArgs e)
         {
             if (editStar != null) editStar.Editor = null;
+            if (editStar.Mass == 0) editStar.Enabled = false;
             Program.Simulation.Running = oldTime;
             window.ChildNumber--;
             window.ViewChange = true;
@@ -202,7 +208,7 @@ namespace StarSim
         private void timer1_Tick(object sender, EventArgs e)
         {
             //UpdateGui();
-            updateComboBox();
+            //updateComboBox();
         }
     }
 }

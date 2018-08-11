@@ -183,7 +183,7 @@ namespace StarSim
                     Star star = starArray[iS];
                     if (!star.Enabled) continue;
 
-                    float r = star.SizeR;
+                    float r = star.Radius;
 
                     byte RColor = (byte)star.Mass;
                     float posX = (float)(star.PosX - r + CamPosX);
@@ -192,7 +192,7 @@ namespace StarSim
                     posX *= (float)scaling; posY *= (float)scaling; r *= (float)scaling;
                     posX += control.Width / 2f; posY += control.Height / 2f;
 
-                    if (r < 0.1) r = 0.1f;
+                    if (r < 0.05) r = 0.05f;
                     if (star.Editor != null)
                     {
                         float starPosX, starPosY, goalPosX, goalPosY;

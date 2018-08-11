@@ -17,6 +17,7 @@ namespace StarSim
 {
     public unsafe partial class MainWindow : Form
     {
+        private MouseEventArgs lastRightClick = new MouseEventArgs(MouseButtons.None,0,0,0,0);
         public bool ViewChange = true;
         StarSim simulation;
         private Renderer renderer;
@@ -296,6 +297,7 @@ namespace StarSim
         }
         private void MainWindow_MouseUp(object sender, MouseEventArgs e)
         {
+            if (e.Button == MouseButtons.Right)lastRightClick = e;
         }
 
         private void searchStarToolStripMenuItem_Click(object sender, EventArgs e)
@@ -337,6 +339,39 @@ R:  Set selcetet star as physics reference
             {
                 FormBorderStyle = FormBorderStyle.Sizable;
                 WindowState = FormWindowState.Normal;
+            }
+        }
+
+        private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
+        {
+            
+        }
+
+        private void jghfToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            float posX = (float)(-renderer.CamPosX + (lastRightClick.X - Width / 2) / renderer.scaling);
+            float posY = (float)(-renderer.CamPosY + (lastRightClick.Y - Height / 2) / renderer.scaling);
+            Program.Simulation.AddStar(1, posX, posY, 0, 0);
+
+            ViewChange = true;
+        }
+
+        private void followToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+                    if (simulation.FocusStar == simulation.SelectetStar) simulation.FocusStar = null;
+            else simulation.FocusStar = simulation.SelectetStar;
+
+        }
+
+        private void editToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+                    if (simulation.SelectetStar != null)
+            {
+                if (simulation.SelectetStar.Editor == null)
+                    new EditStarDialog().Show(this, simulation.SelectetStar);
+                else simulation.SelectetStar.Editor.Focus();
             }
         }
     }

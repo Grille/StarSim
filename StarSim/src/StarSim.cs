@@ -43,7 +43,7 @@ namespace StarSim
         private double massCenterX = 0, massCenterY = 0;
         private double speedCenterX = 0, speedCenterY = 0;
         private float totalMass = 0;
-        private int starsNumber = 0;
+        private int starCount = 0;
 
         private bool running = false;
 
@@ -73,7 +73,7 @@ namespace StarSim
         }
         public int StarCount
         {
-            get { return starsNumber; }
+            get { return starCount; }
         }
         public bool Running
         {
@@ -177,10 +177,17 @@ namespace StarSim
             }
             //CollapseStarArray();
         }
-        public void CollapseStarArray()
+        public void AddStar(float mass, double posX, double posY, double speedX, double speedY)
+        {
+            collapseStarArray(starCount + 1);
+            starArray[starCount] = new Star(starCount, mass, posX, posY, speedX, speedY);
+            starCount++;
+        }
+
+        private void collapseStarArray(int lenght)
         {
             int iDst = 0;
-            Star[] newStars = new Star[starsNumber];
+            Star[] newStars = new Star[lenght];
             for (int iSrc = 0; iSrc < starArray.Length; iSrc++)
             {
                 if (starArray[iSrc].Enabled)
@@ -197,6 +204,10 @@ namespace StarSim
                 }
             }
             starArray = newStars;
+        }
+        public void CollapseStarArray()
+        {
+            collapseStarArray(starCount);
         }
 
         private void simulationTick(object sender, EventArgs e)
@@ -289,7 +300,7 @@ namespace StarSim
                     }
 
                     //if (starsNumber != newEnabeldStarNumber)
-                    starsNumber = newEnabeldStarNumber;
+                    starCount = newEnabeldStarNumber;
                     if (starArray.Length - newEnabeldStarNumber > 100) CollapseStarArray();
 
                     FrameCalculatet?.Invoke(this, new EventArgs());
@@ -307,42 +318,40 @@ namespace StarSim
                 MessageBox.Show("Error in simulation task:\n" + e.ToString(), "ERROR", MessageBoxButtons.OK,MessageBoxIcon.Error);
             }
         }
-        private void colide(Star iS1)
+        private void colide(Star star1)
         {
-            Star iS2;
-            if (((iS2 = iS1.ColisionsRef) != null) && iS2.Enabled)
+            Star star2;
+            if (((star2 = star1.ColisionsRef) != null) && star2.Enabled)
             {
-                iS1.ColisionsRef = null;
+                star1.ColisionsRef = null;
                 //iS2.ColisionsRef = null;
                 /*
                 Console.WriteLine("colide " + iS1 + " width " + iS2);
                 Console.WriteLine(starArray[iS1].Enabled);
                 Console.WriteLine(starArray[iS2].Enabled);
                 */
-                if (iS2.ColisionsRef != null) colide(iS2);
+                if (star2.ColisionsRef != null) colide(star2);
 
-                double massPS1 = (float)iS1.AbsMass / (iS1.AbsMass + iS2.AbsMass);
-                double massPS2 = (float)iS2.AbsMass / (iS1.AbsMass + iS2.AbsMass);
+                double massPS1 = (float)star1.AbsMass / (star1.AbsMass + star2.AbsMass);
+                double massPS2 = (float)star2.AbsMass / (star1.AbsMass + star2.AbsMass);
 
                 
-                if (iS2 == SelectetStar) SelectetStar = iS1;
-                if (iS2 == FocusStar) FocusStar = iS1;
-                if (iS2 == RefStar) RefStar = iS1;
-                
-
-                iS1.Marked |= iS2.Marked;
+                if (star2 == SelectetStar) SelectetStar = star1;
+                if (star2 == FocusStar) FocusStar = star1;
+                if (star2 == RefStar) RefStar = star1;
+                star1.Marked |= star2.Marked;
 
 
-                iS1.UpdateMass(iS1.Mass + iS2.Mass);
-                iS1.PosX = (iS1.PosX * massPS1 + iS2.PosX * massPS2);
-                iS1.PosY = (iS1.PosY * massPS1 + iS2.PosY * massPS2);
-                iS1.SpeedX = (iS1.SpeedX * massPS1 + iS2.SpeedX * massPS2);
-                iS1.SpeedY = (iS1.SpeedY * massPS1 + iS2.SpeedY * massPS2);
+                star1.UpdateMass(star1.Mass + star2.Mass);
+                star1.PosX = (star1.PosX * massPS1 + star2.PosX * massPS2);
+                star1.PosY = (star1.PosY * massPS1 + star2.PosY * massPS2);
+                star1.SpeedX = (star1.SpeedX * massPS1 + star2.SpeedX * massPS2);
+                star1.SpeedY = (star1.SpeedY * massPS1 + star2.SpeedY * massPS2);
 
-                iS2.Enabled = false;
+                star2.Enabled = false;
 
-                if (iS1.Name == "") iS1.Name = iS2.Name;
-                else if (iS2.Name != "") iS1.Name = iS1.Name + iS2.Name;
+                if (star1.Name == "") star1.Name = star2.Name;
+                else if (star2.Name != "") star1.Name = star1.Name + star2.Name;
             }
         }
         private void simulateSelective(int start, int end, Stopwatch stopwatch)
@@ -374,7 +383,7 @@ namespace StarSim
                             double a1 = Fg / star1.Mass;
                             double a2 = Fg / star2.Mass;
                             
-                            if (dist < (star1.SizeR) + (star2.SizeR))
+                            if (dist < (star1.Radius) + (star2.Radius))
                                 star1.ColisionsRef = star2;
 
                             

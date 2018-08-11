@@ -17,6 +17,7 @@ namespace StarSim
 
     public class Star
     {
+        public float Density;
         public int Idx;
         public string Name;
         public bool Enabled;
@@ -28,7 +29,7 @@ namespace StarSim
         public float Mass;
         public float AbsMass;
 
-        public float SizeR;
+        public float Radius;
 
         public float[] PosTracking;
 
@@ -44,6 +45,7 @@ namespace StarSim
             Idx = id;
             Name = "";
             Enabled = true;
+            Density = 1;
             UpdateMass(mass);
             PosX = posX;PosY = posY;
             SpeedX = speedX; SpeedY = speedY;
@@ -54,7 +56,7 @@ namespace StarSim
         {
             Mass = mass;
             AbsMass = Math.Abs(mass);
-            SizeR = (float)(Math.Sqrt(Math.Abs(mass)) / Math.PI) * 10;
+            Radius = (float)(Math.Sqrt((AbsMass / Density)) / Math.PI)*10;
         }
     }
 }
