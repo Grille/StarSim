@@ -224,98 +224,91 @@ namespace StarSim
         }
         private void simulate()
         {
-            try
+            for (int j = 0; j < SimSpeed; j++)
             {
-                for (int j = 0; j < SimSpeed; j++)
+                Stopwatch SWTotal = new Stopwatch();
+                SWTotal.Start();
+
+                int newEnabeldStarNumber = 0;
+
+                int tasks = 8;
+                float step = starArray.Length / (float)tasks;
+
+                Console.WriteLine();
+                Stopwatch[] stopwatch = new Stopwatch[tasks];
+                logikTasks = new Task[tasks];
+                for (int iT = 0; iT < tasks; iT++)
                 {
-                    Stopwatch SWTotal = new Stopwatch();
-                    SWTotal.Start();
+                    int index = iT;
+                    stopwatch[index] = new Stopwatch();
+                    logikTasks[index] = new Task(() => simulateSelective((int)(step * index), (int)(step * (index + 1)), stopwatch[index]));
+                    logikTasks[index].Start();
+                }
+                for (int iT = 0; iT < tasks; iT++)
+                {
+                    int index = iT; logikTasks[index].Wait();
+                    Console.WriteLine("" + index + " => " + stopwatch[index].ElapsedMilliseconds);
+                }
 
-                    int newEnabeldStarNumber = 0;
-
-                    int tasks = 8;
-                    float step = starArray.Length / (float)tasks;
-
-                    Console.WriteLine();
-                    Stopwatch[] stopwatch = new Stopwatch[tasks];
-                    logikTasks = new Task[tasks];
-                    for (int iT = 0; iT < tasks; iT++)
-                    {
-                        int index = iT;
-                        stopwatch[index] = new Stopwatch();
-                        logikTasks[index] = new Task(() => simulateSelective((int)(step * index), (int)(step * (index + 1)), stopwatch[index]));
-                        logikTasks[index].Start();
-                    }
-                    for (int iT = 0; iT < tasks; iT++)
-                    {
-                        int index = iT; logikTasks[index].Wait();
-                        Console.WriteLine("" + index + " => " + stopwatch[index].ElapsedMilliseconds);
-                    }
-
-                    double newMassCenterX = 0, newMassCenterY = 0;
-                    double newSpeedCenterX = 0, newSpeedCenterY = 0;
-                    float newTotalMass = 0;
-                    for (int iS1 = 0; iS1 < starArray.Length; iS1++)
-                    {
-                        colide(starArray[iS1]);
-                    }
-                    for (int iS1 = 0; iS1 < starArray.Length; iS1++)
-                    {
-                        Star star1 = starArray[iS1];
-                        if (star1.Enabled == false) continue;
-                        else
-                        {
-                            newEnabeldStarNumber++;
-
-                            newMassCenterX += star1.PosX * star1.AbsMass;
-                            newMassCenterY += star1.PosY * star1.AbsMass;
-                            newSpeedCenterX += star1.SpeedX * star1.AbsMass;
-                            newSpeedCenterY += star1.SpeedY * star1.AbsMass;
-
-                            newTotalMass += star1.AbsMass;
-                            //fix speed;
-                            /*
-                            double goalSpeed = 2;
-                            double fullSpeed = Math.Abs(star1.SpeedX) + Math.Abs(star1.SpeedY);
-                            double factor = (goalSpeed / fullSpeed);
-                            star1.SpeedX *= factor;
-                            star1.SpeedY *= factor;
-                            */
-                            star1.PosX += star1.SpeedX *= 1.000f;
-                            star1.PosY += star1.SpeedY *= 1.000f;
-
-                        }
-                    }
-                    totalMass = newTotalMass;
-                    if (totalMass != 0)
-                    {
-                        massCenterX = newMassCenterX / newTotalMass; massCenterY = newMassCenterY / newTotalMass;
-                        speedCenterX = newSpeedCenterX / newTotalMass; speedCenterY = newSpeedCenterY / newTotalMass;
-                    }
+                double newMassCenterX = 0, newMassCenterY = 0;
+                double newSpeedCenterX = 0, newSpeedCenterY = 0;
+                float newTotalMass = 0;
+                for (int iS1 = 0; iS1 < starArray.Length; iS1++)
+                {
+                    colide(starArray[iS1]);
+                }
+                for (int iS1 = 0; iS1 < starArray.Length; iS1++)
+                {
+                    Star star1 = starArray[iS1];
+                    if (star1.Enabled == false) continue;
                     else
                     {
-                        massCenterX = newMassCenterX; massCenterY = newMassCenterY;
-                        speedCenterX = newSpeedCenterX; speedCenterY = newSpeedCenterY;
+                        newEnabeldStarNumber++;
+
+                        newMassCenterX += star1.PosX * star1.AbsMass;
+                        newMassCenterY += star1.PosY * star1.AbsMass;
+                        newSpeedCenterX += star1.SpeedX * star1.AbsMass;
+                        newSpeedCenterY += star1.SpeedY * star1.AbsMass;
+
+                        newTotalMass += star1.AbsMass;
+                        //fix speed;
+                        /*
+                        double goalSpeed = 2;
+                        double fullSpeed = Math.Abs(star1.SpeedX) + Math.Abs(star1.SpeedY);
+                        double factor = (goalSpeed / fullSpeed);
+                        star1.SpeedX *= factor;
+                        star1.SpeedY *= factor;
+                        */
+                        star1.PosX += star1.SpeedX *= 1.000f;
+                        star1.PosY += star1.SpeedY *= 1.000f;
 
                     }
-
-                    //if (starsNumber != newEnabeldStarNumber)
-                    starCount = newEnabeldStarNumber;
-                    if (starArray.Length - newEnabeldStarNumber > 100) CollapseStarArray();
-
-                    FrameCalculatet?.Invoke(this, new EventArgs());
-
-                    SWTotal.Stop();
-                    //usedTime = usedTime * 0.9f + SWTotal.ElapsedMilliseconds * 0.1f;
-                    usedTime = SWTotal.ElapsedMilliseconds;
-
-                    newFrameCalculatet = true;
-                    if (!running) break;
                 }
-            } catch (Exception e)
-            {
-                Stop();
-                MessageBox.Show("Error in simulation task:\n" + e.ToString(), "ERROR", MessageBoxButtons.OK,MessageBoxIcon.Error);
+                totalMass = newTotalMass;
+                if (totalMass != 0)
+                {
+                    massCenterX = newMassCenterX / newTotalMass; massCenterY = newMassCenterY / newTotalMass;
+                    speedCenterX = newSpeedCenterX / newTotalMass; speedCenterY = newSpeedCenterY / newTotalMass;
+                }
+                else
+                {
+                    massCenterX = newMassCenterX; massCenterY = newMassCenterY;
+                    speedCenterX = newSpeedCenterX; speedCenterY = newSpeedCenterY;
+
+                }
+
+                //if (starsNumber != newEnabeldStarNumber)
+                starCount = newEnabeldStarNumber;
+                if (starArray.Length - newEnabeldStarNumber > 100) CollapseStarArray();
+
+                FrameCalculatet?.Invoke(this, new EventArgs());
+
+                SWTotal.Stop();
+                //usedTime = usedTime * 0.9f + SWTotal.ElapsedMilliseconds * 0.1f;
+                usedTime = SWTotal.ElapsedMilliseconds;
+
+                newFrameCalculatet = true;
+                if (!running) break;
             }
         }
         private void colide(Star star1)

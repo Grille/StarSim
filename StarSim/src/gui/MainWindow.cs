@@ -333,6 +333,8 @@ R:  Set selcetet star as physics reference
             if (FormBorderStyle != FormBorderStyle.None)
             {
                 FormBorderStyle = FormBorderStyle.None;
+                if (WindowState == FormWindowState.Maximized)
+                    WindowState = FormWindowState.Normal;
                 WindowState = FormWindowState.Maximized;
             }
             else
