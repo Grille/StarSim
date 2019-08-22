@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace StarSim
@@ -38,7 +32,6 @@ namespace StarSim
             Program.Simulation.Stop();
             Program.Simulation.Wait();
 
-            //UpdateStar(star);
             editStar = star;
             editStar.Editor = this;
             textBoxName.Text = star.Name;
@@ -49,7 +42,6 @@ namespace StarSim
             if (Program.Simulation.RefStar != null && editStar != Program.Simulation.RefStar) comboBox1.SelectedIndex = 3;
             else comboBox1.SelectedIndex = 2;
 
-            //UpdateGui();
             readEnabled = true;
         }
         public void UpdateGui()
@@ -83,7 +75,6 @@ namespace StarSim
                     break;
             }
             Refresh();
-            //textBox_TextChanged(null, null);
         }
 
         private void buttonClose_Click(object sender, EventArgs e)
@@ -110,7 +101,6 @@ namespace StarSim
             window.ViewChange = true;
 
             UpdateGui();
-            //this.Close();
         }
 
         private void EditStarDialog_FormClosed(object sender, FormClosedEventArgs e)
@@ -180,9 +170,6 @@ namespace StarSim
             }
             Console.WriteLine("posX 2--> " + posX);
             Console.WriteLine("posY 2--> " + posY);
-            //posX = 0; posY = 0; speedX = 0; speedY = 0;
-
-
         }
 
         private void updateComboBox()
@@ -203,12 +190,6 @@ namespace StarSim
         private void comboBox1_MouseEnter(object sender, EventArgs e)
         {
             updateComboBox();
-        }
-
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            //UpdateGui();
-            //updateComboBox();
         }
     }
 }

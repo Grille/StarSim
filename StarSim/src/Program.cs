@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Runtime.InteropServices; // Needed for DllImport
-using System.Diagnostics; // Used for Debug.WriteLine
 
 namespace StarSim
 {
@@ -14,7 +9,6 @@ namespace StarSim
     {
         public static StarSim Simulation;
         /// <summary>
-        /// Der Haupteinstiegspunkt für die Anwendung.
         /// </summary>
         [STAThread]
         static void Main()

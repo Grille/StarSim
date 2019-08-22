@@ -1,18 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using WF = System.Windows.Forms;
-using GGL.IO;
-using System.Globalization;
-using GGL.Graphic;
 
 namespace StarSim
 {

@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace StarSim
@@ -17,8 +11,8 @@ namespace StarSim
         public SearchStarDialog()
         {
             InitializeComponent();
-            //dataGridView1.CurrentCell.Value = "xfdgch";
         }
+
         public void Show(MainWindow window, Star[] stars)
         {
             base.Show(window);
@@ -32,7 +26,6 @@ namespace StarSim
         public void SetStars(Star[] stars)
         {
             this.stars = stars;
-            //window.Wait();
             if (stars == null)
             {
                 buttonGoTo.Enabled = false;

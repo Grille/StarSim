@@ -1,48 +1,34 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using GGL.IO;
-using System.Globalization;
-using GGL.Graphic;
 
 namespace StarSim
 {
     public unsafe partial class MainWindow : Form
     {
-        private MouseEventArgs lastRightClick = new MouseEventArgs(MouseButtons.None,0,0,0,0);
+        private MouseEventArgs lastRightClick = new MouseEventArgs(MouseButtons.None, 0, 0, 0, 0);
         public bool ViewChange = true;
         StarSim simulation;
-        private Renderer renderer;
-        public Renderer Renderer
-        {
-            get { return renderer; }
-        }
+
+        public Renderer Renderer { get; }
         public int ChildNumber = 0;
 
         public SearchStarDialog searchStarDialog = new SearchStarDialog();
 
-        Point lastMousePos = new Point(0,0);
-
-        int usedTime;
+        Point lastMousePos = new Point(0, 0);
 
         public MainWindow()
         {
             InitializeComponent();
             MouseWheel += new MouseEventHandler(Window_MouseWheel);
 
-            SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer,true);
+            SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
 
             DoubleBuffered = true;
             simulation = Program.Simulation;
-            renderer = new Renderer(simulation);
+            Renderer = new Renderer(simulation);
             simulation.FrameCalculatet += new EventHandler(folow);
             simulation.Start();
             TimerDraw.Start();
@@ -55,22 +41,22 @@ namespace StarSim
         public void Init(int mode, int size, int stars, float minMass, float maxMass, float disSpeed)
         {
             simulation.SelectetStar = null; simulation.FocusStar = null; simulation.RefStar = null;
-            renderer.CamPosX = renderer.CamPosY = 0;
-            renderer.scaling = Math.Min(this.Width, this.Height) / (float)((size+ disSpeed*32) * 1.2f);
+            Renderer.CamPosX = Renderer.CamPosY = 0;
+            Renderer.scaling = Math.Min(this.Width, this.Height) / (float)((size + disSpeed * 32) * 1.2f);
             simulation.Init(mode, size, stars, minMass, maxMass, disSpeed);
             ViewChange = true;
         }
-        void folow(object sender,EventArgs e)
+        void folow(object sender, EventArgs e)
         {
             if (simulation.FocusStar != null && simulation.FocusStar.Enabled == true)
             {
-                renderer.CamPosX -= simulation.FocusStar.SpeedX;
-                renderer.CamPosY -= simulation.FocusStar.SpeedY;
+                Renderer.CamPosX -= simulation.FocusStar.SpeedX;
+                Renderer.CamPosY -= simulation.FocusStar.SpeedY;
             }
             else
             {
-                renderer.CamPosX -= simulation.SpeedCenterX;
-                renderer.CamPosY -= simulation.SpeedCenterY;
+                Renderer.CamPosX -= simulation.SpeedCenterX;
+                Renderer.CamPosY -= simulation.SpeedCenterY;
             }
         }
 
@@ -84,8 +70,8 @@ namespace StarSim
         }
         private void this_Paint(object sender, PaintEventArgs e)
         {
-            renderer.HighRenderQuality = highQualityToolStripMenuItem.Checked;
-            renderer.Render(sender, e.Graphics);
+            Renderer.HighRenderQuality = highQualityToolStripMenuItem.Checked;
+            Renderer.Render(sender, e.Graphics);
         }
 
 
@@ -93,25 +79,23 @@ namespace StarSim
         {
             if (e.Button == MouseButtons.Left)
             {
-                renderer.CamPosX += ((e.X - lastMousePos.X)/ renderer.scaling);
-                renderer.CamPosY += ((e.Y - lastMousePos.Y) / renderer.scaling);
+                Renderer.CamPosX += ((e.X - lastMousePos.X) / Renderer.scaling);
+                Renderer.CamPosY += ((e.Y - lastMousePos.Y) / Renderer.scaling);
                 ViewChange = true;
             }
             lastMousePos = e.Location;
         }
         private void Window_MouseWheel(object sender, MouseEventArgs e)
         {
-  
-            //get worldPos
-            double posX = -renderer.CamPosX + (e.X - Width / 2d) / renderer.scaling;
-            double posY = -renderer.CamPosY + (e.Y - Height / 2d) / renderer.scaling;
+            double posX = -Renderer.CamPosX + (e.X - Width / 2d) / Renderer.scaling;
+            double posY = -Renderer.CamPosY + (e.Y - Height / 2d) / Renderer.scaling;
 
-            renderer.scaling += (e.Delta * renderer.scaling) / 500d;
-            if (renderer.scaling < 0.00001) renderer.scaling = 0.00001f;
-            else if (renderer.scaling > 10) renderer.scaling = 10;
+            Renderer.scaling += (e.Delta * Renderer.scaling) / 500d;
+            if (Renderer.scaling < 0.00001) Renderer.scaling = 0.00001f;
+            else if (Renderer.scaling > 10) Renderer.scaling = 10;
 
-            renderer.CamPosX = -posX + (Width / 2d * (e.X / (double)Width * 2d - 1)) / renderer.scaling;
-            renderer.CamPosY = -posY + (Height / 2d * (e.Y / (double)Height * 2d - 1)) / renderer.scaling;
+            Renderer.CamPosX = -posX + (Width / 2d * (e.X / (double)Width * 2d - 1)) / Renderer.scaling;
+            Renderer.CamPosY = -posY + (Height / 2d * (e.Y / (double)Height * 2d - 1)) / Renderer.scaling;
             ViewChange = true;
         }
 
@@ -127,8 +111,8 @@ namespace StarSim
         }
         private void selectStar(MouseEventArgs e)
         {
-            float posX = (float)(-renderer.CamPosX + (e.X - Width / 2)/ renderer.scaling);
-            float posY = (float)(-renderer.CamPosY + (e.Y - Height / 2)/ renderer.scaling);
+            float posX = (float)(-Renderer.CamPosX + (e.X - Width / 2) / Renderer.scaling);
+            float posY = (float)(-Renderer.CamPosY + (e.Y - Height / 2) / Renderer.scaling);
             Star nearestStar = null;
 
             bool firstStar = true;
@@ -137,7 +121,7 @@ namespace StarSim
             for (int iS = 0; iS < simulation.Stars.Length; iS++)
             {
                 if (simulation.Stars[iS].Enabled == true)
-                { //Vergleicher jedes object mit jedem anderen
+                {
                     double distX = posX - (simulation.Stars[iS].PosX + 0);
                     double distY = posY - (simulation.Stars[iS].PosY + 0);
                     if (firstStar)
@@ -172,13 +156,13 @@ namespace StarSim
 
             bs.ReadByte();
             int starArrayLenght = bs.ReadInt();
-            renderer.CamPosX = bs.ReadFloat();
-            renderer.CamPosY = bs.ReadFloat();
-            renderer.scaling = bs.ReadFloat();
+            Renderer.CamPosX = bs.ReadFloat();
+            Renderer.CamPosY = bs.ReadFloat();
+            Renderer.scaling = bs.ReadFloat();
             Star[] stars = new Star[starArrayLenght];
             for (int i = 0; i < starArrayLenght; i++)
             {
-                stars[i] = new Star(bs.ReadInt(),bs.ReadFloat(), bs.ReadFloat(), bs.ReadFloat(), bs.ReadFloat(), bs.ReadFloat());
+                stars[i] = new Star(bs.ReadInt(), bs.ReadFloat(), bs.ReadFloat(), bs.ReadFloat(), bs.ReadFloat(), bs.ReadFloat());
                 stars[i].Name = bs.ReadString();
             }
             int starIdx;
@@ -189,7 +173,7 @@ namespace StarSim
         }
         private void saveFileDialog_FileOk(object sender, CancelEventArgs e)
         {
-            
+
             simulation.Wait();
 
             simulation.CollapseStarArray();
@@ -197,9 +181,9 @@ namespace StarSim
             bs.WriteByte(0);
 
             bs.WriteInt(simulation.Stars.Length);
-            bs.WriteFloat((float)renderer.CamPosX);
-            bs.WriteFloat((float)renderer.CamPosY);
-            bs.WriteFloat((float)renderer.scaling);
+            bs.WriteFloat((float)Renderer.CamPosX);
+            bs.WriteFloat((float)Renderer.CamPosY);
+            bs.WriteFloat((float)Renderer.scaling);
             Star[] stars = simulation.Stars;
             for (int i = 0; i < simulation.Stars.Length; i++)
             {
@@ -215,19 +199,12 @@ namespace StarSim
             bs.WriteInt(simulation.FocusStar != null ? simulation.FocusStar.Idx : -1);
             bs.WriteInt(simulation.RefStar != null ? simulation.RefStar.Idx : -1);
             bs.Save(saveFileDialog.FileName);
-            
-        }
-        private void MainWindow_KeyPress(object sender, KeyPressEventArgs e)
-        {
 
         }
 
-        private void MainWindow_KeyUp(object sender, KeyEventArgs e)
-        {
-        }
         private void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
-            
+
             switch (e.KeyData)
             {
                 case Keys.Space:
@@ -297,36 +274,38 @@ namespace StarSim
         }
         private void MainWindow_MouseUp(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Right)lastRightClick = e;
+            if (e.Button == MouseButtons.Right) lastRightClick = e;
         }
 
         private void searchStarToolStripMenuItem_Click(object sender, EventArgs e)
         {
             searchStarDialog = new SearchStarDialog();
-            searchStarDialog.Show(this,simulation.Stars);
+            searchStarDialog.Show(this, simulation.Stars);
         }
 
         private void showMarkerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            renderer.showMarker = ((ToolStripMenuItem)sender).Checked;
+            Renderer.showMarker = ((ToolStripMenuItem)sender).Checked;
         }
         private void showStarInfosToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            renderer.showStarInfo = ((ToolStripMenuItem)sender).Checked;
+            Renderer.showStarInfo = ((ToolStripMenuItem)sender).Checked;
         }
         private void showSimInfosToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            renderer.showSimInfo = ((ToolStripMenuItem)sender).Checked;
+            Renderer.showSimInfo = ((ToolStripMenuItem)sender).Checked;
         }
         private void keyBindingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(@"
-Space:  Pause/Run
-Dot(.):  Increase speed
-Comma(,):  lower speed
-F:  Camera focus to selcetet star
-R:  Set selcetet star as physics reference
-", "Key Bindings");
+            MessageBox.Show(
+                "Space:  Pause/Run\n" +
+                "Dot(.):  Increase speed\n" +
+                "Comma(,):  lower speed\n" +
+                "F:  Camera focus to selcetet star\n" +
+                "R:  Set selcetet star as physics reference\n"
+                , 
+                "Key Bindings"
+            );
         }
         private void fullscrennToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -344,15 +323,10 @@ R:  Set selcetet star as physics reference
             }
         }
 
-        private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
-        {
-            
-        }
-
         private void jghfToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            float posX = (float)(-renderer.CamPosX + (lastRightClick.X - Width / 2) / renderer.scaling);
-            float posY = (float)(-renderer.CamPosY + (lastRightClick.Y - Height / 2) / renderer.scaling);
+            float posX = (float)(-Renderer.CamPosX + (lastRightClick.X - Width / 2) / Renderer.scaling);
+            float posY = (float)(-Renderer.CamPosY + (lastRightClick.Y - Height / 2) / Renderer.scaling);
             Program.Simulation.AddStar(1, posX, posY, 0, 0);
 
             ViewChange = true;
@@ -360,16 +334,13 @@ R:  Set selcetet star as physics reference
 
         private void followToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
-                    if (simulation.FocusStar == simulation.SelectetStar) simulation.FocusStar = null;
+            if (simulation.FocusStar == simulation.SelectetStar) simulation.FocusStar = null;
             else simulation.FocusStar = simulation.SelectetStar;
-
         }
 
         private void editToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
-                    if (simulation.SelectetStar != null)
+            if (simulation.SelectetStar != null)
             {
                 if (simulation.SelectetStar.Editor == null)
                     new EditStarDialog().Show(this, simulation.SelectetStar);
