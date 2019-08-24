@@ -9,54 +9,28 @@ namespace StarSim
     {
         public event EventHandler FrameCalculatet;
         private WF.Timer TimerLogik;
-        private Star[] starArray;
 
-        public bool NewFrameCalculatet {
-            get
-            {
-                if (newFrameCalculatet) {
-                    newFrameCalculatet = false;
-                    return true;
-                }
-                else return false;
-            }
-        }
         private bool newFrameCalculatet = false;
-        private double massCenterX = 0, massCenterY = 0;
-        private double speedCenterX = 0, speedCenterY = 0;
-        private float totalMass = 0;
-        private int starCount = 0;
-
         private bool running = false;
 
         private Task mainLogikTask;
         private Task[] logikTasks;
 
-        private float usedTime = 0;
-
         public int SimSpeed = 1;
+
+        public Star[] Stars { get; set; }
         public Star SelectetStar = null, FocusStar = null, RefStar = null;
 
-        public int UsedTime
-        {
-            get { return (int)usedTime; }
-        }
-        public double MassCenterX { get { return massCenterX; } }
-        public double MassCenterY { get { return massCenterY; } }
-        public double SpeedCenterX { get { return speedCenterX; } }
-        public double SpeedCenterY { get { return speedCenterY; } }
-        public Star[] Stars
-        {
-            get { return starArray; }
-            set
-            {
-                starArray = value;
-            }
-        }
-        public int StarCount
-        {
-            get { return starCount; }
-        }
+        public int UsedTime { get; private set; } = 0;
+        public int StarCount { get; private set; } = 0;
+
+        private float totalMass = 0;
+
+        public double MassCenterX { get; private set; } = 0;
+        public double MassCenterY { get; private set; } = 0;
+        public double SpeedCenterX { get; private set; } = 0;
+        public double SpeedCenterY { get; private set; } = 0;
+
         public bool Running
         {
             get
@@ -69,14 +43,25 @@ namespace StarSim
                 else Stop();
             }
         }
+        public bool NewFrameCalculatet
+        {
+            get
+            {
+                if (newFrameCalculatet)
+                {
+                    newFrameCalculatet = false;
+                    return true;
+                }
+                else return false;
+            }
+        }
 
         public StarSim()
         { 
             TimerLogik = new WF.Timer();
             TimerLogik.Interval = 25;
             TimerLogik.Tick += new System.EventHandler(this.simulationTick);
-            starArray = new Star[0];
-            Console.WriteLine("rfghjk");
+            Stars = new Star[0];
         }
 
         public void Wait()
@@ -102,14 +87,14 @@ namespace StarSim
             try
             {
                 SimSpeed = 1;
-                starArray = new Star[stars];
-                Random rnd = new Random();
+                Stars = new Star[stars];
+                var rnd = new Random();
 
                 if (mode == 0)
                 {
-                    for (int ii = 0; ii < starArray.Length; ii++)
+                    for (int ii = 0; ii < Stars.Length; ii++)
                     {
-                        starArray[ii] = new Star(ii, (float)((maxMass - minMass) * rnd.NextDouble() + minMass)
+                        Stars[ii] = new Star(ii, (float)((maxMass - minMass) * rnd.NextDouble() + minMass)
                             , (float)(size * rnd.NextDouble() - size / 2)
                             , (float)(size * rnd.NextDouble() - size / 2)
                             , (float)((maxSpeed - minSpeed) * rnd.NextDouble() + minSpeed)
@@ -119,9 +104,9 @@ namespace StarSim
                 }
                 else
                 {
-                    for (int ii = 0; ii < starArray.Length; ii++)
+                    for (int ii = 0; ii < Stars.Length; ii++)
                     {
-                        starArray[ii] = new Star(ii, (float)((maxMass - minMass) * rnd.NextDouble() + minMass)
+                        Stars[ii] = new Star(ii, (float)((maxMass - minMass) * rnd.NextDouble() + minMass)
                             , (float)(0)
                             , (float)(size * rnd.NextDouble() - size / 2)
                             , (float)((maxSpeed - minSpeed) * rnd.NextDouble() + minSpeed)
@@ -139,27 +124,27 @@ namespace StarSim
         }
         public void AddStar(float mass, double posX, double posY, double speedX, double speedY)
         {
-            collapseStarArray(starCount + 1);
-            starArray[starCount] = new Star(starCount, mass, posX, posY, speedX, speedY);
-            starCount++;
+            collapseStarArray(StarCount + 1);
+            Stars[StarCount] = new Star(StarCount, mass, posX, posY, speedX, speedY);
+            StarCount++;
         }
 
         private void collapseStarArray(int lenght)
         {
             int iDst = 0;
             Star[] newStars = new Star[lenght];
-            for (int iSrc = 0; iSrc < starArray.Length; iSrc++)
+            for (int iSrc = 0; iSrc < Stars.Length; iSrc++)
             {
-                if (starArray[iSrc].Enabled)
+                if (Stars[iSrc].Enabled)
                 {
-                    starArray[iSrc].Idx = iDst;
-                    newStars[iDst] = starArray[iSrc];
+                    Stars[iSrc].Idx = iDst;
+                    newStars[iDst] = Stars[iSrc];
                     iDst++;
                 }
             }
-            starArray = newStars;
+            Stars = newStars;
         }
-        public void CollapseStarArray() { collapseStarArray(starCount); }
+        public void CollapseStarArray() { collapseStarArray(StarCount); }
 
         private void simulationTick(object sender, EventArgs e)
         {
@@ -175,13 +160,13 @@ namespace StarSim
         {
             for (int j = 0; j < SimSpeed; j++)
             {
-                Stopwatch SWTotal = new Stopwatch();
+                var SWTotal = new Stopwatch();
                 SWTotal.Start();
 
                 int newEnabeldStarNumber = 0;
 
                 int tasks = 8;
-                float step = starArray.Length / (float)tasks;
+                float step = Stars.Length / (float)tasks;
 
                 Console.WriteLine();
                 Stopwatch[] stopwatch = new Stopwatch[tasks];
@@ -190,7 +175,7 @@ namespace StarSim
                 {
                     int index = iT;
                     stopwatch[index] = new Stopwatch();
-                    logikTasks[index] = new Task(() => simulateSelective((int)(step * index), (int)(step * (index + 1)), stopwatch[index]));
+                    logikTasks[index] = new Task(() => simulateSection((int)(step * index), (int)(step * (index + 1)), stopwatch[index]));
                     logikTasks[index].Start();
                 }
                 for (int iT = 0; iT < tasks; iT++)
@@ -202,13 +187,13 @@ namespace StarSim
                 double newMassCenterX = 0, newMassCenterY = 0;
                 double newSpeedCenterX = 0, newSpeedCenterY = 0;
                 float newTotalMass = 0;
-                for (int iS1 = 0; iS1 < starArray.Length; iS1++)
+                for (int iS1 = 0; iS1 < Stars.Length; iS1++)
                 {
-                    colide(starArray[iS1]);
+                    colide(Stars[iS1]);
                 }
-                for (int iS1 = 0; iS1 < starArray.Length; iS1++)
+                for (int iS1 = 0; iS1 < Stars.Length; iS1++)
                 {
-                    Star star1 = starArray[iS1];
+                    var star1 = Stars[iS1];
                     if (star1.Enabled == false) continue;
                     else
                     {
@@ -236,23 +221,22 @@ namespace StarSim
                 totalMass = newTotalMass;
                 if (totalMass != 0)
                 {
-                    massCenterX = newMassCenterX / newTotalMass; massCenterY = newMassCenterY / newTotalMass;
-                    speedCenterX = newSpeedCenterX / newTotalMass; speedCenterY = newSpeedCenterY / newTotalMass;
+                    MassCenterX = newMassCenterX / newTotalMass; MassCenterY = newMassCenterY / newTotalMass;
+                    SpeedCenterX = newSpeedCenterX / newTotalMass; SpeedCenterY = newSpeedCenterY / newTotalMass;
                 }
                 else
                 {
-                    massCenterX = newMassCenterX; massCenterY = newMassCenterY;
-                    speedCenterX = newSpeedCenterX; speedCenterY = newSpeedCenterY;
-
+                    MassCenterX = newMassCenterX; MassCenterY = newMassCenterY;
+                    SpeedCenterX = newSpeedCenterX; SpeedCenterY = newSpeedCenterY;
                 }
 
-                starCount = newEnabeldStarNumber;
-                if (starArray.Length - newEnabeldStarNumber > 100) CollapseStarArray();
+                StarCount = newEnabeldStarNumber;
+                if (Stars.Length - newEnabeldStarNumber > 100) CollapseStarArray();
 
                 FrameCalculatet?.Invoke(this, new EventArgs());
 
                 SWTotal.Stop();
-                usedTime = SWTotal.ElapsedMilliseconds;
+                UsedTime = (int)SWTotal.ElapsedMilliseconds;
 
                 newFrameCalculatet = true;
                 if (!running) break;
@@ -284,23 +268,22 @@ namespace StarSim
                 star2.Enabled = false;
 
                 if (star1.Name == "") star1.Name = star2.Name;
-                else if (star2.Name != "") star1.Name = star1.Name + star2.Name;
+                else if (star2.Name != "") star1.Name += star2.Name;
             }
         }
-        private void simulateSelective(int start, int end, Stopwatch stopwatch)
+        private void simulateSection(int start, int end, Stopwatch stopwatch)
         {
             stopwatch.Start();
             for (int iS1 = start; iS1 < end; iS1++)
             {
-                Star star1 = starArray[iS1];
-                if (starArray[iS1].Enabled == true)
+                var star1 = Stars[iS1];
+                if (Stars[iS1].Enabled == true)
                 {
-                    for (int iS2 = iS1; iS2 < starArray.Length; iS2++)
+                    for (int iS2 = iS1; iS2 < Stars.Length; iS2++)
                     {
-                        Star star2 = starArray[iS2];
-                        if (starArray[iS2].Enabled == true && iS1 != iS2)
+                        var star2 = Stars[iS2];
+                        if (Stars[iS2].Enabled == true && iS1 != iS2)
                         {
-
                             double distX = (star1.PosX) - (star2.PosX);
                             double distY = (star1.PosY) - (star2.PosY);
                             double dist = Math.Sqrt((distX * distX) + (distY * distY));

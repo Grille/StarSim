@@ -5,14 +5,9 @@ namespace StarSim
 {
     public partial class EditStarDialog : Form
     {
-        int selectetIndex = 0, oldIndex2 = 0;
-        public int SelectetIndex
-        {
-            get {
-                return selectetIndex;
-            }
-        }
-        
+        int oldIndex2 = 0;
+        public int SelectetIndex { get; private set; } = 0;
+
         private Star editStar;
         private MainWindow window;
         private bool readEnabled;
@@ -22,7 +17,7 @@ namespace StarSim
         {
             InitializeComponent();
         }
-        public void Show(MainWindow window,Star star)
+        public void Show(MainWindow window, Star star)
         {
 
             base.Show(window);
@@ -97,7 +92,7 @@ namespace StarSim
             editStar.SpeedX += speedX;
             editStar.SpeedY += speedY;
 
-            posX = 0;posY = 0;speedX = 0;speedY = 0;
+            posX = 0; posY = 0; speedX = 0; speedY = 0;
             window.ViewChange = true;
 
             UpdateGui();
@@ -114,58 +109,54 @@ namespace StarSim
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            oldIndex2 = selectetIndex;
-            selectetIndex = comboBox1.SelectedIndex;
+            oldIndex2 = SelectetIndex;
+            SelectetIndex = comboBox1.SelectedIndex;
             readTextBox();
             UpdateGui();
             window.ViewChange = true;
         }
 
-        unsafe private void readTextBox()
+        private unsafe void readTextBox()
         {
             Console.WriteLine("\n------------------------------------- index:" + oldIndex2);
 
             Console.WriteLine("posX 1--> " + posX);
             Console.WriteLine("posY 1--> " + posY);
             if (!readEnabled) return;
-            double tbposX = double.NaN, tbposY = double.NaN, tbspeedX = double.NaN, tbspeedY = double.NaN;
+            //double tbposX = double.NaN, tbposY = double.NaN, tbspeedX = double.NaN, tbspeedY = double.NaN;
 
-            try { tbposX = Convert.ToDouble(textBoxPosX.Text); }
-            catch (Exception) { }
-            try { tbposY = Convert.ToDouble(textBoxPosY.Text); }
-            catch (Exception) { }
-            try { tbspeedX = Convert.ToDouble(textBoxSpeedX.Text); }
-            catch (Exception) { }
-            try { tbspeedY = Convert.ToDouble(textBoxSpeedY.Text); }
-            catch (Exception) { }
+            bool eposX = double.TryParse(textBoxPosX.Text, out double tbposX);
+            bool eposY = double.TryParse(textBoxPosY.Text, out double tbposY);
+            bool espeedX = double.TryParse(textBoxSpeedX.Text, out double tbspeedX);
+            bool espeedY = double.TryParse(textBoxSpeedY.Text, out double tbspeedY);
 
             Console.WriteLine("tbposX--> " + tbposX);
             Console.WriteLine("tbposY--> " + tbposY);
             switch (oldIndex2)
             {
                 case 0:
-                    if (!double.IsNaN(tbposX)) posX = tbposX;
-                    if (!double.IsNaN(tbposY)) posY = tbposY;
-                    if (!double.IsNaN(tbspeedX)) speedX = tbspeedX;
+                    if (eposX) posX = tbposX;
+                    if (eposY) posY = tbposY;
+                    if (espeedX) speedX = tbspeedX;
                     if (!double.IsNaN(tbspeedY)) speedY = tbspeedY;
                     break;
                 case 1:
-                    if (!double.IsNaN(tbposX)) posX = tbposX - editStar.PosX;
-                    if (!double.IsNaN(tbposY)) posY = tbposY- editStar.PosY;
-                    if (!double.IsNaN(tbspeedX)) speedX = tbspeedX- editStar.SpeedX;
-                    if (!double.IsNaN(tbspeedY)) speedY = tbspeedY- editStar.SpeedY;
+                    if (eposX) posX = tbposX - editStar.PosX;
+                    if (eposY) posY = tbposY - editStar.PosY;
+                    if (espeedX) speedX = tbspeedX - editStar.SpeedX;
+                    if (!double.IsNaN(tbspeedY)) speedY = tbspeedY - editStar.SpeedY;
                     break;
                 case 2:
-                    if (!double.IsNaN(tbposX)) posX = tbposX - (editStar.PosX- Program.Simulation.MassCenterX);
-                    if (!double.IsNaN(tbposY)) posY = tbposY - (editStar.PosY- Program.Simulation.MassCenterY);
-                    if (!double.IsNaN(tbspeedX)) speedX = tbspeedX - (editStar.SpeedX- Program.Simulation.SpeedCenterX);
-                    if (!double.IsNaN(tbspeedY)) speedY = tbspeedY - (editStar.SpeedY- Program.Simulation.SpeedCenterY);
+                    if (eposX) posX = tbposX - (editStar.PosX - Program.Simulation.MassCenterX);
+                    if (eposY) posY = tbposY - (editStar.PosY - Program.Simulation.MassCenterY);
+                    if (espeedX) speedX = tbspeedX - (editStar.SpeedX - Program.Simulation.SpeedCenterX);
+                    if (!double.IsNaN(tbspeedY)) speedY = tbspeedY - (editStar.SpeedY - Program.Simulation.SpeedCenterY);
                     break;
                 case 3:
-                    if (!double.IsNaN(tbposX)) posX = tbposX - (editStar.PosX- Program.Simulation.RefStar.PosX);
-                    if (!double.IsNaN(tbposY)) posY = tbposY - (editStar.PosY- Program.Simulation.RefStar.PosY);
-                    if (!double.IsNaN(tbspeedX)) speedX = tbspeedX - (editStar.SpeedX- Program.Simulation.RefStar.SpeedX);
-                    if (!double.IsNaN(tbspeedY)) speedY = tbspeedY - (editStar.SpeedY- Program.Simulation.RefStar.SpeedY);
+                    if (eposX) posX = tbposX - (editStar.PosX - Program.Simulation.RefStar.PosX);
+                    if (eposY) posY = tbposY - (editStar.PosY - Program.Simulation.RefStar.PosY);
+                    if (espeedX) speedX = tbspeedX - (editStar.SpeedX - Program.Simulation.RefStar.SpeedX);
+                    if (espeedY) speedY = tbspeedY - (editStar.SpeedY - Program.Simulation.RefStar.SpeedY);
                     break;
             }
             Console.WriteLine("posX 2--> " + posX);
@@ -184,7 +175,7 @@ namespace StarSim
             else if (index == 3) index = 2;
             comboBox1.SelectedIndex = index;
             comboBox1.Refresh();
-            
+
         }
 
         private void comboBox1_MouseEnter(object sender, EventArgs e)

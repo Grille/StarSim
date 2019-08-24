@@ -7,6 +7,6 @@ namespace StarSim
 {
     class TrackingData
     {
-        float[] pos;
+        //float[] pos;
     }
 }

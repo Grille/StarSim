@@ -10,12 +10,10 @@ namespace StarSim
     {
         private MouseEventArgs lastRightClick = new MouseEventArgs(MouseButtons.None, 0, 0, 0, 0);
         public bool ViewChange = true;
-        StarSim simulation;
+        private StarSim simulation;
 
         public Renderer Renderer { get; }
         public int ChildNumber = 0;
-
-        public SearchStarDialog searchStarDialog = new SearchStarDialog();
 
         Point lastMousePos = new Point(0, 0);
 
@@ -151,7 +149,7 @@ namespace StarSim
             simulation.SelectetStar = null; simulation.FocusStar = null; simulation.RefStar = null;
             simulation.Wait();
 
-            ByteStream bs = new ByteStream(openFileDialog.FileName);
+            var bs = new ByteStream(openFileDialog.FileName);
             bs.ResetIndex();
 
             bs.ReadByte();
@@ -177,7 +175,7 @@ namespace StarSim
             simulation.Wait();
 
             simulation.CollapseStarArray();
-            ByteStream bs = new ByteStream();
+            var bs = new ByteStream();
             bs.WriteByte(0);
 
             bs.WriteInt(simulation.Stars.Length);
@@ -264,7 +262,8 @@ namespace StarSim
         }
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new NewWorldDialog().Show(this);
+            var dialog = new NewWorldDialog();
+            dialog.Show(this);
         }
 
         private void MainWindow_MouseDown(object sender, MouseEventArgs e)
@@ -279,8 +278,8 @@ namespace StarSim
 
         private void searchStarToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            searchStarDialog = new SearchStarDialog();
-            searchStarDialog.Show(this, simulation.Stars);
+            var dialog = new SearchStarDialog();
+            dialog.Show(this, simulation.Stars);
         }
 
         private void showMarkerToolStripMenuItem_Click(object sender, EventArgs e)

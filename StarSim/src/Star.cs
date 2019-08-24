@@ -21,12 +21,10 @@ namespace StarSim
 
         public float[] PosTracking;
 
-        public double PosX,PosY;
-        public double NewPosX,NewPosY;
-        public double SpeedX,SpeedY;
-        public double NewSpeedX,NewSpeedY;
-
-        //public int Richtung; //ghkads
+        public double PosX, PosY;
+        public double NewPosX, NewPosY;
+        public double SpeedX, SpeedY;
+        public double NewSpeedX, NewSpeedY;
 
         public Star(int id,float mass, double posX, double posY, double speedX, double speedY)
         {
