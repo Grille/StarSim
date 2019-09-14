@@ -165,22 +165,24 @@ namespace StarSim
 
                 int newEnabeldStarNumber = 0;
 
-                int tasks = 8;
-                float step = Stars.Length / (float)tasks;
+                int length = Stars.Length;
+                int tasks = Environment.ProcessorCount * 2;
+                int pairs = length * length / 2 - length / 2;
+                float step = length / (float)tasks;
 
                 Console.WriteLine();
                 Stopwatch[] stopwatch = new Stopwatch[tasks];
                 logikTasks = new Task[tasks];
-                for (int iT = 0; iT < tasks; iT++)
+                for (int iTask = 0; iTask < tasks; iTask++)
                 {
-                    int index = iT;
+                    int index = iTask;
                     stopwatch[index] = new Stopwatch();
                     logikTasks[index] = new Task(() => simulateSection((int)(step * index), (int)(step * (index + 1)), stopwatch[index]));
                     logikTasks[index].Start();
                 }
-                for (int iT = 0; iT < tasks; iT++)
+                for (int iTask = 0; iTask < tasks; iTask++)
                 {
-                    int index = iT; logikTasks[index].Wait();
+                    int index = iTask; logikTasks[index].Wait();
                     Console.WriteLine("" + index + " => " + stopwatch[index].ElapsedMilliseconds);
                 }
 
