@@ -1,4 +1,6 @@
 .vs
 StarSim/bin
 StarSim/obj
+StarSim/Properties
 *.csproj.user
+*.suo

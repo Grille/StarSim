@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using GGL.IO;
+using GGL;
 
 namespace StarSim
 {
@@ -149,25 +149,25 @@ namespace StarSim
             simulation.SelectetStar = null; simulation.FocusStar = null; simulation.RefStar = null;
             simulation.Wait();
 
-            var bs = new ByteStream(openFileDialog.FileName);
-            bs.ResetIndex();
-
-            bs.ReadByte();
-            int starArrayLenght = bs.ReadInt();
-            Renderer.CamPosX = bs.ReadFloat();
-            Renderer.CamPosY = bs.ReadFloat();
-            Renderer.scaling = bs.ReadFloat();
-            Star[] stars = new Star[starArrayLenght];
-            for (int i = 0; i < starArrayLenght; i++)
+            using (var bs = new BinaryView(openFileDialog.FileName))
             {
-                stars[i] = new Star(bs.ReadInt(), bs.ReadFloat(), bs.ReadFloat(), bs.ReadFloat(), bs.ReadFloat(), bs.ReadFloat());
-                stars[i].Name = bs.ReadString();
+                bs.ReadByte();
+                int starArrayLenght = bs.ReadInt32();
+                Renderer.CamPosX = bs.ReadSingle();
+                Renderer.CamPosY = bs.ReadSingle();
+                Renderer.scaling = bs.ReadSingle();
+                Star[] stars = new Star[starArrayLenght];
+                for (int i = 0; i < starArrayLenght; i++)
+                {
+                    stars[i] = new Star(bs.ReadInt32(), bs.ReadSingle(), bs.ReadSingle(), bs.ReadSingle(), bs.ReadSingle(), bs.ReadSingle());
+                    stars[i].Name = bs.ReadString();
+                }
+                int starIdx;
+                if ((starIdx = bs.ReadInt32()) != -1) simulation.SelectetStar = stars[starIdx];
+                if ((starIdx = bs.ReadInt32()) != -1) simulation.FocusStar = stars[starIdx];
+                if ((starIdx = bs.ReadInt32()) != -1) simulation.RefStar = stars[starIdx];
+                simulation.Stars = stars;
             }
-            int starIdx;
-            if ((starIdx = bs.ReadInt()) != -1) simulation.SelectetStar = stars[starIdx];
-            if ((starIdx = bs.ReadInt()) != -1) simulation.FocusStar = stars[starIdx];
-            if ((starIdx = bs.ReadInt()) != -1) simulation.RefStar = stars[starIdx];
-            simulation.Stars = stars;
         }
         private void saveFileDialog_FileOk(object sender, CancelEventArgs e)
         {
@@ -175,28 +175,30 @@ namespace StarSim
             simulation.Wait();
 
             simulation.CollapseStarArray();
-            var bs = new ByteStream();
-            bs.WriteByte(0);
-
-            bs.WriteInt(simulation.Stars.Length);
-            bs.WriteFloat((float)Renderer.CamPosX);
-            bs.WriteFloat((float)Renderer.CamPosY);
-            bs.WriteFloat((float)Renderer.scaling);
-            Star[] stars = simulation.Stars;
-            for (int i = 0; i < simulation.Stars.Length; i++)
+            using (var bs = new BinaryView())
             {
-                bs.WriteInt(stars[i].Idx);
-                bs.WriteFloat(stars[i].Mass);
-                bs.WriteFloat((float)stars[i].PosX);
-                bs.WriteFloat((float)stars[i].PosY);
-                bs.WriteFloat((float)stars[i].SpeedX);
-                bs.WriteFloat((float)stars[i].SpeedY);
-                bs.WriteString(stars[i].Name);
+                bs.WriteByte(0);
+
+                bs.WriteInt32(simulation.Stars.Length);
+                bs.WriteSingle((float)Renderer.CamPosX);
+                bs.WriteSingle((float)Renderer.CamPosY);
+                bs.WriteSingle((float)Renderer.scaling);
+                Star[] stars = simulation.Stars;
+                for (int i = 0; i < simulation.Stars.Length; i++)
+                {
+                    bs.WriteInt32(stars[i].Idx);
+                    bs.WriteSingle(stars[i].Mass);
+                    bs.WriteSingle((float)stars[i].PosX);
+                    bs.WriteSingle((float)stars[i].PosY);
+                    bs.WriteSingle((float)stars[i].SpeedX);
+                    bs.WriteSingle((float)stars[i].SpeedY);
+                    bs.WriteString(stars[i].Name);
+                }
+                bs.WriteInt32(simulation.SelectetStar != null ? simulation.SelectetStar.Idx : -1);
+                bs.WriteInt32(simulation.FocusStar != null ? simulation.FocusStar.Idx : -1);
+                bs.WriteInt32(simulation.RefStar != null ? simulation.RefStar.Idx : -1);
+                bs.Save(saveFileDialog.FileName);
             }
-            bs.WriteInt(simulation.SelectetStar != null ? simulation.SelectetStar.Idx : -1);
-            bs.WriteInt(simulation.FocusStar != null ? simulation.FocusStar.Idx : -1);
-            bs.WriteInt(simulation.RefStar != null ? simulation.RefStar.Idx : -1);
-            bs.Save(saveFileDialog.FileName);
 
         }
 
