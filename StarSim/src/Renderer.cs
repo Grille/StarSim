@@ -11,29 +11,21 @@ namespace StarSim
         private Graphics g;
         private Control control;
         private StarSim simulation;
+        private Camera camera;
 
-        public double CamPosX, CamPosY;
-        public double scaling = 1;
-
-        public int ChildNumber = 0;
-
-        public bool showMarker = true;
-        public bool showStarInfo = true;
-        public bool showSimInfo = true;
+        public bool ShowMarker = true;
+        public bool ShowStarInfo = true;
+        public bool ShowSimInfo = true;
 
         public bool HighRenderQuality = false;
 
-        public Renderer(StarSim simulation)
+        public Renderer(Camera cam, StarSim simulation)
         {
+            this.camera = cam;
             this.simulation = simulation;
         }
 
-        private void transformPoint(double x, double y, out float outX, out float outY)
-        {
-            outX = ((float)x + (float)CamPosX) * (float)scaling + control.Width / 2f;
-            outY = ((float)y + (float)CamPosY) * (float)scaling + control.Height / 2f;
-        }
-        private void fixPoint(ref float posX, ref float posY, float refX, float refY)
+        private void clampPoint(ref float posX, ref float posY, float refX, float refY)
         {
 
             float mX = (refX - posX) / (refY - posY);
@@ -71,8 +63,8 @@ namespace StarSim
             if (posX1 > control.Width && posX2 > control.Width) return;
             if (posY1 > control.Height && posY2 > control.Height) return;
 
-            fixPoint(ref posX1, ref posY1, posX2, posY2);
-            fixPoint(ref posX2, ref posY2, posX1, posY1);
+            clampPoint(ref posX1, ref posY1, posX2, posY2);
+            clampPoint(ref posX2, ref posY2, posX1, posY1);
 
             g.DrawLine(pen, posX1, posY1, posX2, posY2);
         }
@@ -110,24 +102,24 @@ namespace StarSim
 
             Star[] starArray = simulation.Stars;
 
-            if (showMarker)
+            if (ShowMarker)
             {
                 float centerPosX, centerPosY;
-                transformPoint((float)simulation.MassCenterX, (float)simulation.MassCenterY, out centerPosX, out centerPosY);
+                camera.WorldToScreenSpace(simulation.MassCenterX, simulation.MassCenterY, out centerPosX, out centerPosY);
 
                 g.DrawEllipse(backPen, centerPosX - 20f, centerPosY - 20f, 40, 40);
 
                 float refPosX = centerPosX, refPosY = centerPosY;
                 if (simulation.RefStar != null)
                 {
-                    transformPoint((float)simulation.RefStar.PosX, (float)simulation.RefStar.PosY, out refPosX, out refPosY);
+                    camera.WorldToScreenSpace(simulation.RefStar.PosX, simulation.RefStar.PosY, out refPosX, out refPosY);
                     g.DrawEllipse(backPen, refPosX - 10, refPosY - 10, 20, 20);
                     drawLine(backPen, centerPosX, centerPosY, refPosX, refPosY);
                 }
                 float focusPosX = centerPosX, focusPosY = centerPosY;
                 if (simulation.FocusStar != null)
                 {
-                    transformPoint((float)simulation.FocusStar.PosX, (float)simulation.FocusStar.PosY, out focusPosX, out focusPosY);
+                    camera.WorldToScreenSpace(simulation.FocusStar.PosX, simulation.FocusStar.PosY, out focusPosX, out focusPosY);
                 }
                 int dist1 = 10, dist2 = 40;
                 drawLine(backPen, focusPosX + dist1, focusPosY + dist1, focusPosX + dist2, focusPosY + dist2);
@@ -138,7 +130,7 @@ namespace StarSim
                 if (simulation.SelectetStar != null)
                 {
                     float curPosX, curPosY;
-                    transformPoint((float)simulation.SelectetStar.PosX, (float)simulation.SelectetStar.PosY, out curPosX, out curPosY);
+                    camera.WorldToScreenSpace(simulation.SelectetStar.PosX, simulation.SelectetStar.PosY, out curPosX, out curPosY);
                     drawLine(backPen2, curPosX, curPosY, refPosX, refPosY);
                 }
             }
@@ -152,28 +144,27 @@ namespace StarSim
 
                 float r = star.Radius;
 
-                float posX = (float)(star.PosX - r + CamPosX);
-                float posY = (float)(star.PosY - r + CamPosY);
-
-                posX *= (float)scaling; posY *= (float)scaling; r *= (float)scaling;
-                posX += control.Width / 2f; posY += control.Height / 2f;
+                camera.WorldToScreenSpace(star.PosX - r, star.PosY - r, out float posX, out float posY);
+                r *= (float)camera.Scale;
 
                 if (r < 0.05) r = 0.05f;
+                
                 if (star.Editor != null)
                 {
                     float starPosX, starPosY, goalPosX, goalPosY;
-                    transformPoint(star.PosX, star.PosY, out starPosX, out starPosY);
+                    camera.WorldToScreenSpace(star.PosX, star.PosY, out starPosX, out starPosY);
                     switch (star.Editor.SelectetIndex)
                     {
-                        case 2: transformPoint(star.PosX + (star.SpeedX - simulation.SpeedCenterX) * 10, star.PosY + (star.SpeedY - simulation.SpeedCenterY) * 10, out goalPosX, out goalPosY); break;
-                        case 3: transformPoint(star.PosX + (star.SpeedX - simulation.RefStar.SpeedX) * 10, star.PosY + (star.SpeedY - simulation.RefStar.SpeedY) * 10, out goalPosX, out goalPosY); break;
-                        default: transformPoint(star.PosX + star.SpeedX * 10, star.PosY + star.SpeedY * 10, out goalPosX, out goalPosY); break;
+                        case 2: camera.WorldToScreenSpace(star.PosX + (star.SpeedX - simulation.SpeedCenterX) * 10, star.PosY + (star.SpeedY - simulation.SpeedCenterY) * 10, out goalPosX, out goalPosY); break;
+                        case 3: camera.WorldToScreenSpace(star.PosX + (star.SpeedX - simulation.RefStar.SpeedX) * 10, star.PosY + (star.SpeedY - simulation.RefStar.SpeedY) * 10, out goalPosX, out goalPosY); break;
+                        default: camera.WorldToScreenSpace(star.PosX + star.SpeedX * 10, star.PosY + star.SpeedY * 10, out goalPosX, out goalPosY); break;
 
                     }
                     drawLine(new Pen(Color.FromArgb(255, 50, 200, 100), 2), starPosX, starPosY, goalPosX, goalPosY);
                     var pen = new Pen(Color.FromArgb(50, 50, 200, 100), 4);
                     g.DrawEllipse(pen, posX, posY, r * 2, r * 2);
                 }
+                
                 if (star == simulation.SelectetStar)
                 {
                     if (star.Mass > 0) g.DrawEllipse(new Pen(Color.FromArgb(170, 255, 255), 1), posX, posY, r * 2, r * 2);
@@ -181,11 +172,12 @@ namespace StarSim
                 }
                 else
                 {
-                    if (star.Mass > 0) g.DrawEllipse(new Pen(Color.FromArgb(100, 200, 255), 1), posX, posY, r * 2, r * 2);
-                    else g.DrawEllipse(new Pen(Color.FromArgb(200, 100, 255), 1), posX, posY, r * 2, r * 2);
+                    //if (star.Mass > 0) 
+                    g.DrawEllipse(new Pen(Color.FromArgb(100, 200, 255), 1), posX, posY, r * 2, r * 2);
+                    //else g.DrawEllipse(new Pen(Color.FromArgb(200, 100, 255), 1), posX, posY, r * 2, r * 2);
                 }
 
-                if ((simulation.SelectetStar == star || star.Marked) && showStarInfo || star.Editor != null)
+                if ((simulation.SelectetStar == star || star.Marked) && ShowStarInfo || star.Editor != null)
                 {
                     posX += r;
                     posY += r;
@@ -203,13 +195,14 @@ namespace StarSim
 
             }
             SWTotal.Stop();
-            if (showSimInfo)
+            if (ShowSimInfo)
             {
                 g.DrawString("Stars " + simulation.StarCount + " /" + simulation.Stars.Length, new Font("Consolas", 9), brush, new Point(10, 40));
                 g.DrawString("Mass " + "-", new Font("Consolas", 9), brush, new Point(10, 50));
                 g.DrawString("DrawTime " + SWTotal.ElapsedMilliseconds, new Font("Consolas", 9), brush, new Point(10, 60));
                 g.DrawString("SimTime " + simulation.UsedTime, new Font("Consolas", 9), brush, new Point(10, 70));
-                g.DrawString("SimSpeed x" + simulation.SimSpeed + (Program.Simulation.Running ? "" : " (paused)"), new Font("Consolas", 9), brush, new Point(10, 80));
+                g.DrawString("SimSpeed x" + simulation.SimSpeed + (simulation.Running ? "" : " (paused)"), new Font("Consolas", 9), brush, new Point(10, 80));
+                g.DrawString($"Pos {camera.PosX},{ camera.PosY}", new Font("Consolas", 9), brush, new Point(10, 90));
             }
         }
 

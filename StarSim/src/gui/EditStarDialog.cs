@@ -8,6 +8,7 @@ namespace StarSim
         int oldIndex2 = 0;
         public int SelectetIndex { get; private set; } = 0;
 
+        private StarSim simulation;
         private Star editStar;
         private MainWindow window;
         private bool readEnabled;
@@ -17,15 +18,16 @@ namespace StarSim
         {
             InitializeComponent();
         }
-        public void Show(MainWindow window, Star star)
+        public void Show(MainWindow window, StarSim sim, Star star)
         {
 
             base.Show(window);
             window.ChildNumber++;
+            simulation = sim;
             this.window = window;
-            oldTime = Program.Simulation.Running;
-            Program.Simulation.Stop();
-            Program.Simulation.Wait();
+            oldTime = simulation.Running;
+            simulation.Stop();
+            simulation.Wait();
 
             editStar = star;
             editStar.Editor = this;
@@ -34,7 +36,7 @@ namespace StarSim
             textBoxDensity.Text = "" + star.Density;
 
             updateComboBox();
-            if (Program.Simulation.RefStar != null && editStar != Program.Simulation.RefStar) comboBox1.SelectedIndex = 3;
+            if (simulation.RefStar != null && editStar != simulation.RefStar) comboBox1.SelectedIndex = 3;
             else comboBox1.SelectedIndex = 2;
 
             readEnabled = true;
@@ -57,16 +59,16 @@ namespace StarSim
                     textBoxSpeedY.Text = "" + Math.Round(editStar.SpeedY + speedY, round);
                     break;
                 case 2:
-                    textBoxPosX.Text = "" + Math.Round(editStar.PosX - Program.Simulation.MassCenterX + posX, round);
-                    textBoxPosY.Text = "" + Math.Round(editStar.PosY - Program.Simulation.MassCenterY + posY, round);
-                    textBoxSpeedX.Text = "" + Math.Round(editStar.SpeedX - Program.Simulation.SpeedCenterX + speedX, round);
-                    textBoxSpeedY.Text = "" + Math.Round(editStar.SpeedY - Program.Simulation.SpeedCenterY + speedY, round);
+                    textBoxPosX.Text = "" + Math.Round(editStar.PosX - simulation.MassCenterX + posX, round);
+                    textBoxPosY.Text = "" + Math.Round(editStar.PosY - simulation.MassCenterY + posY, round);
+                    textBoxSpeedX.Text = "" + Math.Round(editStar.SpeedX - simulation.SpeedCenterX + speedX, round);
+                    textBoxSpeedY.Text = "" + Math.Round(editStar.SpeedY - simulation.SpeedCenterY + speedY, round);
                     break;
                 case 3:
-                    textBoxPosX.Text = "" + Math.Round(editStar.PosX - Program.Simulation.RefStar.PosX + posX, round);
-                    textBoxPosY.Text = "" + Math.Round(editStar.PosY - Program.Simulation.RefStar.PosY + posY, round);
-                    textBoxSpeedX.Text = "" + Math.Round(editStar.SpeedX - Program.Simulation.RefStar.SpeedX + speedX, round);
-                    textBoxSpeedY.Text = "" + Math.Round(editStar.SpeedY - Program.Simulation.RefStar.SpeedY + speedY, round);
+                    textBoxPosX.Text = "" + Math.Round(editStar.PosX - simulation.RefStar.PosX + posX, round);
+                    textBoxPosY.Text = "" + Math.Round(editStar.PosY - simulation.RefStar.PosY + posY, round);
+                    textBoxSpeedX.Text = "" + Math.Round(editStar.SpeedX - simulation.RefStar.SpeedX + speedX, round);
+                    textBoxSpeedY.Text = "" + Math.Round(editStar.SpeedY - simulation.RefStar.SpeedY + speedY, round);
                     break;
             }
             Refresh();
@@ -102,7 +104,7 @@ namespace StarSim
         {
             if (editStar != null) editStar.Editor = null;
             if (editStar.Mass == 0) editStar.Enabled = false;
-            Program.Simulation.Running = oldTime;
+            simulation.Running = oldTime;
             window.ChildNumber--;
             window.ViewChange = true;
         }
@@ -147,16 +149,16 @@ namespace StarSim
                     if (!double.IsNaN(tbspeedY)) speedY = tbspeedY - editStar.SpeedY;
                     break;
                 case 2:
-                    if (eposX) posX = tbposX - (editStar.PosX - Program.Simulation.MassCenterX);
-                    if (eposY) posY = tbposY - (editStar.PosY - Program.Simulation.MassCenterY);
-                    if (espeedX) speedX = tbspeedX - (editStar.SpeedX - Program.Simulation.SpeedCenterX);
-                    if (!double.IsNaN(tbspeedY)) speedY = tbspeedY - (editStar.SpeedY - Program.Simulation.SpeedCenterY);
+                    if (eposX) posX = tbposX - (editStar.PosX - simulation.MassCenterX);
+                    if (eposY) posY = tbposY - (editStar.PosY - simulation.MassCenterY);
+                    if (espeedX) speedX = tbspeedX - (editStar.SpeedX - simulation.SpeedCenterX);
+                    if (!double.IsNaN(tbspeedY)) speedY = tbspeedY - (editStar.SpeedY - simulation.SpeedCenterY);
                     break;
                 case 3:
-                    if (eposX) posX = tbposX - (editStar.PosX - Program.Simulation.RefStar.PosX);
-                    if (eposY) posY = tbposY - (editStar.PosY - Program.Simulation.RefStar.PosY);
-                    if (espeedX) speedX = tbspeedX - (editStar.SpeedX - Program.Simulation.RefStar.SpeedX);
-                    if (espeedY) speedY = tbspeedY - (editStar.SpeedY - Program.Simulation.RefStar.SpeedY);
+                    if (eposX) posX = tbposX - (editStar.PosX - simulation.RefStar.PosX);
+                    if (eposY) posY = tbposY - (editStar.PosY - simulation.RefStar.PosY);
+                    if (espeedX) speedX = tbspeedX - (editStar.SpeedX - simulation.RefStar.SpeedX);
+                    if (espeedY) speedY = tbspeedY - (editStar.SpeedY - simulation.RefStar.SpeedY);
                     break;
             }
             Console.WriteLine("posX 2--> " + posX);
@@ -171,7 +173,7 @@ namespace StarSim
             comboBox1.Items.Add("Null");
             comboBox1.Items.Add("Absolute");
             comboBox1.Items.Add("Center");
-            if (Program.Simulation.RefStar != null && editStar != Program.Simulation.RefStar) comboBox1.Items.Add("Relative");
+            if (simulation.RefStar != null && editStar != simulation.RefStar) comboBox1.Items.Add("Relative");
             else if (index == 3) index = 2;
             comboBox1.SelectedIndex = index;
             comboBox1.Refresh();

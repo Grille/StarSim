@@ -5,7 +5,7 @@ namespace StarSim
 
     public class Star
     {
-        public float Density;
+        public double Density;
         public int Idx;
         public string Name;
         public bool Enabled;
@@ -14,8 +14,8 @@ namespace StarSim
         public EditStarDialog Editor;
         public Star Reference;
         public Star ColisionsRef;
-        public float Mass;
-        public float AbsMass;
+        public double Mass;
+        public double AbsMass;
 
         public float Radius;
 
@@ -26,19 +26,19 @@ namespace StarSim
         public double SpeedX, SpeedY;
         public double NewSpeedX, NewSpeedY;
 
-        public Star(int id,float mass, double posX, double posY, double speedX, double speedY)
+        public Star(int id, double mass, double posX, double posY, double speedX, double speedY)
         {
             Idx = id;
             Name = "";
             Enabled = true;
-            Density = 1;
+            Density = 100;
             UpdateMass(mass);
             PosX = posX;PosY = posY;
             SpeedX = speedX; SpeedY = speedY;
             ColisionsRef = null;
             Reference = null;
         }
-        public void UpdateMass(float mass)
+        public void UpdateMass(double mass)
         {
             Mass = mass;
             AbsMass = Math.Abs(mass);

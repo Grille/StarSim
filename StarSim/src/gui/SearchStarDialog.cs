@@ -6,6 +6,7 @@ namespace StarSim
     public partial class SearchStarDialog : Form
     {
         MainWindow window;
+        StarSim simulation;
         Star[] stars;
         bool oldTime;
         public SearchStarDialog()
@@ -13,14 +14,16 @@ namespace StarSim
             InitializeComponent();
         }
 
-        public void Show(MainWindow window, Star[] stars)
+        public void Show(MainWindow window, StarSim sim)
         {
             base.Show(window);
             window.ChildNumber++;
             this.window = window;
-            oldTime = Program.Simulation.Running;
-            Program.Simulation.Stop();
-            Program.Simulation.Wait();
+            this.simulation = sim;
+            this.stars = sim.Stars;
+            oldTime = simulation.Running;
+            simulation.Stop();
+            simulation.Wait();
             SetStars(stars);
         }
         public void SetStars(Star[] stars)
@@ -45,24 +48,24 @@ namespace StarSim
         private void button2_Click(object sender, EventArgs e)
         {
             this.Close();
-            Program.Simulation.Running = oldTime;
+            simulation.Running = oldTime;
         }
 
         private void buttonGoTo_Click(object sender, EventArgs e)
         {
-            window.Renderer.CamPosX = -stars[(int)dataGridView1.CurrentRow.Cells[0].Value].PosX;
-            window.Renderer.CamPosY = -stars[(int)dataGridView1.CurrentRow.Cells[0].Value].PosY;
+            window.Camera.PosX = -stars[(int)dataGridView1.CurrentRow.Cells[0].Value].PosX;
+            window.Camera.PosY = -stars[(int)dataGridView1.CurrentRow.Cells[0].Value].PosY;
             window.ViewChange = true;
         }
 
         private void buttonEdit_Click(object sender, EventArgs e)
         {
-            new EditStarDialog().Show(window, stars[(int)dataGridView1.CurrentRow.Cells[0].Value]);
+            new EditStarDialog().Show(window, simulation, stars[(int)dataGridView1.CurrentRow.Cells[0].Value]);
         }
 
         private void dataGridView1_Click(object sender, EventArgs e)
         {
-            Program.Simulation.SelectetStar = stars[(int)dataGridView1.CurrentRow.Cells[0].Value];
+            simulation.SelectetStar = stars[(int)dataGridView1.CurrentRow.Cells[0].Value];
             window.Focus();
         }
 
