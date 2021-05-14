@@ -19,10 +19,17 @@ namespace StarSim
 
         private Point lastLocation = new Point(0,0);
 
+        public bool Changed = true;
+
         public void SetScreenSize(int width,int height)
         {
-            this.width = width;
-            this.height = height;
+            if (this.width != width || this.height != height)
+            {
+                this.width = width;
+                this.height = height;
+
+                Changed = true;
+            }
         }
 
         public void ScreenToWorldSpace(double x, double y, out double outX, out double outY)
@@ -43,6 +50,8 @@ namespace StarSim
             {
                 PosX += (lastLocation.X - e.Location.X) / Scale;
                 PosY += (lastLocation.Y - e.Location.Y) / Scale;
+
+                Changed = true;
             }
             lastLocation = e.Location;
         }
@@ -59,6 +68,8 @@ namespace StarSim
             ScreenToWorldSpace(e.Location.X, e.Location.Y, out double newPosX, out double newPosY);
             PosX += oldPosX - newPosX;
             PosY += oldPosY - newPosY;
+
+            Changed = true;
         }
     }
 }

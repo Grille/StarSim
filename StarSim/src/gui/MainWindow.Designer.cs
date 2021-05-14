@@ -64,7 +64,7 @@
             // 
             // TimerDraw
             // 
-            this.TimerDraw.Interval = 15;
+            this.TimerDraw.Interval = 16;
             this.TimerDraw.Tick += new System.EventHandler(this.TimerDraw_Tick);
             // 
             // openFileDialog
@@ -85,6 +85,7 @@
             this.helpToolStripMenuItem});
             resources.ApplyResources(this.menuStrip1, "menuStrip1");
             this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuStrip1_ItemClicked);
             // 
             // fileToolStripMenuItem
             // 
@@ -221,9 +222,7 @@
             // showSimInfosToolStripMenuItem
             // 
             this.showSimInfosToolStripMenuItem.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.showSimInfosToolStripMenuItem.Checked = true;
             this.showSimInfosToolStripMenuItem.CheckOnClick = true;
-            this.showSimInfosToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.showSimInfosToolStripMenuItem.Name = "showSimInfosToolStripMenuItem";
             resources.ApplyResources(this.showSimInfosToolStripMenuItem, "showSimInfosToolStripMenuItem");
             this.showSimInfosToolStripMenuItem.Click += new System.EventHandler(this.showSimInfosToolStripMenuItem_Click);
@@ -262,7 +261,7 @@
             // 
             this.NewStarItem.Name = "NewStarItem";
             resources.ApplyResources(this.NewStarItem, "NewStarItem");
-            this.NewStarItem.Click += new System.EventHandler(this.jghfToolStripMenuItem_Click);
+            this.NewStarItem.Click += new System.EventHandler(this.addStarToolStripMenuItem_Click);
             // 
             // MainWindow
             // 

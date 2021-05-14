@@ -6,7 +6,8 @@ namespace StarSim
     public partial class SearchStarDialog : Form
     {
         MainWindow window;
-        StarSim simulation;
+        Game game;
+        SimData simulation;
         Star[] stars;
         bool oldTime;
         public SearchStarDialog()
@@ -14,16 +15,17 @@ namespace StarSim
             InitializeComponent();
         }
 
-        public void Show(MainWindow window, StarSim sim)
+        public void Show(MainWindow window, Game game)
         {
             base.Show(window);
+            this.game = game;
             window.ChildNumber++;
             this.window = window;
-            this.simulation = sim;
-            this.stars = sim.Stars;
-            oldTime = simulation.Running;
-            simulation.Stop();
-            simulation.Wait();
+            this.simulation = game.Data;
+            this.stars = simulation.Stars;
+            oldTime = game.Running;
+            game.Stop();
+            game.Sim.WaitForIdle();
             SetStars(stars);
         }
         public void SetStars(Star[] stars)
@@ -48,24 +50,24 @@ namespace StarSim
         private void button2_Click(object sender, EventArgs e)
         {
             this.Close();
-            simulation.Running = oldTime;
+            game.Running = oldTime;
         }
 
         private void buttonGoTo_Click(object sender, EventArgs e)
         {
-            window.Camera.PosX = -stars[(int)dataGridView1.CurrentRow.Cells[0].Value].PosX;
-            window.Camera.PosY = -stars[(int)dataGridView1.CurrentRow.Cells[0].Value].PosY;
-            window.ViewChange = true;
+            game.Camera.PosX = stars[(int)dataGridView1.CurrentRow.Cells[0].Value].PosX;
+            game.Camera.PosY = stars[(int)dataGridView1.CurrentRow.Cells[0].Value].PosY;
+            game.ViewChanged = true;
         }
 
         private void buttonEdit_Click(object sender, EventArgs e)
         {
-            new EditStarDialog().Show(window, simulation, stars[(int)dataGridView1.CurrentRow.Cells[0].Value]);
+            new EditStarDialog().Show(window, game, stars[(int)dataGridView1.CurrentRow.Cells[0].Value]);
         }
 
         private void dataGridView1_Click(object sender, EventArgs e)
         {
-            simulation.SelectetStar = stars[(int)dataGridView1.CurrentRow.Cells[0].Value];
+            //game.SelectetStar = stars[(int)dataGridView1.CurrentRow.Cells[0].Value];
             window.Focus();
         }
 

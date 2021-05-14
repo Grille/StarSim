@@ -8,7 +8,8 @@ namespace StarSim
         int oldIndex2 = 0;
         public int SelectetIndex { get; private set; } = 0;
 
-        private StarSim simulation;
+        private Game game;
+        private SimData simulation;
         private Star editStar;
         private MainWindow window;
         private bool readEnabled;
@@ -18,16 +19,17 @@ namespace StarSim
         {
             InitializeComponent();
         }
-        public void Show(MainWindow window, StarSim sim, Star star)
+        public void Show(MainWindow window, Game game, Star star)
         {
 
             base.Show(window);
+            this.game = game;
             window.ChildNumber++;
-            simulation = sim;
+            simulation = game.Data;
             this.window = window;
-            oldTime = simulation.Running;
-            simulation.Stop();
-            simulation.Wait();
+            oldTime = game.Running;
+            game.Stop();
+            game.Sim.WaitForIdle();
 
             editStar = star;
             editStar.Editor = this;
@@ -36,8 +38,8 @@ namespace StarSim
             textBoxDensity.Text = "" + star.Density;
 
             updateComboBox();
-            if (simulation.RefStar != null && editStar != simulation.RefStar) comboBox1.SelectedIndex = 3;
-            else comboBox1.SelectedIndex = 2;
+            //if (simulation.RefStar != null && editStar != simulation.RefStar) comboBox1.SelectedIndex = 3;
+            //else comboBox1.SelectedIndex = 2;
 
             readEnabled = true;
         }
@@ -65,10 +67,10 @@ namespace StarSim
                     textBoxSpeedY.Text = "" + Math.Round(editStar.SpeedY - simulation.SpeedCenterY + speedY, round);
                     break;
                 case 3:
-                    textBoxPosX.Text = "" + Math.Round(editStar.PosX - simulation.RefStar.PosX + posX, round);
-                    textBoxPosY.Text = "" + Math.Round(editStar.PosY - simulation.RefStar.PosY + posY, round);
-                    textBoxSpeedX.Text = "" + Math.Round(editStar.SpeedX - simulation.RefStar.SpeedX + speedX, round);
-                    textBoxSpeedY.Text = "" + Math.Round(editStar.SpeedY - simulation.RefStar.SpeedY + speedY, round);
+                    //textBoxPosX.Text = "" + Math.Round(editStar.PosX - simulation.RefStar.PosX + posX, round);
+                    //textBoxPosY.Text = "" + Math.Round(editStar.PosY - simulation.RefStar.PosY + posY, round);
+                    //textBoxSpeedX.Text = "" + Math.Round(editStar.SpeedX - simulation.RefStar.SpeedX + speedX, round);
+                    //textBoxSpeedY.Text = "" + Math.Round(editStar.SpeedY - simulation.RefStar.SpeedY + speedY, round);
                     break;
             }
             Refresh();
@@ -95,7 +97,7 @@ namespace StarSim
             editStar.SpeedY += speedY;
 
             posX = 0; posY = 0; speedX = 0; speedY = 0;
-            window.ViewChange = true;
+            game.ViewChanged = true;
 
             UpdateGui();
         }
@@ -104,9 +106,9 @@ namespace StarSim
         {
             if (editStar != null) editStar.Editor = null;
             if (editStar.Mass == 0) editStar.Enabled = false;
-            simulation.Running = oldTime;
+            game.Running = oldTime;
             window.ChildNumber--;
-            window.ViewChange = true;
+            game.ViewChanged = true;
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -115,7 +117,7 @@ namespace StarSim
             SelectetIndex = comboBox1.SelectedIndex;
             readTextBox();
             UpdateGui();
-            window.ViewChange = true;
+            game.ViewChanged = true;
         }
 
         private unsafe void readTextBox()
@@ -155,10 +157,10 @@ namespace StarSim
                     if (!double.IsNaN(tbspeedY)) speedY = tbspeedY - (editStar.SpeedY - simulation.SpeedCenterY);
                     break;
                 case 3:
-                    if (eposX) posX = tbposX - (editStar.PosX - simulation.RefStar.PosX);
-                    if (eposY) posY = tbposY - (editStar.PosY - simulation.RefStar.PosY);
-                    if (espeedX) speedX = tbspeedX - (editStar.SpeedX - simulation.RefStar.SpeedX);
-                    if (espeedY) speedY = tbspeedY - (editStar.SpeedY - simulation.RefStar.SpeedY);
+                    //if (eposX) posX = tbposX - (editStar.PosX - simulation.RefStar.PosX);
+                    //if (eposY) posY = tbposY - (editStar.PosY - simulation.RefStar.PosY);
+                    //if (espeedX) speedX = tbspeedX - (editStar.SpeedX - simulation.RefStar.SpeedX);
+                    //if (espeedY) speedY = tbspeedY - (editStar.SpeedY - simulation.RefStar.SpeedY);
                     break;
             }
             Console.WriteLine("posX 2--> " + posX);
@@ -173,8 +175,8 @@ namespace StarSim
             comboBox1.Items.Add("Null");
             comboBox1.Items.Add("Absolute");
             comboBox1.Items.Add("Center");
-            if (simulation.RefStar != null && editStar != simulation.RefStar) comboBox1.Items.Add("Relative");
-            else if (index == 3) index = 2;
+            //if (simulation.RefStar != null && editStar != simulation.RefStar) comboBox1.Items.Add("Relative");
+            //else if (index == 3) index = 2;
             comboBox1.SelectedIndex = index;
             comboBox1.Refresh();
 
