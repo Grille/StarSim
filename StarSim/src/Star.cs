@@ -22,9 +22,8 @@ namespace StarSim
         public float[] PosTracking;
 
         public double PosX, PosY;
-        public double NewPosX, NewPosY;
+        public double PullX, PullY;
         public double SpeedX, SpeedY;
-        public double NewSpeedX, NewSpeedY;
 
         public Star(int id, double mass, double posX, double posY, double speedX, double speedY)
         {

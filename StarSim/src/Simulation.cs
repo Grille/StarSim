@@ -10,6 +10,9 @@ namespace StarSim
         public PerformanceWatch Stats;
         public PerformanceWatch[] TaskStats;
 
+        public double GravitationalConstant;
+        private double gravitationalForce;
+
         public int TaskCount;
 
         private Task mainLogikTask;
@@ -29,6 +32,9 @@ namespace StarSim
         {
             this.camera = camera;
             this.data = data;
+
+            GravitationalConstant = 0.001; //Math.Pow(6.674*10, -11);
+            //Console.WriteLine(GravitationalConstant);
 
             TaskCount = Environment.ProcessorCount;
             Stats = new PerformanceWatch();
@@ -64,6 +70,8 @@ namespace StarSim
         {
             Stats.Begin();
 
+            gravitationalForce = GravitationalConstant;
+
             int newEnabeldStarNumber = 0;
 
             var stars = data.Stars;
@@ -77,7 +85,12 @@ namespace StarSim
             int pairs = length * length / 2 - length / 2;
             float step = length / (float)taskCount;
 
-            Console.WriteLine();
+            for (int iS1 = 0; iS1 < stars.Length; iS1++)
+            {
+                stars[iS1].PullX = 0;
+                stars[iS1].PullY = 0;
+            }
+
             subLogikTasks = new Task[taskCount];
             for (int iTask = 0; iTask < taskCount; iTask++)
             {
@@ -104,6 +117,9 @@ namespace StarSim
                 else
                 {
                     newEnabeldStarNumber++;
+
+                    star1.SpeedX += star1.PullX;
+                    star1.SpeedY += star1.PullY;
 
                     star1.PosX += star1.SpeedX * SimMultiplier;
                     star1.PosY += star1.SpeedY * SimMultiplier;
@@ -206,17 +222,17 @@ namespace StarSim
                             double propX = distX / relativDistXY;
                             double propY = distY / relativDistXY;
 
-                            double fg = (star1.AbsMass * star2.AbsMass) / (dist * dist) * 0.01;
+                            double fg = (star1.AbsMass * star2.AbsMass) / (dist * dist) * gravitationalForce;
                             double fgPropS1 = fg / star1.Mass;
                             double fgPropS2 = fg / star2.Mass;
                             
                             if (dist < star1.Radius + star2.Radius)
                                 star1.ColisionsRef = star2;
 
-                            star1.SpeedX -= fgPropS1 * propX * SimMultiplier;
-                            star1.SpeedY -= fgPropS1 * propY * SimMultiplier;
-                            star2.SpeedX += fgPropS2 * propX * SimMultiplier;
-                            star2.SpeedY += fgPropS2 * propY * SimMultiplier;
+                            star1.PullX -= fgPropS1 * propX * SimMultiplier;
+                            star1.PullY -= fgPropS1 * propY * SimMultiplier;
+                            star2.PullX += fgPropS2 * propX * SimMultiplier;
+                            star2.PullY += fgPropS2 * propY * SimMultiplier;
                         }
                     }
                 }

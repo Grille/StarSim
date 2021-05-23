@@ -155,8 +155,9 @@ namespace StarSim
                 
                 if (star.Editor != null)
                 {
-                    float starPosX, starPosY, goalPosX, goalPosY;
+                    float starPosX, starPosY, goalPosX, goalPosY, hX,hY;
                     camera.WorldToScreenSpace(star.PosX, star.PosY, out starPosX, out starPosY);
+                    camera.WorldToScreenSpace(star.PosX + star.PullX * 10000, star.PosY + star.PullY * 10000, out hX, out hY);
                     switch (star.Editor.SelectetIndex)
                     {
                         case 2: camera.WorldToScreenSpace(star.PosX + (star.SpeedX - data.SpeedCenterX) * 10, star.PosY + (star.SpeedY - data.SpeedCenterY) * 10, out goalPosX, out goalPosY); break;
@@ -165,6 +166,9 @@ namespace StarSim
 
                     }
                     drawLine(new Pen(Color.FromArgb(255, 50, 200, 100), 2), starPosX, starPosY, goalPosX, goalPosY);
+
+                    drawLine(new Pen(Color.FromArgb(255, 245, 200, 100), 2), starPosX, starPosY, hX, hY);
+
                     var pen = new Pen(Color.FromArgb(50, 50, 200, 100), 4);
                     g.DrawEllipse(pen, posX, posY, r * 2, r * 2);
                 }

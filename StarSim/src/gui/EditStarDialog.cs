@@ -5,6 +5,14 @@ namespace StarSim
 {
     public partial class EditStarDialog : Form
     {
+        enum Tab
+        {
+            Null,
+            Absolute,
+            Center,
+            Relative,
+        }
+
         int oldIndex2 = 0;
         public int SelectetIndex { get; private set; } = 0;
 
@@ -45,35 +53,39 @@ namespace StarSim
         }
         public void UpdateGui()
         {
-            int round = 6;
             switch (comboBox1.SelectedIndex)
             {
-                case 0:
-                    textBoxPosX.Text = "" + Math.Round(posX, round);
-                    textBoxPosY.Text = "" + Math.Round(posY, round);
-                    textBoxSpeedX.Text = "" + Math.Round(speedX, round);
-                    textBoxSpeedY.Text = "" + Math.Round(speedY, round);
+                case (int)Tab.Null:
+                    setTextBoxValue(textBoxPosX, posX);
+                    setTextBoxValue(textBoxPosY, posY);
+                    setTextBoxValue(textBoxSpeedX, speedX);
+                    setTextBoxValue(textBoxSpeedY, speedY);
                     break;
-                case 1:
-                    textBoxPosX.Text = "" + Math.Round(editStar.PosX + posX, round);
-                    textBoxPosY.Text = "" + Math.Round(editStar.PosY + posY, round);
-                    textBoxSpeedX.Text = "" + Math.Round(editStar.SpeedX + speedX, round);
-                    textBoxSpeedY.Text = "" + Math.Round(editStar.SpeedY + speedY, round);
+                case (int)Tab.Absolute:
+                    setTextBoxValue(textBoxPosX, editStar.PosX + posX);
+                    setTextBoxValue(textBoxPosY, editStar.PosY + posY);
+                    setTextBoxValue(textBoxSpeedX, editStar.SpeedX + speedX);
+                    setTextBoxValue(textBoxSpeedY, editStar.SpeedY + speedY);
                     break;
-                case 2:
-                    textBoxPosX.Text = "" + Math.Round(editStar.PosX - data.MassCenterX + posX, round);
-                    textBoxPosY.Text = "" + Math.Round(editStar.PosY - data.MassCenterY + posY, round);
-                    textBoxSpeedX.Text = "" + Math.Round(editStar.SpeedX - data.SpeedCenterX + speedX, round);
-                    textBoxSpeedY.Text = "" + Math.Round(editStar.SpeedY - data.SpeedCenterY + speedY, round);
+                case (int)Tab.Center:
+                    setTextBoxValue(textBoxPosX, editStar.PosX - data.MassCenterX + posX);
+                    setTextBoxValue(textBoxPosY, editStar.PosY - data.MassCenterY + posY);
+                    setTextBoxValue(textBoxSpeedX, editStar.SpeedX - data.SpeedCenterX + speedX);
+                    setTextBoxValue(textBoxSpeedY, editStar.SpeedY - data.SpeedCenterY + speedY);
                     break;
-                case 3:
-                    textBoxPosX.Text = "" + Math.Round(editStar.PosX - data.RefStar.PosX + posX, round);
-                    textBoxPosY.Text = "" + Math.Round(editStar.PosY - data.RefStar.PosY + posY, round);
-                    textBoxSpeedX.Text = "" + Math.Round(editStar.SpeedX - data.RefStar.SpeedX + speedX, round);
-                    textBoxSpeedY.Text = "" + Math.Round(editStar.SpeedY - data.RefStar.SpeedY + speedY, round);
+                case (int)Tab.Relative:
+                    setTextBoxValue(textBoxPosX, editStar.PosX - data.RefStar.PosX + posX);
+                    setTextBoxValue(textBoxPosY, editStar.PosY - data.RefStar.PosY + posY);
+                    setTextBoxValue(textBoxSpeedX, editStar.SpeedX - data.RefStar.SpeedX + speedX);
+                    setTextBoxValue(textBoxSpeedY, editStar.SpeedY - data.RefStar.SpeedY + speedY);
                     break;
             }
             Refresh();
+        }
+
+        private void setTextBoxValue(TextBox control, double value)
+        {
+            textBoxPosX.Text = Math.Round(editStar.PosX - data.RefStar.PosX + posX, 6).ToString();
         }
 
         private void buttonClose_Click(object sender, EventArgs e)
@@ -138,25 +150,25 @@ namespace StarSim
             Console.WriteLine("tbposY--> " + tbposY);
             switch (oldIndex2)
             {
-                case 0:
+                case (int)Tab.Null:
                     if (eposX) posX = tbposX;
                     if (eposY) posY = tbposY;
                     if (espeedX) speedX = tbspeedX;
-                    if (!double.IsNaN(tbspeedY)) speedY = tbspeedY;
+                    if (espeedY) speedY = tbspeedY;
                     break;
-                case 1:
+                case (int)Tab.Absolute:
                     if (eposX) posX = tbposX - editStar.PosX;
                     if (eposY) posY = tbposY - editStar.PosY;
                     if (espeedX) speedX = tbspeedX - editStar.SpeedX;
-                    if (!double.IsNaN(tbspeedY)) speedY = tbspeedY - editStar.SpeedY;
+                    if (espeedY) speedY = tbspeedY - editStar.SpeedY;
                     break;
-                case 2:
+                case (int)Tab.Center:
                     if (eposX) posX = tbposX - (editStar.PosX - data.MassCenterX);
                     if (eposY) posY = tbposY - (editStar.PosY - data.MassCenterY);
                     if (espeedX) speedX = tbspeedX - (editStar.SpeedX - data.SpeedCenterX);
-                    if (!double.IsNaN(tbspeedY)) speedY = tbspeedY - (editStar.SpeedY - data.SpeedCenterY);
+                    if (espeedY) speedY = tbspeedY - (editStar.SpeedY - data.SpeedCenterY);
                     break;
-                case 3:
+                case (int)Tab.Relative:
                     if (eposX) posX = tbposX - (editStar.PosX - data.RefStar.PosX);
                     if (eposY) posY = tbposY - (editStar.PosY - data.RefStar.PosY);
                     if (espeedX) speedX = tbspeedX - (editStar.SpeedX - data.RefStar.SpeedX);
