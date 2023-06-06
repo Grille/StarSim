@@ -11,7 +11,7 @@ namespace StarSim
         private MouseEventArgs lastRightClick = new MouseEventArgs(MouseButtons.None, 0, 0, 0, 0);
 
         private Game game;
-        private SimData data;
+        private SimulationData data;
         private Camera camera;
         private Renderer renderer;
 
@@ -37,11 +37,14 @@ namespace StarSim
 
         public void Init(int mode, int size, int stars, float minMass, float maxMass, float disSpeed)
         {
-            game.Sim.WaitForIdle();
+            game.Timer.Lock();
+
             data.SelectetStar = null; data.FocusStar = null; data.RefStar = null;
             camera.Scale = Math.Min(this.Width, this.Height) / (float)((size + disSpeed * 32) * 1.2f);
             game.Data.Init(mode, size, stars, minMass, maxMass, disSpeed);
             game.ViewChanged = true;
+
+            game.Timer.Free();
         }
 
         private void TimerDraw_Tick(object sender, EventArgs e)
@@ -88,17 +91,17 @@ namespace StarSim
             bool firstStar = true;
             double maxdist = 0;
 
-            for (int iS = 0; iS < game.Data.Stars.Length; iS++)
+            for (int iS = 0; iS < game.Data.Count; iS++)
             {
-                if (game.Data.Stars[iS].Enabled == true)
+                if (game.Data[iS].Enabled == true)
                 {
-                    double distX = posX - (game.Data.Stars[iS].PosX + 0);
-                    double distY = posY - (game.Data.Stars[iS].PosY + 0);
+                    double distX = posX - (game.Data[iS].PosX + 0);
+                    double distY = posY - (game.Data[iS].PosY + 0);
                     if (firstStar)
                     {
                         maxdist = (float)Math.Sqrt((distX * distX) + (distY * distY));
                         firstStar = false;
-                        nearestStar = game.Data.Stars[iS];
+                        nearestStar = game.Data[iS];
                     }
                     else
                     {
@@ -106,7 +109,7 @@ namespace StarSim
                         if (dist < maxdist)
                         {
                             maxdist = dist;
-                            nearestStar = game.Data.Stars[iS];
+                            nearestStar = game.Data[iS];
                         }
                     }
 
@@ -173,11 +176,14 @@ namespace StarSim
         }
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            game.Sim.WaitForIdle();
+            game.Timer.Lock();
+
             saveFileDialog.DefaultExt = "sm";
             saveFileDialog.AddExtension = true;
             saveFileDialog.InitialDirectory = Environment.CurrentDirectory;
             saveFileDialog.ShowDialog();
+
+            game.Timer.Free();
         }
         private void loadToolStripMenuItem_Click(object sender, EventArgs e)
         {

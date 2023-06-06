@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Numerics;
 using System.Threading.Tasks;
 using WF = System.Windows.Forms;
 
@@ -15,10 +16,7 @@ namespace StarSim
 
         public int TaskCount;
 
-        private Task mainLogikTask;
-        private Task[] subLogikTasks;
-
-        private SimData data;
+        private SimulationData data;
         private Camera camera;
 
         public int SimSpeed = 1;
@@ -28,12 +26,12 @@ namespace StarSim
 
         public bool NewFrameCalculatet = true;
 
-        public Simulation(Camera camera, SimData data)
+        public Simulation(Camera camera, SimulationData data)
         {
             this.camera = camera;
             this.data = data;
 
-            GravitationalConstant = 0.001; //Math.Pow(6.674*10, -11);
+            GravitationalConstant = 0.01; //Math.Pow(6.674*10, -11);
             //Console.WriteLine(GravitationalConstant);
 
             TaskCount = Environment.ProcessorCount;
@@ -43,22 +41,6 @@ namespace StarSim
                 TaskStats[i] = new PerformanceWatch();
         }
 
-        public void WaitForIdle()
-        {
-            mainLogikTask.Wait();
-            if (subLogikTasks != null)
-                for (int i = 0; i < subLogikTasks.Length; i++) subLogikTasks[i].Wait();
-        }
-        public void Run()
-        {
-            if (mainLogikTask == null || mainLogikTask.IsCompleted)
-            {
-                if (mainLogikTask != null && mainLogikTask.Status == TaskStatus.Faulted) Console.WriteLine("Task Crash");
-                mainLogikTask = new Task(() => Simulate());
-                mainLogikTask.Start();
-            }
-        }
-
         public void Simulate()
         {
             for (int i = 0; i< SimSpeed; i++)
@@ -66,6 +48,7 @@ namespace StarSim
                 simulate();
             }
         }
+
         private void simulate()
         {
             Stats.Begin();
@@ -74,43 +57,34 @@ namespace StarSim
 
             int newEnabeldStarNumber = 0;
 
-            var stars = data.Stars;
-            int length = stars.Length;
+            var stars = data;
+            int length = stars.Count;
 
 
             if (length == 0)
                 return;
 
-            int taskCount = TaskCount;
-            int pairs = length * length / 2 - length / 2;
-            float step = length / (float)taskCount;
-
-            for (int iS1 = 0; iS1 < stars.Length; iS1++)
+            for (int iS1 = 0; iS1 < stars.Count; iS1++)
             {
                 stars[iS1].PullX = 0;
                 stars[iS1].PullY = 0;
             }
 
-            subLogikTasks = new Task[taskCount];
-            for (int iTask = 0; iTask < taskCount; iTask++)
+            var tasks = new Task[TaskCount];
+            for (int iTask = 0; iTask < TaskCount; iTask++)
             {
-                int index = iTask;
-                subLogikTasks[index] = new Task(() => simulateSection(index, (int)(step * index), (int)(step * (index + 1))));
-                subLogikTasks[index].Start();
+                tasks[iTask] = RunCollateTask(iTask, TaskCount);
             }
-            for (int iTask = 0; iTask < taskCount; iTask++)
-            {
-                int index = iTask; subLogikTasks[index].Wait();
-            }
+            Task.WaitAll(tasks);
 
             double newMassCenterX = 0, newMassCenterY = 0;
             double newSpeedCenterX = 0, newSpeedCenterY = 0;
             double newTotalMass = 0;
-            for (int iS1 = 0; iS1 < stars.Length; iS1++)
+            for (int iS1 = 0; iS1 < stars.Count; iS1++)
             {
-                colide(stars[iS1]);
+                ApplyColisions(stars[iS1]);
             }
-            for (int iS1 = 0; iS1 < stars.Length; iS1++)
+            for (int iS1 = 0; iS1 < stars.Count; iS1++)
             {
                 var star1 = stars[iS1];
                 if (star1.Enabled == false) continue;
@@ -160,8 +134,8 @@ namespace StarSim
                 camera.PosY += data.SpeedCenterY;
             }
 
-            data.StarCount = newEnabeldStarNumber;
-            if (stars.Length - newEnabeldStarNumber > 100) 
+            data.EnabledCount = newEnabeldStarNumber;
+            if (stars.Count - newEnabeldStarNumber > 100) 
                 data.CollapseStarArray();
 
             Stats.EndAndLog();
@@ -169,38 +143,44 @@ namespace StarSim
             NewFrameCalculatet = true;
 
         }
-        private void colide(Star star1)
+
+        private void ApplyColisions(Star star1)
         {
-            Star star2;
-            if (((star2 = star1.ColisionsRef) != null) && star2.Enabled)
-            {
-                star1.ColisionsRef = null;
+            var star2 = star1.ColisionsRef;
 
-                if (star2.ColisionsRef != null) colide(star2);
+            if (star2 == null || !star2.Enabled)
+                return;
 
-                double massPS1 = star1.AbsMass / (star1.AbsMass + star2.AbsMass);
-                double massPS2 = star2.AbsMass / (star1.AbsMass + star2.AbsMass);
-                
-                if (star2 == data.SelectetStar) data.SelectetStar = star1;
-                if (star2 == data.FocusStar) data.FocusStar = star1;
-                if (star2 == data.RefStar) data.RefStar = star1;
-                star1.Marked |= star2.Marked;
+            star1.ColisionsRef = null;
 
-                star1.UpdateMass(star1.Mass + star2.Mass);
-                star1.PosX = (star1.PosX * massPS1 + star2.PosX * massPS2);
-                star1.PosY = (star1.PosY * massPS1 + star2.PosY * massPS2);
-                star1.SpeedX = (star1.SpeedX * massPS1 + star2.SpeedX * massPS2);
-                star1.SpeedY = (star1.SpeedY * massPS1 + star2.SpeedY * massPS2);
+            if (star2.ColisionsRef != null) 
+                ApplyColisions(star2);
 
-                star2.Enabled = false;
+            double massPS1 = star1.AbsMass / (star1.AbsMass + star2.AbsMass);
+            double massPS2 = star2.AbsMass / (star1.AbsMass + star2.AbsMass);
 
-                if (star1.Name == "") star1.Name = star2.Name;
-                else if (star2.Name != "") star1.Name += star2.Name;
-            }
+            if (star2 == data.SelectetStar) data.SelectetStar = star1;
+            if (star2 == data.FocusStar) data.FocusStar = star1;
+            if (star2 == data.RefStar) data.RefStar = star1;
+            star1.Marked |= star2.Marked;
+
+            star1.UpdateMass(star1.Mass + star2.Mass);
+            star1.PosX = (star1.PosX * massPS1 + star2.PosX * massPS2);
+            star1.PosY = (star1.PosY * massPS1 + star2.PosY * massPS2);
+            star1.SpeedX = (star1.SpeedX * massPS1 + star2.SpeedX * massPS2);
+            star1.SpeedY = (star1.SpeedY * massPS1 + star2.SpeedY * massPS2);
+
+            star2.Enabled = false;
+
+            if (star1.Name == "")
+                star1.Name = star2.Name;
+            else if (star2.Name != "")
+                star1.Name += star2.Name;
         }
+
         private void simulateSection(int id, int start, int end)
         {
-            var stars = data.Stars;
+            var stars = data;
             var stats = TaskStats[id];
             stats.Begin();
 
@@ -209,30 +189,12 @@ namespace StarSim
                 var star1 = stars[iS1];
                 if (stars[iS1].Enabled == true)
                 {
-                    for (int iS2 = iS1; iS2 < stars.Length; iS2++)
+                    for (int iS2 = iS1; iS2 < stars.Count; iS2++)
                     {
                         var star2 = stars[iS2];
                         if (stars[iS2].Enabled == true && iS1 != iS2)
                         {
-                            double distX = (star1.PosX) - (star2.PosX);
-                            double distY = (star1.PosY) - (star2.PosY);
-                            double dist = Math.Sqrt((distX * distX) + (distY * distY));
-                            
-                            double relativDistXY = Math.Abs(distX) + Math.Abs(distY);
-                            double propX = distX / relativDistXY;
-                            double propY = distY / relativDistXY;
-
-                            double fg = (star1.AbsMass * star2.AbsMass) / (dist * dist) * gravitationalForce;
-                            double fgPropS1 = fg / star1.Mass;
-                            double fgPropS2 = fg / star2.Mass;
-                            
-                            if (dist < star1.Radius + star2.Radius)
-                                star1.ColisionsRef = star2;
-
-                            star1.PullX -= fgPropS1 * propX * SimMultiplier;
-                            star1.PullY -= fgPropS1 * propY * SimMultiplier;
-                            star2.PullX += fgPropS2 * propX * SimMultiplier;
-                            star2.PullY += fgPropS2 * propY * SimMultiplier;
+                            CollateStars(star1, star2);
                         }
                     }
                 }
@@ -240,6 +202,71 @@ namespace StarSim
 
             stats.EndAndLog();
             return;
+        }
+
+        private Range GetTaskRange(int taskIndex, int totalTaskCount)
+        {
+            long totalComparisons = data.TotalComparisons;
+
+            long numTasks = totalTaskCount;
+            long comparisonsPerTask = totalComparisons / numTasks;
+
+            long startIndex = taskIndex * comparisonsPerTask;
+            long endIndex = (taskIndex == numTasks - 1) ? totalComparisons - 1 : (taskIndex + 1) * comparisonsPerTask - 1;
+
+            return new Range((int)startIndex, (int)endIndex);
+        }
+
+        private Task RunCollateTask(int taskIndex, int totalTaskCount)
+        {
+            var stats = TaskStats[taskIndex];
+
+            return Task.Run(() =>
+            {
+                stats.Begin();
+
+                var range = GetTaskRange(taskIndex, totalTaskCount);
+                int startIndex = range.Start;
+                int endIndex = range.End;
+
+                // Perform comparisons within the assigned range
+                for (int i = startIndex; i <= endIndex; i++)
+                {
+
+                    var pair = data.GetComparisonPair(i);
+
+                    if (pair.Enabled)
+                    {
+                        CollateStars(pair.Star1, pair.Star2);
+                    }
+                }
+
+                stats.EndAndLog();
+            });
+
+        }
+
+        private void CollateStars(Star star1, Star star2)
+        {
+            double distX = (star1.PosX) - (star2.PosX);
+            double distY = (star1.PosY) - (star2.PosY);
+            double dist = Math.Sqrt((distX * distX) + (distY * distY));
+
+            double relativDistXY = Math.Abs(distX) + Math.Abs(distY);
+            double propX = distX / relativDistXY;
+            double propY = distY / relativDistXY;
+
+            double fg = (star1.AbsMass * star2.AbsMass) / (dist * dist) * gravitationalForce;
+            double fgStar1 = fg / star1.Mass;
+            double fgStar2 = fg / star2.Mass;
+
+            if (dist < star1.Radius + star2.Radius)
+                star1.ColisionsRef = star2;
+
+            star1.PullX -= fgStar1 * propX * SimMultiplier;
+            star1.PullY -= fgStar1 * propY * SimMultiplier;
+            star2.PullX += fgStar2 * propX * SimMultiplier;
+            star2.PullY += fgStar2 * propY * SimMultiplier;
         }
 
     }

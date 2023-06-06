@@ -17,7 +17,7 @@ namespace StarSim
         public int SelectetIndex { get; private set; } = 0;
 
         private Game game;
-        private SimData data;
+        private SimulationData data;
         private Star editStar;
         private MainWindow window;
         private bool readEnabled;
@@ -36,8 +36,8 @@ namespace StarSim
             data = game.Data;
             this.window = window;
             oldTime = game.Running;
-            game.Stop();
-            game.Sim.WaitForIdle();
+
+            game.Timer.Lock();
 
             editStar = star;
             editStar.Editor = this;
@@ -121,6 +121,8 @@ namespace StarSim
             game.Running = oldTime;
             window.ChildNumber--;
             game.ViewChanged = true;
+
+            game.Timer.Free();
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)

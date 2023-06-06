@@ -12,8 +12,8 @@ namespace StarSim
     {
         public int BaseFramerate = 50;
         private bool running = false;
-        Timer TimerLogik;
-        public SimData Data;
+        public SimulationTimer Timer;
+        public SimulationData Data;
         public Camera Camera;
         public Simulation Sim;
 
@@ -32,44 +32,38 @@ namespace StarSim
 
         public bool Running
         {
-            get => running;
+            get => Timer.Running;
             set
             {
-                if (value == true) Start();
-                else Stop();
+                if (value == true) 
+                    Start();
+                else 
+                    Stop();
             }
         }
 
         public Game()
         {
             Camera = new Camera();
-            Data = new SimData();
+            Data = new SimulationData();
             Sim = new Simulation(Camera, Data);
 
-            TimerLogik = new Timer();
-            TimerLogik.Interval = 1000 / BaseFramerate;
-            TimerLogik.Elapsed += new ElapsedEventHandler(tick);
+            Timer = new SimulationTimer(Sim);
         }
 
         public void Start()
         {
-            running = true;
-            TimerLogik.Start();
+            Timer.Start();
         }
         public void Stop()
         {
-            TimerLogik.Stop();
-            running = false;
-        }
-
-        private void tick(object sender, ElapsedEventArgs args)
-        {
-            Sim.Run();
+            Timer.Stop();
         }
 
         public void Load(string path)
         {
-            Sim.WaitForIdle();
+            Timer.Lock();
+
             Data.Reset();
 
             using (var bs = new BinaryView(path))
@@ -91,13 +85,15 @@ namespace StarSim
                 if ((starIdx = bs.ReadInt32()) != -1) Data.SelectetStar = stars[starIdx];
                 if ((starIdx = bs.ReadInt32()) != -1) Data.FocusStar = stars[starIdx];
                 if ((starIdx = bs.ReadInt32()) != -1) Data.RefStar = stars[starIdx];
-                Data.Stars = stars;
+                //Data.Stars = stars;
             }
+
+            Timer.Free();
         }
 
         public void Save(string path)
         {
-            Sim.WaitForIdle();
+            Timer.Lock();
 
             Data.CollapseStarArray();
 
@@ -105,20 +101,20 @@ namespace StarSim
             {
                 bs.WriteByte(0);
 
-                bs.WriteInt32(Data.Stars.Length);
+                bs.WriteInt32(Data.Count);
                 bs.WriteDouble(Camera.PosX);
                 bs.WriteDouble(Camera.PosY);
                 bs.WriteDouble(Camera.Scale);
-                Star[] stars = Data.Stars;
-                for (int i = 0; i < Data.Stars.Length; i++)
+                for (int i = 0; i < Data.Count; i++)
                 {
-                    bs.WriteInt32(stars[i].Idx);
-                    bs.WriteDouble(stars[i].Mass);
-                    bs.WriteDouble(stars[i].PosX);
-                    bs.WriteDouble(stars[i].PosY);
-                    bs.WriteDouble(stars[i].SpeedX);
-                    bs.WriteDouble(stars[i].SpeedY);
-                    bs.WriteString(stars[i].Name);
+                    var star = Data[i];
+                    bs.WriteInt32(star.Idx);
+                    bs.WriteDouble(star.Mass);
+                    bs.WriteDouble(star.PosX);
+                    bs.WriteDouble(star.PosY);
+                    bs.WriteDouble(star.SpeedX);
+                    bs.WriteDouble(star.SpeedY);
+                    bs.WriteString(star.Name);
                 }
                 bs.WriteInt32(Data.SelectetStar != null ? Data.SelectetStar.Idx : -1);
                 bs.WriteInt32(Data.FocusStar != null ? Data.FocusStar.Idx : -1);
@@ -126,6 +122,8 @@ namespace StarSim
 
                 bs.Compress();
             }
+
+            Timer.Free();
         }
     }
 }

@@ -11,7 +11,7 @@ namespace StarSim
         private Graphics g;
         private Game game;
         private Control control;
-        private SimData data;
+        private SimulationData data;
         private Camera camera;
         private PerformanceWatch stats;
 
@@ -103,8 +103,6 @@ namespace StarSim
 
             var guiLine = new Pen(Color.FromArgb(40, 60, 80), 1);
 
-            Star[] starArray = data.Stars;
-
             if (ShowMarker)
             {
                 float centerPosX, centerPosY;
@@ -141,9 +139,9 @@ namespace StarSim
 
             var brush = new SolidBrush(Color.LightGray);
 
-            for (int iS = 0; iS < data.Stars.Length; iS++)
+            for (int iS = 0; iS < data.Count; iS++)
             {
-                var star = starArray[iS];
+                var star = data[iS];
                 if (!star.Enabled) continue;
 
                 float r = star.Radius;
@@ -204,7 +202,8 @@ namespace StarSim
             }
             stats.EndAndLog();
             string info = "";
-            info += $"Stars {data.StarCount} / {data.Stars.Length}\n";
+            info += $"Stars {data.EnabledCount} / {data.Count}\n";
+            info += $"Comparisons {data.TotalComparisons}\n";
             info += $"Mass {data.TotalMass}\n";
             info += $"SimSpeed x{game.Sim.SimSpeed * game.Sim.SimMultiplier} {(game.Running ? "" : " (paused)")}\n\n";
             if (ShowSimInfo)

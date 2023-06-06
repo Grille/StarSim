@@ -25,7 +25,7 @@ namespace StarSim
                 return (float)time;
             }
         }
-        public int FPS { private set; get; } = 0;
+        public float FPS { private set; get; } = 0;
 
         public void Begin()
         {
@@ -34,7 +34,7 @@ namespace StarSim
 
         public void EndAndLog()
         {
-            time = time * 0.9 + ((DateTime.Now.Ticks - beginDate) / (double)TimeSpan.TicksPerMillisecond) * 0.1;
+            time = (DateTime.Now.Ticks - beginDate) / (double)TimeSpan.TicksPerMillisecond;
             count += 1;
 
             if (((DateTime.Now.Ticks - logDate) / (double)TimeSpan.TicksPerSecond) > 1)

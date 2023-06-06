@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,11 +7,18 @@ using System.Threading.Tasks;
 
 namespace StarSim
 {
-    public class SimData
+    public class SimulationData : IReadOnlyList<Star>
     {
+        public record struct ComparisonPair(Star Star1, Star Star2)
+        {
+            public bool Enabled => Star1.Enabled && Star2.Enabled;
+        }
+
         public Star SelectetStar, FocusStar, RefStar;
-        public Star[] Stars { get; set; }
-        public int StarCount;
+        private Star[] Stars { get; set; }
+
+        public int EnabledCount;
+
         public double TotalMass;
 
         public double MassCenterX;
@@ -18,7 +26,13 @@ namespace StarSim
         public double SpeedCenterX;
         public double SpeedCenterY;
 
-        public SimData()
+        public long TotalComparisons => (long)Stars.Length * ((long)Stars.Length - 1) / 2;
+
+        public int Count => ((IReadOnlyCollection<Star>)Stars).Count;
+
+        public Star this[int index] => ((IReadOnlyList<Star>)Stars)[index];
+
+        public SimulationData()
         {
             Reset();
         }
@@ -27,7 +41,7 @@ namespace StarSim
         {
             SelectetStar = null; FocusStar = null; RefStar = null;
             Stars = new Star[0];
-            StarCount = 0;
+            EnabledCount = 0;
             TotalMass = 0;
 
             MassCenterX = 0;
@@ -71,9 +85,19 @@ namespace StarSim
         }
         public void AddStar(float mass, double posX, double posY, double speedX, double speedY)
         {
-            resizeStarArray(StarCount + 1);
-            Stars[StarCount] = new Star(StarCount, mass, posX, posY, speedX, speedY);
-            StarCount++;
+            resizeStarArray(EnabledCount + 1);
+            Stars[EnabledCount] = new Star(EnabledCount, mass, posX, posY, speedX, speedY);
+            EnabledCount++;
+        }
+
+        public ComparisonPair GetComparisonPair(int index)
+        {
+            long comparisonIndex = index;
+            long numObjects = Stars.Length;
+            long objectIndex1 = numObjects - 2 - (int)Math.Floor(Math.Sqrt(-8 * comparisonIndex + 4 * numObjects * (numObjects - 1) - 7) / 2.0 - 0.5);
+            long objectIndex2 = comparisonIndex + objectIndex1 + 1 - numObjects * (numObjects - 1) / 2 + (numObjects - objectIndex1) * ((numObjects - objectIndex1) - 1) / 2;
+
+            return new ComparisonPair(Stars[objectIndex1], Stars[objectIndex2]);
         }
 
         private void resizeStarArray(int lenght)
@@ -91,7 +115,16 @@ namespace StarSim
             }
             Stars = newStars;
         }
-        public void CollapseStarArray() { resizeStarArray(StarCount); }
+        public void CollapseStarArray() { resizeStarArray(EnabledCount); }
 
+        public IEnumerator<Star> GetEnumerator()
+        {
+            return ((IEnumerable<Star>)Stars).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return Stars.GetEnumerator();
+        }
     }
 }

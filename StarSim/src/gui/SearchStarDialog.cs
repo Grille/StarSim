@@ -7,8 +7,7 @@ namespace StarSim
     {
         MainWindow window;
         Game game;
-        SimData simulation;
-        Star[] stars;
+        SimulationData stars;
         bool oldTime;
         public SearchStarDialog()
         {
@@ -21,16 +20,14 @@ namespace StarSim
             this.game = game;
             window.ChildNumber++;
             this.window = window;
-            this.simulation = game.Data;
-            this.stars = simulation.Stars;
+            this.stars = game.Data;
             oldTime = game.Running;
-            game.Stop();
-            game.Sim.WaitForIdle();
+            game.Timer.Lock();
             SetStars(stars);
         }
-        public void SetStars(Star[] stars)
+
+        public void SetStars(SimulationData stars)
         {
-            this.stars = stars;
             if (stars == null)
             {
                 buttonGoTo.Enabled = false;
@@ -40,13 +37,14 @@ namespace StarSim
             {
                 dataGridView1.ShowEditingIcon = false;
                 this.dataGridView1.Rows.Clear();
-                for (int i = 0; i < stars.Length; i++)
+                for (int i = 0; i < stars.Count; i++)
                 {
                     if (stars[i].Enabled) this.dataGridView1.Rows.Add(i, stars[i].Name, Math.Round(stars[i].Mass, 2), Math.Round(Math.Abs(stars[i].SpeedX) + Math.Abs(stars[i].SpeedY), 2));
                 }
             }
             dataGridView1.Refresh();
         }
+
         private void button2_Click(object sender, EventArgs e)
         {
             this.Close();
@@ -74,6 +72,7 @@ namespace StarSim
         private void SearchStarDialog_FormClosed(object sender, FormClosedEventArgs e)
         {
             window.ChildNumber--;
+            game.Timer.Free();
         }
     }
 }
